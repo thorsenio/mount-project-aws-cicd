@@ -8,6 +8,19 @@
 
 # TODO: Allow custom path(s) to the variables files
 
+if [[ ${#} -gt 1 ]]
+then
+  echo "Usage: ${0} [tag]" 1>&2
+  exit 1
+fi
+
+if [[ ${#} -eq 1 ]]
+then
+  TAG=${1}
+else
+  TAG='latest'
+fi
+
 # Change to the directory of this script
 cd $(dirname "$0")
 
@@ -22,5 +35,5 @@ docker container run \
   --mount type=bind,source="${HOME}/.aws",target=/root/.aws \
   --mount type=bind,source="${HOME}/.ecs",target=/root/.ecs \
   --mount type=bind,source="${HOME}/.ssh",target=/root/.ssh \
-  skypilot/ecs-stack:latest \
+  skypilot/ecs-stack:${TAG} \
   bash
