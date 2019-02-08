@@ -14,7 +14,7 @@ source ./config/project-variables.sh
 cd - > /dev/null
 
 
-# ----- Computed common variables
+# ----- Computed regional variables
 
 # The S3 buckets below are referenced by the pipeline stack, but must be created independently
 # (if they do not already exist)
@@ -23,11 +23,18 @@ cd - > /dev/null
 TemplateBucketName="cf-templates-${AccountName}-${Region//-/}"
 
 
-# ----- Computed project variables
-BastionInstanceName="${ProjectName}-bastion"
-BastionStackName="${ProjectName}-bastion-stack"
-EcsClusterName="${ProjectName}-cluster"
-EcsStackName="${ProjectName}-stack"
+# ----- Computed cluster variables for the project
+# If the project specifies a cluster, it will be used; otherwise, the project gets its own cluster
+EcsClusterName="${EcsClusterName:-${ProjectName}-cluster}"
+
+# These resources are shared by the cluster, so there should be only one of each
+BastionInstanceName="${EcsClusterName}-bastion"
+BastionStackName="${EcsClusterName}-bastion-stack"
+EcsStackName="${EcsClusterName}-stack"
 KeyPairKeyName="${EcsClusterName}-${Region//-/}"
-VpcDefaultSecurityGroupName="${ProjectName}-sg"
-VpcStackName="${ProjectName}-vpc-stack"
+
+# TODO: Build in support for per-project subnets
+VpcDefaultSecurityGroupName="${EcsClusterName}-sg"
+VpcStackName="${EcsClusterName}-vpc-stack"
+
+# ----- Other computed project variables

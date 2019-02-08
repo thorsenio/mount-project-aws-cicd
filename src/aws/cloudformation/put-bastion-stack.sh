@@ -109,6 +109,7 @@ OUTPUT=$(aws cloudformation create-stack \
   --stack-name ${BastionStackName} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
+    ParameterKey=BastionInstanceName,ParameterValue=${BastionInstanceName} \
     ParameterKey=KeyPairKeyName,ParameterValue=${KeyPairKeyName} \
     ParameterKey=ProjectName,ParameterValue=${ProjectName} \
     ParameterKey=SecurityGroupId,ParameterValue=${SECURITY_GROUP_ID} \

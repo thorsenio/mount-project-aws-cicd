@@ -3,6 +3,9 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: Bastion host
 
 Parameters:
+  BastionInstanceName:
+    Description: Name of the bastion instance
+    Type: String
   KeyPairKeyName:
     Description: EC2 key pair for SSH access to the instance.
     Type: AWS::EC2::KeyPair::KeyName
@@ -39,4 +42,4 @@ Resources:
           SubnetId: !Ref SubnetId
       Tags:
         - Key: Name
-          Value: !Sub "${ProjectName}-bastion"
+          Value: !Ref BastionInstanceName

@@ -111,6 +111,12 @@ getPublicIpbyInstanceId () {
 
 BASTION_INSTANCE_ID=$(getInstanceIdByName ${BastionInstanceName})
 
+if [[ ${BASTION_INSTANCE_ID} == 'null' ]]
+then
+  echo "The connection could not be made. Bastion host '${BastionInstanceName}' was not found." 1>&2
+  exit 1
+fi
+
 ARN=$(getEcsInstanceArnByIndex ${INSTANCE_INDEX})
 
 CONTAINER_INSTANCE_ID=$(getContainerInstanceIdByArn ${ARN})
