@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: Bastion host
+
+Parameters:
+  KeyPairKeyName:
+    Description: EC2 key pair for SSH access to the instance.
+    Type: AWS::EC2::KeyPair::KeyName
+  LatestAmiId:
+    Description: The ID of the latest Amazon Linux 2 AMI
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+  ProjectName:
+    Description: The name of the project for which the bastion is being used
+    Type: String
+  SecurityGroupId:
+    Description: ID of the VPC's main security group
+    Type: String
+  SubnetId:
+    Description: The ID of the public subnet in which to create the bastion host
+    Type: String
+  VpcId:
+    Description: The ID of the VPC in which to create the bastion host
+    Type: String
+
+Resources:
+  Ec2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestAmiId
+      InstanceType: t3.nano
+      KeyName: !Ref KeyPairKeyName
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeleteOnTermination: true
+          DeviceIndex: 0
+          GroupSet:
+            - !Ref SecurityGroupId
+          SubnetId: !Ref SubnetId
+      Tags:
+        - Key: Name
+          Value: !Sub "${ProjectName}-bastion"

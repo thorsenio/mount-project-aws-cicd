@@ -1,0 +1,26 @@
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Development folders
+.githooks
+
+# Local variables
+#src/config/project-variables.*sh
+#src/config/regional-variables.*sh
+src/config/
+
+# Local-only files
+/_local-only/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*--expanded.yml

@@ -1,0 +1,227 @@
+# CloudFormation template for the networking resources of an ECS stack
+
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  DefaultSecurityGroupName:
+    Description: 'Name of the default security group for the VPC'
+    Type: String
+  StackName:
+    Description: 'Name of the stack.'
+    Type: String
+
+Resources:
+  Vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: '10.0.0.0/16'
+      Tags:
+        - Key: 'Name'
+          Value: !Sub ${StackName}VPC
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+  GatewayAttachment:
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref Vpc
+    Type: AWS::EC2::VPCGatewayAttachment
+
+  # Route Table resources
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref Vpc
+  PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref InternetGateway
+      RouteTableId: !Ref PublicRouteTable
+
+  # Create a NAT gateway in AZ1
+  # TODO: Create an additional gateway for redundancy?
+  NatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      # `!Ref ElasticIp` returns the EIP's IP address, not its allocation ID; use `!GetAtt` instead
+      AllocationId: !GetAtt
+        - ElasticIp
+        - AllocationId
+      SubnetId: !Ref PublicSubnetAz1
+  ElasticIp:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: 'vpc'
+    DependsOn: GatewayAttachment
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref Vpc
+  PrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: '0.0.0.0/0'
+      NatGatewayId: !Ref NatGateway
+      RouteTableId: !Ref PrivateRouteTable
+
+  # Create 3 public subnets
+  PublicSubnetAz1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Sub ${AWS::Region}a
+      CidrBlock: '10.0.1.0/24'
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: 'Access'
+          Value: 'public'
+    DependsOn: PublicRouteTable
+  PublicSubnetAz2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Sub ${AWS::Region}b
+      CidrBlock: '10.0.2.0/24'
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: 'Access'
+          Value: 'public'
+    DependsOn: PublicRouteTable
+  PublicSubnetAz3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Sub ${AWS::Region}c
+      CidrBlock: '10.0.3.0/24'
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: 'Access'
+          Value: 'public'
+    DependsOn: PublicRouteTable
+
+  # Associate the public subnets with the public route table, which has a route to the IGW
+  PublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnetAz1
+  PublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnetAz2
+  PublicSubnet3RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnetAz3
+
+  # Create 3 private subnets
+  PrivateSubnetAz1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Sub ${AWS::Region}a
+      CidrBlock: '10.0.4.0/24'
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: 'Access'
+          Value: 'private'
+  PrivateSubnetAz2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Sub ${AWS::Region}b
+      CidrBlock: '10.0.5.0/24'
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: 'Access'
+          Value: 'private'
+  PrivateSubnetAz3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Sub ${AWS::Region}c
+      CidrBlock: '10.0.6.0/24'
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: 'Access'
+          Value: 'private'
+
+  # Associate the private subnets with the private route table, which has a route to the NAT gateway
+  PrivateSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnetAz1
+  PrivateSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnetAz2
+  PrivateSubnet3RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnetAz3
+
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'All intragroup traffic, SSH access from anywhere'
+      GroupName: !Ref DefaultSecurityGroupName
+      VpcId: !Ref Vpc
+
+  # Allow all outbound traffic
+  SgEgress:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref SecurityGroup
+      CidrIp: '0.0.0.0/0'
+      FromPort: 0
+      ToPort: 65535
+      IpProtocol: -1
+
+  # Allow inbound traffic from the same group
+  SgIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref SecurityGroup
+      FromPort: 0
+      ToPort: 65535
+      IpProtocol: -1
+      SourceSecurityGroupId: !Ref SecurityGroup
+
+  # Allow SSH ingress from anywhere
+  SshIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref SecurityGroup
+      CidrIp: '0.0.0.0/0'
+      FromPort: 22
+      ToPort: 22
+      IpProtocol: 'tcp'
+
+Outputs:
+  VpcId:
+    Description: 'ID of VPC'
+    Value: !Ref Vpc
+
+  PrivateSubnet1:
+    Description: 'ID of private subnet in AZ 1'
+    Value: !Ref PrivateSubnetAz1
+  PrivateSubnet2:
+    Description: 'ID of private subnet in AZ 2'
+    Value: !Ref PrivateSubnetAz2
+  PrivateSubnet3:
+    Description: 'ID of private subnet in AZ 3'
+    Value: !Ref PrivateSubnetAz3
+
+  PublicSubnet1:
+    Description: 'ID of public subnet in AZ 1'
+    Value: !Ref PublicSubnetAz1
+  PublicSubnet2:
+    Description: 'ID of public subnet in AZ 2'
+    Value: !Ref PublicSubnetAz2
+  PublicSubnet3:
+    Description: 'ID of public subnet in AZ 3'
+    Value: !Ref PublicSubnetAz3
+
+  SecurityGroupId:
+    Description: "ID of the VPC's primary security group"
+    Value: !Ref SecurityGroup
