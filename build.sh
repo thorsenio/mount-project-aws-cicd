@@ -2,7 +2,7 @@
 
 # This script builds the Docker image and tags it with the version number found in `.version`
 
-BASE_NAME='skypilot/ecs-stack'
+BASE_NAME='skypilot/aws-cicd'
 
 if [[ ${#} -gt 1 ]]
 then
@@ -42,7 +42,7 @@ echo "Tag: ${TAG}"
 echo "Version tag: ${VERSION_TAG}"
 
 # Tag the build with `latest` or the custom tag passed as an argument
-docker build -t skypilot/ecs-stack:${TAG} .
+docker build -t ${BASE_NAME}:${TAG} .
 
 if [[ ${?} -ne 0 ]]
 then

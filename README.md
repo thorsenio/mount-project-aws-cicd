@@ -1,12 +1,12 @@
-# ecs-stack
+# aws-cicd
 
-Environment for managing an AWS ECS stack hosting containerized services.
+Docker image for managing a CI/CD pipeline hosted on AWS
 
 Variables are read from the following two files:
 - `config/project-variables.sh`
 - `config/regional-variables.sh`
 
-### Create an ECS stack
+### General
 
 ##### 1. Set values in the variables files
 
@@ -17,16 +17,18 @@ Enter regional and project-specific settings into
 ##### 2. Activate the containerized environment:
 
 ```bash
-./activate-env.sh
+./activate-aws-cicd.sh
 ```
 
-##### 3. Create a key pair for the ECS cluster (if one doesn't exist already)
+### ECS cluster stack
+
+##### 1. Create a key pair for the ECS cluster (if one doesn't exist already)
 
 ```bash
 ../lib/aws/ec2/create-key-pair.sh
 ```
 
-##### 4. Create the ECS stack:
+##### 2. Create or update the ECS stack:
 
 ```bash
 ../lib/aws/cloudformation/put-ecs-stack.sh
@@ -36,6 +38,48 @@ Enter regional and project-specific settings into
 
 ```bash
 ../lib/aws/cloudformation/delete-ecs-stack.sh
+```
+
+### CI/CD pipeline
+
+##### 1. Create or update the pipeline stack:
+
+```bash
+../lib/aws/cloudformation/put-cicd-pipeline-stack.sh
+```
+
+##### Delete the stack when it is no longer needed
+
+```bash
+../lib/aws/cloudformation/delete-cicd-pipeline-stack.sh
+```
+
+### Containerized site in ECS cluster
+
+##### 1. Create or update the ECS site stack:
+
+```bash
+../lib/aws/cloudformation/put-ecs-site-stack.sh
+```
+
+##### Delete the stack when it is no longer needed
+
+```bash
+../lib/aws/cloudformation/delete-ecs-site-stack.sh
+```
+
+### Static site served from S3
+
+##### 1. Create or update the S3 site stack:
+
+```bash
+../lib/aws/cloudformation/put-s3-site-stack.sh
+```
+
+##### Delete the stack when it is no longer needed
+
+```bash
+../lib/aws/cloudformation/delete-ecs-site-stack.sh
 ```
 
 ##### Utility scripts
