@@ -44,6 +44,10 @@ VpcStackName="${EcsClusterName}-vpc-stack"
 # ----- Other computed project variables
 
 # --- S3 site
+
+# Replace `.` with `-` to make a valid stack name
+SiteStackName="${SiteStackName:=${SiteDomainName//./-}-s3-site-stack}"
+
 # The name of the S3 bucket that hosts the website files
 BucketRandomSuffix=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 13 | head -n 1)
 SiteBucketName="${SiteBucketName:=${SiteDomainName}-${BucketRandomSuffix}}"

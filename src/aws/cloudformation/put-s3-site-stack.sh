@@ -7,8 +7,8 @@ CLOUDFORMATION_TEMPLATE='./s3-site.yml'
 # Change to the directory of this script
 cd $(dirname "$0")
 
-source functions.sh
-source variables-computed.sh
+source ../aws-functions.sh
+source ../../compute-variables.sh
 
 # Capture the mode that should be used put the stack: `create` or `update`
 PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${SiteStackName})
