@@ -27,6 +27,10 @@ SiteDomainName=${SiteDomainName:='www.example.com'}
 CodeBuildArtifactBucketName="${CodeBuildArtifactBucketName:=cicd-artifacts-${AccountName}-${Region//-/}}"
 CodePipelineArtifactBucketName="${CodePipelineArtifactBucketName:=cicd-artifacts-${AccountName}-${Region//-/}}"
 
+# Name and ARN of the service role used by CodePipeline to call AWS services
+CodePipelineServiceRoleName='codepipeline-service-role'
+CodePipelineServiceRoleArn="arn:aws:iam::${AccountNumber}:role/${CodePipelineServiceRoleName}"
+
 # Name of the S3 bucket that holds CloudFormation templates for the region
 TemplateBucketName="${TemplateBucketName:=cf-templates-${AccountName}-${Region//-/}}"
 
