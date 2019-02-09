@@ -2,7 +2,7 @@
 
 # This script updates a stack if it exists or creates the stack if it doesn't exist
 
-CLOUDFORMATION_TEMPLATE='./s3-site.yml'
+CLOUDFORMATION_TEMPLATE='templates/s3-site.yml'
 
 # Change to the directory of this script
 cd $(dirname "$0")
