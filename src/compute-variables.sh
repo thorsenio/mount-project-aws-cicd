@@ -46,7 +46,7 @@ VpcStackName="${EcsClusterName}-vpc-stack"
 # --- S3 site
 # The name of the S3 bucket that hosts the website files
 BucketRandomSuffix=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 13 | head -n 1)
-SiteBucketName="${SiteDomainName}-${BucketRandomSuffix}"
+SiteBucketName="${SiteBucketName:=${SiteDomainName}-${BucketRandomSuffix}}"
 
 # This stack name is ignored if the S3 bucket stack is created as a nested stack
 SiteBucketStackName="${SiteBucketName//./-}-bucket-stack"
