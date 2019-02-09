@@ -51,6 +51,18 @@ VpcStackName="${VpcStackName:=${EcsClusterName}-vpc-stack}"
 CodeBuildProjectName="${CodeBuildProjectName:=${ProjectName}-codebuild-project}"
 CodeBuildProjectStackName="${CodeBuildProjectStackName:=${CodeBuildProjectName}-stack}"
 
+# --- CodePipeline pipeline
+CodePipelineName="${ProjectName}-codepipeline"
+CodePipelineStackName="${ProjectName}-codepipeline-stack"
+
+# --- Events rule
+EventsRuleRandomId=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9-' | fold -w 24 | head -n 1)
+
+# These values are used only when the rule is created independently of its parent stack
+# (i.e., probably only during testing & development)
+EventsRepoChangeRuleName="${CodePipelineName}-events-repo-change-rule"
+EventsRepoChangeRuleStackName="${EventsRepoChangeRuleName}-stack"
+
 # --- CodeCommit repo
 RepoName="${RepoName:=${ProjectName}}"
 RepoDescription="${RepoDescription:=${ProjectDescription}}"
@@ -73,5 +85,6 @@ SiteErrorDocument="${SiteErrorDocument:=${SiteIndexDocument}}"
 
 # --- CloudFront distribution
 
-# This name is ignored if the CloudFront distribution stack is created as a nested stack
+# This value is used only when the distribution is created independently of its parent stack
+# (i.e., probably only during testing & development)
 CloudfrontDistributionStackName="${CloudfrontDistributionStackName:=${ProjectName}-cdn-stack}"

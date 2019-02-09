@@ -1,29 +1,32 @@
 #!/usr/bin/env bash
 
-TEMPLATE_FILE='./events-repo-change-rule.yml'
+CLOUDFORMATION_TEMPLATE='templates/events-repo-change-rule.yml'
 
 # Change to the directory of this script
 cd $(dirname "$0")
 
-source functions.sh
-source variables-computed.sh
+source ../aws-functions.sh
+source ../../compute-variables.sh
 
 CodePipelineArn="arn:aws:codepipeline:${Region}:${AccountNumber}:${CodePipelineName}"
 
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${CloudWatchRepoChangeRuleStackName})
+PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${EventsRepoChangeRuleStackName})
 
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${PROFILE} \
   --region ${Region} \
-  --stack-name ${CloudWatchRepoChangeRuleStackName} \
-  --template-body file://${TEMPLATE_FILE} \
+  --stack-name ${EventsRepoChangeRuleStackName} \
+  --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
     ParameterKey=CodePipelineArn,ParameterValue=${CodePipelineArn} \
     ParameterKey=CodePipelineName,ParameterValue=${CodePipelineName} \
+    ParameterKey=EventsRuleRandomId,ParameterValue=${EventsRuleRandomId} \
     ParameterKey=ProjectName,ParameterValue=${ProjectName} \
     ParameterKey=RepoName,ParameterValue=${RepoName} \
-  --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
+  --capabilities \
+    CAPABILITY_IAM \
+    CAPABILITY_NAMED_IAM \
 )
 
 EXIT_STATUS=$?
