@@ -3,7 +3,7 @@
 # This script creates a bastion host in a public subnet of the VPC that hosts container instances
 # of the ECS cluster.
 
-CLOUDFORMATION_TEMPLATE='templates/bastion-stack.yml'
+CLOUDFORMATION_TEMPLATE='templates/bastion.yml'
 
 # Change to the directory of this script
 cd $(dirname "$0")
