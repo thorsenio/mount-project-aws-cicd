@@ -13,6 +13,7 @@ cd - > /dev/null
 
 # ----- Dummy values for required variables
 # TODO: Verify that all required values exist
+ProjectDescription="${ProjectDescription:=${ProjectName}}"
 SiteDomainName=${SiteDomainName:='www.example.com'}
 
 
@@ -53,6 +54,7 @@ CodeBuildProjectStackName="${CodeBuildProjectStackName:=${CodeBuildProjectName}-
 
 # --- CodeCommit repo
 RepoName="${RepoName:=${ProjectName}}"
+RepoDescription="${RepoDescription:=${ProjectDescription}}"
 
 # --- S3 site
 
