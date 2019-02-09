@@ -1,0 +1,112 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CodeBuild project stack'
+
+Parameters:
+  CodeBuildArtifactBucketName:
+    Description: 'S3 bucket used for CodeBuild artifacts for the project'
+    Type: String
+
+  CodeBuildProjectName:
+    Description: 'Name of the CodeBuild project'
+    Type: String
+
+  CodePipelineArtifactBucketName:
+    Description: 'S3 bucket used for all CodePipeline pipelines in the region'
+    Type: String
+
+  ProjectDescription:
+    Description: 'Description of the project'
+    Type: String
+
+  ProjectName:
+    Description: 'Name of the project'
+    Type: String
+
+  RepoName:
+    Description: "Name of the CodeCommit repo holding the project's source code"
+    Type: String
+
+  SiteBucketName:
+    Description: 'S3 bucket holding the website'
+    Type: String
+
+Resources:
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub "${CodeBuildProjectName}"
+      Description: !Sub "CodeBuild project for ${ProjectDescription}"
+      Artifacts:
+        EncryptionDisabled: true
+        Location: !Sub "${CodeBuildArtifactBucketName}"
+        Name: !Sub "codebuild-artifact-${ProjectName}-${AWS::Region}"
+        NamespaceType: 'BUILD_ID'
+        OverrideArtifactName: true
+        Packaging: 'NONE'
+        Path: ''
+        Type: 'S3'
+      BadgeEnabled: true
+      Cache:
+        Type: 'NO_CACHE'
+      EncryptionKey: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/aws/s3"
+      Environment:
+        ComputeType: 'BUILD_GENERAL1_SMALL'
+        Image: 'aws/codebuild/nodejs:10.14.1'
+        PrivilegedMode: false
+        Type: 'LINUX_CONTAINER'
+      QueuedTimeoutInMinutes: 60
+      Source:
+        Type: 'CODECOMMIT'
+        Location: !Sub "https://git-codecommit.${AWS::Region}.amazonows.com/v1/repos/${RepoName}"
+        GitCloneDepth: 1
+      ServiceRole: !Ref CodeBuildServiceRole
+      TimeoutInMinutes: 10
+
+  CodeBuildServiceRole:
+    Type: AWS::IAM::Role
+    Description: 'Allows CodeBuild to call AWS services on your behalf.'
+    Properties:
+      RoleName: !Sub "codebuild-service-role-${ProjectName}-${AWS::Region}"
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service: 'codebuild.amazonaws.com'
+            Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName: !Sub "codebuild-service-role-policy-${ProjectName}-${AWS::Region}"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action: 'codecommit:GitPull'
+                Resource: !Sub "arn:aws:codecommit:${AWS::Region}:${AWS::AccountId}:${RepoName}"
+              - Effect: 'Allow'
+                Action:
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Resource:
+                  - !Sub "arn:aws:logs:us-west-2:${AWS::AccountId}:log-group:/aws/codebuild/${CodeBuildProjectName}"
+                  - !Sub "arn:aws:logs:us-west-2:${AWS::AccountId}:log-group:/aws/codebuild/${CodeBuildProjectName}:*"
+              - Effect: 'Allow'
+                Action:
+                  - 'logs:CreateLogGroup'
+                  - 's3:PutAccountPublicAccessBlock'
+                  - 's3:GetAccountPublicAccessBlock'
+                  - 's3:HeadBucket'
+                  - 's3:ListAllMyBuckets'
+                Resource: '*'
+              -
+                Effect: 'Allow'
+                Action: 's3:*'
+                Resource: !Sub "arn:aws:s3:::${CodeBuildArtifactBucketName}/*"
+              -
+                Effect: 'Allow'
+                Action: 's3:*'
+                Resource: !Sub "arn:aws:s3:::${CodePipelineArtifactBucketName}/*"
+              -
+                Effect: 'Allow'
+                Action: 's3:*'
+                Resource: !Sub "arn:aws:s3:::${SiteBucketName}/*"

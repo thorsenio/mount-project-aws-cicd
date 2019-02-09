@@ -13,13 +13,19 @@ cd - > /dev/null
 
 # ----- Dummy values for required variables
 # TODO: Verify that all required values exist
+ProjectDescription="${ProjectDescription:=${ProjectName}}"
 SiteDomainName=${SiteDomainName:='www.example.com'}
 
 
 # ----- Computed regional variables
 
 # The S3 buckets below are referenced by the pipeline stack, but must be created independently
-# (if they do not already exist)
+# if they do not already exist
+
+# Name of the S3 bucket that hosts CodeBuild & CodePipeline artifacts for all projects in the region
+# Here they are configured to share a bucket
+CodeBuildArtifactBucketName="${CodeBuildArtifactBucketName:=cicd-artifacts-${AccountName}-${Region//-/}}"
+CodePipelineArtifactBucketName="${CodePipelineArtifactBucketName:=cicd-artifacts-${AccountName}-${Region//-/}}"
 
 # Name of the S3 bucket that holds CloudFormation templates for the region
 TemplateBucketName="${TemplateBucketName:=cf-templates-${AccountName}-${Region//-/}}"
@@ -40,6 +46,14 @@ VpcDefaultSecurityGroupName="${VpcDefaultSecurityGroupName:=${EcsClusterName}-sg
 VpcStackName="${VpcStackName:=${EcsClusterName}-vpc-stack}"
 
 # ----- Other computed project variables
+
+# --- CodeBuild project
+CodeBuildProjectName="${CodeBuildProjectName:=${ProjectName}-codebuild-project}"
+CodeBuildProjectStackName="${CodeBuildProjectStackName:=${CodeBuildProjectName}-stack}"
+
+# --- CodeCommit repo
+RepoName="${RepoName:=${ProjectName}}"
+RepoDescription="${RepoDescription:=${ProjectDescription}}"
 
 # --- S3 site
 
