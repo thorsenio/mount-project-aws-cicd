@@ -54,3 +54,8 @@ SiteBucketStackName="${SiteBucketName//./-}-bucket-stack"
 # Name of the index and error documents for the site (for an SPA, these are typically the same)
 SiteIndexDocument='index.html'
 SiteErrorDocument="${SiteIndexDocument}"
+
+# --- CloudFront distribution
+
+# This name is ignored if the CloudFront distribution stack is created as a nested stack
+CloudfrontDistributionStackName="${CloudfrontDistributionStackName:=${ProjectName}-cdn-stack}"
