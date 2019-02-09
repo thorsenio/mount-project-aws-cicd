@@ -16,11 +16,19 @@ bucketExists ${PROFILE} ${CodeBuildArtifactBucketName}
 ERROR_STATUS=${?}
 if [[ ${ERROR_STATUS} -ne 0 ]]
 then
-  aws s3api create-bucket \
-    --profile ${PROFILE} \
-    --region ${Region} \
-    --bucket ${CodeBuildArtifactBucketName} \
-    --create-bucket-configuration LocationConstraint=${Region}
+  if [[ ${Region} == 'us-east-1' ]]
+  then
+    aws s3api create-bucket \
+      --profile ${PROFILE} \
+      --region ${Region} \
+      --bucket ${CodeBuildArtifactBucketName}
+  else
+    aws s3api create-bucket \
+      --profile ${PROFILE} \
+      --region ${Region} \
+      --bucket ${CodeBuildArtifactBucketName} \
+      --create-bucket-configuration LocationConstraint=${Region}
+  fi
 fi
 
 if [[ ! ${CodePipelineArtifactBucketName} == ${CodeBuildArtifactBucketName} ]]
@@ -30,10 +38,18 @@ then
   ERROR_STATUS=${?}
   if [[ ${ERROR_STATUS} -ne 0 ]]
   then
-    aws s3api create-bucket \
-      --profile ${PROFILE} \
-      --region ${Region} \
-      --bucket ${CodePipelineArtifactBucketName} \
-      --create-bucket-configuration LocationConstraint=${Region}
+    if [[ ${Region} == 'us-east-1' ]]
+    then
+      aws s3api create-bucket \
+        --profile ${PROFILE} \
+        --region ${Region} \
+        --bucket ${CodePipelineArtifactBucketName}
+    else
+      aws s3api create-bucket \
+        --profile ${PROFILE} \
+        --region ${Region} \
+        --bucket ${CodePipelineArtifactBucketName} \
+        --create-bucket-configuration LocationConstraint=${Region}
+    fi
   fi
 fi
