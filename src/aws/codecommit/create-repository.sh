@@ -16,6 +16,7 @@ REPO_NAME=$(aws codecommit create-repository \
 
 if [[ ${?} -ne 0 ]]
 then
+  echo "The CodeCommit repository '${RepoName}' could not be created." 1>&2
   exit 1
 fi
 
