@@ -2,13 +2,13 @@
 
 # This script creates a CodeBuild project and related resources as a CloudFormation stack
 
-TEMPLATE_FILE='./codebuild-project.yml'
+CLOUDFORMATION_TEMPLATE='templates/codebuild-project.yml'
 
 # Change to the directory of this script
 cd $(dirname "$0")
 
-source functions.sh
-source variables-computed.sh
+source ../aws-functions.sh
+source ../../compute-variables.sh
 
 # Capture the mode that should be used put the stack: `create` or `update`
 PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${CodeBuildProjectStackName})
@@ -19,7 +19,7 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${PROFILE} \
   --region ${Region} \
   --stack-name ${CodeBuildProjectStackName} \
-  --template-body file://${TEMPLATE_FILE} \
+  --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
     ParameterKey=CodeBuildProjectName,ParameterValue=${CodeBuildProjectName} \
     ParameterKey=CodeBuildArtifactBucketName,ParameterValue=${CodeBuildArtifactBucketName} \

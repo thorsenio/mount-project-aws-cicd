@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
 
-# This script deletes the CloudFormation stack
+# This script deletes the specified CodeBuild project stack
 
 # Change to the directory of this script
 cd $(dirname "$0")
 
-source functions.sh
-source variables-computed.sh
+source ../aws-functions.sh
+source ../../compute-variables.sh
 
-aws cloudformation delete-stack \
+OUTPUT=$(aws cloudformation delete-stack \
   --profile ${PROFILE} \
   --region ${Region} \
-  --stack-name ${CodeBuildProjectStackName}
+  --stack-name ${CodeBuildProjectStackName} \
+)
+
+EXIT_STATUS=$?
+echoPutStackOutput 'delete' ${Region} ${EXIT_STATUS} ${OUTPUT}
