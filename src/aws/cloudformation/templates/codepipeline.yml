@@ -63,7 +63,6 @@ Resources:
       Parameters:
         CodePipelineArn: !Sub "arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${CodePipelineName}"
         CodePipelineName: !Ref CodePipelineName
-        CodePipelineServiceRoleName: !Ref CodePipelineServiceRoleName
         EventsRuleRandomId: !Ref EventsRuleRandomId
         ProjectName: !Ref ProjectName
         RepoName: !Ref RepoName

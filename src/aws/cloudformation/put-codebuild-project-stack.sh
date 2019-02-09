@@ -13,13 +13,16 @@ source ../../compute-variables.sh
 # Capture the mode that should be used put the stack: `create` or `update`
 PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${CodeBuildProjectStackName})
 
+# TODO: REFACTOR: This snippet is duplicated in `put-codepipeline-stack.sh`
 codecommitRepoExists ${PROFILE} ${Region} ${RepoName}
 if [[ $? -ne 0 ]]
 then
   ../codecommit/create-repository.sh
-  if [[ $? -ne 0 ]]
+  if [[ $? -eq 0 ]]
   then
-    echo "The CodeCommit repository '${RepoName}' could not be created" 1>&2
+    echo "The CodeCommit repository '${RepoName}' exists and will be used for this project." 1>&2
+  else
+    echo "The CodeCommit repository '${RepoName}' could not be created." 1>&2
     exit 1
   fi
 fi

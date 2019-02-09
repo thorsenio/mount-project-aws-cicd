@@ -2,16 +2,16 @@
 
 # This script updates a stack if it exists or creates the stack if it doesn't exist
 
-CLOUDFORMATION_TEMPLATE='./cicd-pipeline.yml'
+CLOUDFORMATION_TEMPLATE='templates/codepipeline.yml'
 
 # Change to the directory of this script
 cd $(dirname "$0")
 
-source functions.sh
-source variables-computed.sh
+source ../aws-functions.sh
+source ../../compute-variables.sh
 
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${CodeBuildProjectStackName})
+PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${CodePipelineStackName})
 
 # TODO: REFACTOR: Use a function to generate ParameterKey,ParameterValue strings
 
@@ -22,11 +22,25 @@ then
   exit 1
 fi
 
+# TODO: REFACTOR: This snippet is duplicated in `put-codebuild-project-stack.sh`
+codecommitRepoExists ${PROFILE} ${Region} ${RepoName}
+if [[ $? -ne 0 ]]
+then
+  ../codecommit/create-repository.sh
+  if [[ $? -eq 0 ]]
+  then
+    echo "The CodeCommit repository '${RepoName}' exists and will be used for this project." 1>&2
+  else
+    echo "The CodeCommit repository '${RepoName}' could not be created." 1>&2
+    exit 1
+  fi
+fi
+
 TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }' | cut -d. -f1)
 
-# Check whether the CodePipeline service role exists, and pass the value to the template.
+# Check whether the CodePipeline service role exists, and pass a boolean to the template.
 iamRoleExists ${PROFILE} ${Region} ${CodePipelineServiceRoleName}
-if [[ $? == '0' ]]
+if [[ $? -eq 0 ]]
 then
   CP_SERVICE_ROLE_EXISTS=true
 else
