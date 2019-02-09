@@ -13,6 +13,17 @@ source ../../compute-variables.sh
 # Capture the mode that should be used put the stack: `create` or `update`
 PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${CodeBuildProjectStackName})
 
+codecommitRepoExists ${PROFILE} ${Region} ${RepoName}
+if [[ $? -ne 0 ]]
+then
+  ../codecommit/create-repository.sh
+  if [[ $? -ne 0 ]]
+  then
+    echo "The CodeCommit repository '${RepoName}' could not be created" 1>&2
+    exit 1
+  fi
+fi
+
 # TODO: REFACTOR: Use a function to generate ParameterKey,ParameterValue strings
 
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \

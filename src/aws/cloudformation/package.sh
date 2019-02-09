@@ -28,3 +28,8 @@ aws cloudformation package \
   --template-file ${CLOUDFORMATION_TEMPLATE} \
   --s3-bucket ${TemplateBucketName} \
   --output-template-file ${TEMPLATE_BASENAME}--expanded.yml
+
+if [[ ${?} -ne 0 ]]
+then
+  exit 1
+fi
