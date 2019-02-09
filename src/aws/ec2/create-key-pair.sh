@@ -43,4 +43,4 @@ fi
 # Protect the identity file
 chmod 400 ${IDENTITY_FILE}
 
-echo "A key pair named '${KeyPairKeyName}' has been generated and saved to ~/.ssh/${IDENTITY_FILE}.pem."
+echo "A key pair named '${KeyPairKeyName}' has been generated and saved to ~/.ssh/${KeyPairKeyName}.pem."

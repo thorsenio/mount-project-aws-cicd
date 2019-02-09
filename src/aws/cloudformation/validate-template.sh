@@ -16,4 +16,9 @@ source ../../compute-variables.sh
 aws cloudformation validate-template \
   --profile=${PROFILE} \
   --region=${Region} \
-  --template-body=file://${TEMPLATE}
+  --template-body=file://${TEMPLATE} 1> /dev/null
+
+if [[ $? -eq 0 ]]
+then
+  echo "Template '${TEMPLATE}' is valid"
+fi

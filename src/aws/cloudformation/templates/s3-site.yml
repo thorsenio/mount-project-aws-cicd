@@ -1,0 +1,42 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'S3 website served through CloudFront'
+
+Parameters:
+  SiteBucketName:
+    Description: 'S3 bucket holding the website'
+    Type: String
+
+  SiteDomainName:
+    Description: 'Domain name of the site'
+    Type: String
+
+  SiteErrorDocument:
+    Description: 'Error document'
+    Type: String
+
+  SiteIndexDocument:
+    Description: 'Index document'
+    Type: String
+
+Resources:
+  CdnDistroStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        SiteBucketName: !Ref SiteBucketName
+        SiteDomainName: !Ref SiteDomainName
+        SiteErrorDocument: !Ref SiteErrorDocument
+        SiteIndexDocument: !Ref SiteIndexDocument
+      TemplateURL: './cloudfront-distribution.yml'
+      TimeoutInMinutes: 60
+  SiteBucketStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        SiteBucketName: !Ref SiteBucketName
+        SiteDomainName: !Ref SiteDomainName
+        SiteErrorDocument: !Ref SiteErrorDocument
+        SiteIndexDocument: !Ref SiteIndexDocument
+      TemplateURL: './site-bucket.yml'
+      TimeoutInMinutes: 10
