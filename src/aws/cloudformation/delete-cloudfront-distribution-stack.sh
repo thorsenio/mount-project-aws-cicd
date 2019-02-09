@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
 
-# This script deletes the specified CloudFormation stack
+# This script deletes the specified CloudFront distribution stack
 
 # Change to the directory of this script
 cd $(dirname "$0")
 
-source functions.sh
-source variables-computed.sh
+source ../aws-functions.sh
+source ../../compute-variables.sh
 
-aws cloudformation delete-stack \
+OUTPUT=$(aws cloudformation delete-stack \
   --profile ${PROFILE} \
   --region ${Region} \
-  --stack-name ${CloudfrontDistributionStackName}
+  --stack-name ${CloudfrontDistributionStackName} \
+)
+
+EXIT_STATUS=$?
+echoPutStackOutput 'delete' ${Region} ${EXIT_STATUS} ${OUTPUT}
