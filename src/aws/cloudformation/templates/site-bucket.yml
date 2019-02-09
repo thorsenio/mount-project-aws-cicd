@@ -1,0 +1,30 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'S3 bucket for static website'
+
+Parameters:
+  SiteBucketName:
+    Description: 'S3 bucket holding the website'
+    Type: String
+
+  SiteErrorDocument:
+    Description: 'Error document'
+    Type: String
+
+  SiteIndexDocument:
+    Description: 'Index document'
+    Type: String
+
+  SiteDomainName:
+    Description: 'Domain name of the site'
+    Type: String
+
+Resources:
+  SiteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: 'PublicRead'
+      BucketName: !Ref SiteBucketName
+      WebsiteConfiguration:
+        ErrorDocument: !Ref SiteErrorDocument
+        IndexDocument: !Ref SiteIndexDocument
