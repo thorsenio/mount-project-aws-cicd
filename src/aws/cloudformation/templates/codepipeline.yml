@@ -1,0 +1,134 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CI/CD pipeline'
+
+Conditions:
+  # Create the service role only if it doesn't already exist.
+  CreateCodePipelineServiceRole: !Equals [!Ref CodePipelineServiceRoleExists, false]
+
+Parameters:
+  CodeBuildArtifactBucketName:
+    Description: 'S3 bucket used for CodeBuild artifacts for the project'
+    Type: String
+
+  CodeBuildProjectName:
+    Description: 'Name of the CodeBuild project'
+    Type: String
+
+  CodePipelineArtifactBucketName:
+    Description: 'S3 bucket used for all CodePipeline pipelines in the region'
+    Type: String
+
+  CodePipelineName:
+    Description: 'Name of the CI/CD pipeline'
+    Type: String
+
+  CodePipelineServiceRoleExists:
+    Description: 'True if the CodePipeline service role already exists'
+    Type: String
+    AllowedValues:
+      - false
+      - true
+    Default: true
+
+  CodePipelineServiceRoleName:
+    Description: 'Name of the service role used by CodePipeline to call AWS services'
+    Type: String
+
+  EventsRuleRandomId:
+    Description: 'A unique, user-definied identifier for the target of an Events rule'
+    Type: String
+
+  ProjectDescription:
+    Description: 'Description of the project'
+    Type: String
+
+  ProjectName:
+    Description: 'Name of the project (typically same as repo name)'
+    Type: String
+
+  RepoName:
+    Description: "Name of the CodeCommit repo holding project source code"
+    Type: String
+
+  SiteBucketName:
+    Description: 'S3 bucket holding the website'
+    Type: String
+
+Resources:
+  EventsRepoChangeRuleStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: CodePipeline
+    Properties:
+      Parameters:
+        CodePipelineArn: !Sub "arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${CodePipelineName}"
+        CodePipelineName: !Ref CodePipelineName
+        CodePipelineServiceRoleName: !Ref CodePipelineServiceRoleName
+        EventsRuleRandomId: !Ref EventsRuleRandomId
+        ProjectName: !Ref ProjectName
+        RepoName: !Ref RepoName
+      TemplateURL: './events-repo-change-rule.yml'
+
+  CodeBuildProjectStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        CodeBuildProjectName: !Ref CodeBuildProjectName
+        CodeBuildArtifactBucketName: !Ref CodeBuildArtifactBucketName
+        CodePipelineArtifactBucketName: !Ref CodePipelineArtifactBucketName
+        ProjectDescription: !Ref ProjectDescription
+        ProjectName: !Ref ProjectName
+        RepoName: !Ref RepoName
+        SiteBucketName: !Ref SiteBucketName
+      TemplateURL: './codebuild-project.yml'
+      TimeoutInMinutes: 5
+
+  CodePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    DependsOn: CodeBuildProjectStack
+    Properties:
+      Name: !Ref CodePipelineName
+      RoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/codepipeline-service-role"
+      Stages:
+        - Name: 'Source'
+          Actions:
+            - Name: 'SourceAction'
+              RunOrder: 1
+              ActionTypeId:
+                Category: 'Source'
+                Owner: 'AWS'
+                Provider: 'CodeCommit'
+                Version: '1'
+              Configuration:
+                BranchName: 'develop'
+                PollForSourceChanges: false
+                RepositoryName: !Ref RepoName
+              OutputArtifacts:
+                - Name: 'SourceOutputArtifact'
+        - Name: Build
+          Actions:
+            - Name: BuildAction
+              RunOrder: 1
+              InputArtifacts:
+                - Name: 'SourceOutputArtifact'
+              ActionTypeId:
+                Category: 'Build'
+                Owner: 'AWS'
+                Version: '1'
+                Provider: 'CodeBuild'
+              Configuration:
+                ProjectName: !Ref CodeBuildProjectName
+              OutputArtifacts:
+                - Name: 'BuildOutputArtifact'
+      ArtifactStore:
+        # A single S3 bucket serves as the bucket for all the pipelines in that region
+        Location: !Ref CodePipelineArtifactBucketName
+        Type: 'S3'
+
+  CodePipelineServiceRoleStack:
+    Type: AWS::CloudFormation::Stack
+    Description: 'Allows CodePipeline to call AWS services.'
+    Condition: CreateCodePipelineServiceRole
+    Properties:
+      TemplateURL: './codepipeline-service-role.yml'
+      TimeoutInMinutes: 2
