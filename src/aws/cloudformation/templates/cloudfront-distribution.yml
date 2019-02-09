@@ -1,0 +1,71 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFront distribution for S3 website'
+
+Parameters:
+  SiteBucketName:
+    Description: 'S3 bucket holding the website'
+    Type: String
+
+  SiteDomainName:
+    Description: 'Domain name of the site'
+    Type: String
+
+  SiteErrorDocument:
+    Description: 'Error document'
+    Type: String
+
+  SiteIndexDocument:
+    Description: 'Index document'
+    Type: String
+
+Resources:
+  AcmCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref SiteDomainName
+      ValidationMethod: 'DNS'
+
+  CdnDistro:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - !Ref SiteDomainName
+        CustomErrorResponses:
+          - ErrorCachingMinTTL: 0
+            ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: !Sub "/${SiteErrorDocument}"
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - 'GET'
+            - 'HEAD'
+          CachedMethods:
+            - 'GET'
+            - 'HEAD'
+          Compress: true
+          DefaultTTL: 86400
+          ForwardedValues:
+            QueryString: false
+          MaxTTL: 31536000 # 1 year
+          MinTTL: 0
+          TargetOriginId: !Sub "S3-${SiteBucketName}"
+          ViewerProtocolPolicy: 'redirect-to-https'
+        DefaultRootObject: !Ref SiteIndexDocument
+        Enabled: true
+        HttpVersion: 'http2'
+        IPV6Enabled: true
+        Origins:
+          - DomainName: !Sub "${SiteBucketName}.s3.amazonaws.com"
+            # The value of Id must be unique within the distribution
+            Id: !Sub "S3-${SiteBucketName}"
+            S3OriginConfig:
+              # An empty value allows access through both CloudFront & the bucket.
+              # TODO: Allow access through CloudFront only
+              OriginAccessIdentity: ''
+        PriceClass: 'PriceClass_100'
+        ViewerCertificate:
+          AcmCertificateArn: !Ref AcmCertificate
+          MinimumProtocolVersion: 'TLSv1.1_2016'
+          SslSupportMethod: 'sni-only'

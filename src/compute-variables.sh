@@ -13,6 +13,10 @@ source ./config/regional-variables.sh
 source ./config/project-variables.sh
 cd - > /dev/null
 
+# ----- Dummy values for required variables
+# TODO: Verify that all required values exist
+SiteDomainName=${SiteDomainName:='www.example.com'}
+
 
 # ----- Computed regional variables
 
@@ -38,3 +42,24 @@ VpcDefaultSecurityGroupName="${EcsClusterName}-sg"
 VpcStackName="${EcsClusterName}-vpc-stack"
 
 # ----- Other computed project variables
+
+# --- S3 site
+
+# Replace `.` with `-` to make a valid stack name
+SiteStackName="${SiteStackName:=${SiteDomainName//./-}-s3-site-stack}"
+
+# The name of the S3 bucket that hosts the website files
+BucketRandomSuffix=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 13 | head -n 1)
+SiteBucketName="${SiteBucketName:=${SiteDomainName}-${BucketRandomSuffix}}"
+
+# This stack name is ignored if the S3 bucket stack is created as a nested stack
+SiteBucketStackName="${SiteBucketName//./-}-bucket-stack"
+
+# Name of the index and error documents for the site (for an SPA, these are typically the same)
+SiteIndexDocument='index.html'
+SiteErrorDocument="${SiteIndexDocument}"
+
+# --- CloudFront distribution
+
+# This name is ignored if the CloudFront distribution stack is created as a nested stack
+CloudfrontDistributionStackName="${CloudfrontDistributionStackName:=${ProjectName}-cdn-stack}"
