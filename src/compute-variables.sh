@@ -26,6 +26,8 @@ SiteDomainName=${SiteDomainName:='www.example.com'}
 # Here they are configured to share a bucket
 CodeBuildArtifactBucketName="${CodeBuildArtifactBucketName:=cicd-artifacts-${AccountName}-${Region//-/}}"
 CodePipelineArtifactBucketName="${CodePipelineArtifactBucketName:=cicd-artifacts-${AccountName}-${Region//-/}}"
+CodeBuildServiceRoleName="codebuild-service-role-${ProjectName}-${Region}"
+CodeBuildServiceRolePolicyName="codebuild-service-role-policy-${ProjectName}-${Region}"
 
 # Name and ARN of the service role used by CodePipeline to call AWS services
 CodePipelineServiceRoleName='codepipeline-service-role'

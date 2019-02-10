@@ -15,6 +15,14 @@ Parameters:
     Description: 'Name of the CodeBuild project'
     Type: String
 
+  CodeBuildServiceRoleName:
+    Description: 'Name of the service role used by CodeBuild to call AWS services'
+    Type: String
+
+  CodeBuildServiceRolePolicyName:
+    Description: 'Name of the policy attached to the CodeBuild service role'
+    Type: String
+
   CodePipelineArtifactBucketName:
     Description: 'S3 bucket used for all CodePipeline pipelines in the region'
     Type: String
@@ -74,6 +82,8 @@ Resources:
       Parameters:
         CodeBuildProjectName: !Ref CodeBuildProjectName
         CodeBuildArtifactBucketName: !Ref CodeBuildArtifactBucketName
+        CodeBuildServiceRoleName: !Ref CodeBuildServiceRoleName
+        CodeBuildServiceRolePolicyName: !Ref CodeBuildServiceRolePolicyName
         CodePipelineArtifactBucketName: !Ref CodePipelineArtifactBucketName
         ProjectDescription: !Ref ProjectDescription
         ProjectName: !Ref ProjectName

@@ -9,7 +9,7 @@ for TEMPLATE in \
   'codepipeline.yml' \
   'codepipeline-service-role.yml' \
   'ecs-stack.yml' \
-  'bastion-stack.yml' \
+  'bastion.yml' \
   'events-repo-change-rule.yml' \
   's3-site.yml' \
   'site-bucket.yml' \

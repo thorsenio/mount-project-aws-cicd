@@ -11,6 +11,14 @@ Parameters:
     Description: 'Name of the CodeBuild project'
     Type: String
 
+  CodeBuildServiceRoleName:
+    Description: 'Name of the service role used by CodeBuild to call AWS services'
+    Type: String
+
+  CodeBuildServiceRolePolicyName:
+    Description: 'Name of the policy attached to the CodeBuild service role'
+    Type: String
+
   CodePipelineArtifactBucketName:
     Description: 'S3 bucket used for all CodePipeline pipelines in the region'
     Type: String
@@ -67,7 +75,7 @@ Resources:
     Type: AWS::IAM::Role
     Description: 'Allows CodeBuild to call AWS services on your behalf.'
     Properties:
-      RoleName: !Sub "codebuild-service-role-${ProjectName}-${AWS::Region}"
+      RoleName: !Ref CodeBuildServiceRoleName
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -76,7 +84,7 @@ Resources:
               Service: 'codebuild.amazonaws.com'
             Action: 'sts:AssumeRole'
       Policies:
-        - PolicyName: !Sub "codebuild-service-role-policy-${ProjectName}-${AWS::Region}"
+        - PolicyName: !Ref CodeBuildServiceRolePolicyName
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -88,8 +96,8 @@ Resources:
                   - 'logs:CreateLogStream'
                   - 'logs:PutLogEvents'
                 Resource:
-                  - !Sub "arn:aws:logs:us-west-2:${AWS::AccountId}:log-group:/aws/codebuild/${CodeBuildProjectName}"
-                  - !Sub "arn:aws:logs:us-west-2:${AWS::AccountId}:log-group:/aws/codebuild/${CodeBuildProjectName}:*"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${CodeBuildProjectName}"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${CodeBuildProjectName}:*"
               - Effect: 'Allow'
                 Action:
                   - 'logs:CreateLogGroup'
