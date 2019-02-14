@@ -1,9 +1,10 @@
 FROM skypilot/aws:latest
 
 RUN mkdir -p \
-  /root/lib \
-  /root/project
+  /var/lib \
+  /var/project
 
-COPY src/ /root/lib/
+COPY src/ /var/lib/
 
-WORKDIR /root/project
+WORKDIR /var/project
+

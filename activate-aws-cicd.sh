@@ -3,8 +3,8 @@
 # This script opens a shell in which the AWS CLI and the AWS ECS CLI are enabled for management
 # of the CI/CD pipeline
 
-# Container code is copied into the container at /root/lib
-# The current directory is mounted into the container at /root/project
+# Container code is copied into the container at /var/lib
+# The current directory is mounted into the container at /var/project
 
 # TODO: Allow custom path(s) to the variables files
 
@@ -30,8 +30,8 @@ docker container run \
   --interactive \
   --rm \
   --tty \
-  --mount type=bind,source=${PWD},target=/root/project \
-  --mount type=bind,source=${PWD}/config,target=/root/lib/config \
+  --mount type=bind,source=${PWD},target=/var/project \
+  --mount type=bind,source=${PWD}/config,target=/var/lib/config \
   --mount type=bind,source="${HOME}/.aws",target=/root/.aws \
   --mount type=bind,source="${HOME}/.ecs",target=/root/.ecs \
   --mount type=bind,source="${HOME}/.ssh",target=/root/.ssh \
