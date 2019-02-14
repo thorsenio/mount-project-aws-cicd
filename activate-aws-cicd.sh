@@ -10,15 +10,15 @@ BASE_NAME='skypilot/aws-cicd'
 
 # TODO: Allow custom path(s) to the variables files
 
-if [[ ${#} -gt 1 ]]
+if [[ $# -gt 1 ]]
 then
   echo "Usage: ${0} [tag]" 1>&2
   exit 1
 fi
 
-if [[ ${#} -eq 1 ]]
+if [[ $# -eq 1 ]]
 then
-  TAG=${1}
+  TAG=$1
 else
   TAG='latest'
 fi

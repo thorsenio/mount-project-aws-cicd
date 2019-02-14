@@ -7,7 +7,8 @@
 
 # There is no `delete-site-bucket-stack.sh`, because the bucket & stack get unique names
 # and these are not stored anywhere, so the deletion script would have no way of knowing which
-# bucket to delete.
+# bucket to delete. If it's necessary to have a deletion script, use Outputs to create a
+# persistent reference.
 
 CLOUDFORMATION_TEMPLATE='templates/site-bucket.yml'
 
