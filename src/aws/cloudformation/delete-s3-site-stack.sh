@@ -2,7 +2,10 @@
 
 # This script deletes the specified S3 site stack
 
-# Change to the directory of this script
+# TODO: REFACTOR: Make this script generic, so that it can be used to delete any stack
+#  that has an S3 bucket.
+
+# Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
 source ../aws-functions.sh
@@ -11,19 +14,11 @@ source ../../compute-variables.sh
 # If the bucket exists, empty it; otherwise, CloudFormation won't be able to delete it
 BUCKET_NAME=$(echoSiteBucketName ${PROFILE} ${Region} ${SiteStackName})
 
-bucketExists ${PROFILE} ${BUCKET_NAME}
-if [[ $? -eq 0 ]]
+../s3/empty-bucket.sh ${BUCKET_NAME} ${PROFILE} 'site'
+if [[ $? -ne 0 ]]
 then
-  # The bucket exists, so empty it
-  echo 'Emptying site bucket...'
-  ../s3/empty-site-bucket.sh ${BUCKET_NAME}
-
-  if [[ $? -ne 0 ]]
-  then
-    echo 'The site bucket could not be emptied.'
-    echo 'Deletion of the stack has been aborted.'
-    exit 1
-  fi
+  echo 'Deletion of the stack has been aborted.'
+  exit 1
 fi
 
 echo 'Requesting deletion of the stack...'
