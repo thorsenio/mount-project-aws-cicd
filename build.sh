@@ -50,4 +50,4 @@ then
 fi
 
 # Also tag the image with the version number, prefixed by the custom tag (if any)
-docker tag skypilot/ecs-stack:${TAG} skypilot/ecs-stack:${VERSION_TAG}
+docker tag ${BASE_NAME}:${TAG} ${BASE_NAME}:${VERSION_TAG}

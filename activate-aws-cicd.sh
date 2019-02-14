@@ -6,6 +6,8 @@
 # Container code is copied into the container at /var/lib
 # The current directory is mounted into the container at /var/project
 
+BASE_NAME='skypilot/aws-cicd'
+
 # TODO: Allow custom path(s) to the variables files
 
 if [[ ${#} -gt 1 ]]
@@ -35,5 +37,5 @@ docker container run \
   --mount type=bind,source="${HOME}/.aws",target=/root/.aws \
   --mount type=bind,source="${HOME}/.ecs",target=/root/.ecs \
   --mount type=bind,source="${HOME}/.ssh",target=/root/.ssh \
-  skypilot/ecs-stack:${TAG} \
+  ${BASE_NAME}:${TAG} \
   bash
