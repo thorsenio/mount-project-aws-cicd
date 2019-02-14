@@ -13,12 +13,6 @@ source ../../compute-variables.sh
 # Capture the mode that should be used put the stack: `create` or `update`
 PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${SiteStackName})
 
-if [[ ${PUT_MODE} == 'update' ]]
-then
-  # Get the bucket name from the existing stack
-  SiteBucketName=$(echoSiteBucketName ${PROFILE} ${Region} ${SiteStackName})
-fi
-
 ./package.sh ${CLOUDFORMATION_TEMPLATE}
 
 if [[ $? -ne 0 ]]

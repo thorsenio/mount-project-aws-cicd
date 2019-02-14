@@ -79,8 +79,7 @@ RepoDescription="${RepoDescription:=${ProjectDescription}}"
 SiteStackName="${SiteStackName:=${SiteDomainName//./-}-s3-site-stack}"
 
 # The name of the S3 bucket that hosts the website files
-BucketRandomSuffix=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 13 | head -n 1)
-SiteBucketName="${SiteBucketName:=${SiteDomainName}-${BucketRandomSuffix}}"
+SiteBucketName="${SiteBucketName:=${SiteDomainName}-${SiteVersion}}-${Region//-/}"
 
 # This stack name is ignored if the S3 bucket stack is created as a nested stack
 SiteBucketStackName="${SiteBucketStackName:=${SiteBucketName//./-}-bucket-stack}"

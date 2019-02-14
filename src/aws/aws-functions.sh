@@ -150,49 +150,6 @@ echo2ndLevelDomain () {
   echo "${DOMAIN_LEVEL_2}.${DOMAIN_LEVEL_1}"
 }
 
-# Echo the name of the S3 bucket that hosts the site, after locating it in the specified stack
-# Assumptions: The bucket has the logical name `SiteBucket` and is created in the nested stack
-# named `SiteBucketStack`
-echoSiteBucketName () {
-
-  local PROFILE=$1
-  local REGION=$2
-  local STACK_NAME=$3
-
-  local BUCKET_STACK_NAME=$(
-    aws cloudformation describe-stack-resource \
-      --profile ${PROFILE} \
-      --region ${REGION} \
-      --stack-name ${STACK_NAME} \
-      --logical-resource-id SiteBucketStack \
-    | jq '.StackResourceDetail.PhysicalResourceId' \
-    | cut -d/ -f 2 \
-  ) &> /dev/null
-
-  if [[ $? -ne 0 ]]
-  then
-    return 1
-  fi
-
-  local BUCKET_NAME=$(
-    aws cloudformation describe-stack-resource \
-      --profile ${PROFILE} \
-      --region ${REGION} \
-      --stack-name ${BUCKET_STACK_NAME} \
-      --logical-resource-id SiteBucket \
-    | jq '.StackResourceDetail.PhysicalResourceId' \
-    | cut -d\" -f 2 \
-  ) &> /dev/null
-
-  if [[ $? -ne 0 ]]
-  then
-    return 1
-  fi
-
-  echo ${BUCKET_NAME}
-}
-
-
 echoPutStackMode () {
 
   local PROFILE=$1
