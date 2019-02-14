@@ -60,6 +60,7 @@ VpcStackName="${VpcStackName:=${EcsClusterName}-vpc-stack}"
 # --- CodeBuild project
 CodeBuildProjectName="${CodeBuildProjectName:=${ProjectName}-codebuild-project}"
 CodeBuildProjectStackName="${CodeBuildProjectStackName:=${CodeBuildProjectName}-stack}"
+CodeBuildEnvironmentImage="${CodeBuildEnvironmentImage:='aws/codebuild/docker:18.09.0'}"
 
 # --- CodePipeline pipeline
 CodePipelineName="${ProjectName}-codepipeline"

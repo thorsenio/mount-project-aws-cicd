@@ -7,6 +7,10 @@ Parameters:
     Description: 'S3 bucket used for CodeBuild artifacts for the project'
     Type: String
 
+  CodeBuildEnvironmentImage:
+    Description: 'Docker image to use in CodeBuild'
+    Type: String
+
   CodeBuildProjectName:
     Description: 'Name of the CodeBuild project'
     Type: String
@@ -60,7 +64,7 @@ Resources:
       EncryptionKey: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/aws/s3"
       Environment:
         ComputeType: 'BUILD_GENERAL1_SMALL'
-        Image: 'aws/codebuild/nodejs:10.14.1'
+        Image: !Ref CodeBuildEnvironmentImage
         PrivilegedMode: false
         Type: 'LINUX_CONTAINER'
       QueuedTimeoutInMinutes: 60
