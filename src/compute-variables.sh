@@ -14,7 +14,11 @@ cd - > /dev/null
 # ----- Dummy values for required variables
 # TODO: Verify that all required values exist
 ProjectDescription="${ProjectDescription:=${ProjectName}}"
+ProjectVersion="${ProjectVersion:=1}"
 SiteDomainName=${SiteDomainName:='www.example.com'}
+
+# ----- Defaults
+ProtectAgainstTermination='false'
 
 
 # ----- Computed regional variables
