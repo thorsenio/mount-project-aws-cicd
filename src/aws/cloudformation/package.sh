@@ -8,7 +8,7 @@
 
 CLOUDFORMATION_TEMPLATE=${1}
 
-# Change to the directory of this script
+# Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
 source ../aws-functions.sh

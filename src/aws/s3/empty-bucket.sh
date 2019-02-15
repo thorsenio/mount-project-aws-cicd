@@ -20,7 +20,7 @@ else
   DESCRIPTION='S3'
 fi
 
-# Change to the directory of this script
+# Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
 source ../aws-functions.sh

@@ -27,7 +27,7 @@ else
   VERSION_TAG_PREFIX=""
 fi
 
-# Change to the directory of this script
+# Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
 VERSION_TAG="${VERSION_TAG_PREFIX}$(head -n 1 .version)"

@@ -45,13 +45,13 @@ Enter regional and project-specific settings into
 ##### 1. Create or update the pipeline stack:
 
 ```bash
-../lib/aws/cloudformation/put-cicd-pipeline-stack.sh
+../lib/aws/cloudformation/put-codepipeline-stack.sh
 ```
 
 ##### Delete the stack when it is no longer needed
 
 ```bash
-../lib/aws/cloudformation/delete-cicd-pipeline-stack.sh
+../lib/aws/cloudformation/delete-codepipeline-stack.sh
 ```
 
 ### Containerized site in ECS cluster

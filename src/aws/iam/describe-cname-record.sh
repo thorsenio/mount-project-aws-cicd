@@ -2,7 +2,7 @@
 
 # This script displays the details of the CNAME record that validates the stack's ACM certificate
 
-# Change to the directory of this script
+# Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
 source ../aws-functions.sh
