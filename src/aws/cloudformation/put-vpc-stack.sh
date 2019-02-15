@@ -15,6 +15,11 @@ PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${EcsStackName})
 
 ./package.sh ${CLOUDFORMATION_TEMPLATE}
 
+if [[ $? -ne 0 ]]
+then
+  exit 1
+fi
+
 OUTPUT=$(aws cloudformation create-stack \
   --profile ${PROFILE} \
   --region ${Region} \

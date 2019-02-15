@@ -17,19 +17,21 @@ source ../../compute-variables.sh
 TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }' | cut -d. -f1)
 
 bucketExists ${PROFILE} ${TemplateBucketName}
-if [[ ${?} -ne 0 ]]
+if [[ $? -ne 0 ]]
 then
   ../s3/create-cf-templates-bucket.sh
 fi
 
-aws cloudformation package \
+OUTPUT=$(aws cloudformation package \
   --profile ${PROFILE} \
   --region ${Region} \
   --template-file ${CLOUDFORMATION_TEMPLATE} \
   --s3-bucket ${TemplateBucketName} \
-  --output-template-file ${TEMPLATE_BASENAME}--expanded.yml
+  --output-template-file ${TEMPLATE_BASENAME}--expanded.yml \
+)
 
-if [[ ${?} -ne 0 ]]
+if [[ $? -ne 0 ]]
 then
+  echo "${OUTPUT}" 1>&2
   exit 1
 fi
