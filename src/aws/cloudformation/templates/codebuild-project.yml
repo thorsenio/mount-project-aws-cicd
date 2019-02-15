@@ -3,6 +3,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'CodeBuild project stack'
 
 Parameters:
+  AssetBucketName:
+    Description: 'S3 bucket used for project assets'
+    Type: String
+
   CodeBuildArtifactBucketName:
     Description: 'S3 bucket used for CodeBuild artifacts for the project'
     Type: String
@@ -110,6 +114,10 @@ Resources:
                   - 's3:HeadBucket'
                   - 's3:ListAllMyBuckets'
                 Resource: '*'
+              -
+                Effect: 'Allow'
+                Action: 's3:*'
+                Resource: !Sub "arn:aws:s3:::${AssetBucketName}/*"
               -
                 Effect: 'Allow'
                 Action: 's3:*'

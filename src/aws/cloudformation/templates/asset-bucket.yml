@@ -1,0 +1,15 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'S3 bucket for project assets'
+
+Parameters:
+ BucketName:
+    Description: "Name of the S3 bucket"
+    Type: String
+
+Resources:
+  AssetBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: 'PublicRead'
+      BucketName: !Ref BucketName

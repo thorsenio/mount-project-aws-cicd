@@ -35,6 +35,7 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --stack-name ${CodeBuildProjectStackName} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
+    ParameterKey=AssetBucketName,ParameterValue=${AssetBucketName} \
     ParameterKey=CodeBuildArtifactBucketName,ParameterValue=${CodeBuildArtifactBucketName} \
     ParameterKey=CodeBuildEnvironmentImage,ParameterValue=${CodeBuildEnvironmentImage} \
     ParameterKey=CodeBuildProjectName,ParameterValue=${CodeBuildProjectName} \

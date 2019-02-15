@@ -83,10 +83,12 @@ RepoDescription="${RepoDescription:=${ProjectDescription}}"
 # Replace `.` with `-` to make a valid stack name
 SiteStackName="${SiteStackName:=${SiteDomainName//./-}-s3-site-stack}"
 
-# The name of the S3 bucket that hosts the website files
-SiteBucketName="${SiteBucketName:=${SiteDomainName}-${SiteVersion}}-${Region//-/}"
+# The name of the S3 buckets that host the project assets & website files
+AssetBucketName="${AssetBucketName:=${SiteDomainName}-v${SiteVersion}-assets}"
+SiteBucketName="${SiteBucketName:=${SiteDomainName}-v${SiteVersion}}"
 
-# This stack name is ignored if the S3 bucket stack is created as a nested stack
+# These stack names are ignored when the stacks are created as nested stacks
+AssetBucketStackName="${AssetBucketStackName:=${AssetBucketName//./-}-bucket-stack}"
 SiteBucketStackName="${SiteBucketStackName:=${SiteBucketName//./-}-bucket-stack}"
 
 # Name of the index and error documents for the site (for an SPA, these are typically the same)
