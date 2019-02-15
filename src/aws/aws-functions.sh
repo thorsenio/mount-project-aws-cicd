@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# Uncomment this block when any of the functions in `functions.sh` (non-AWS functions) are used
+#THIS_SCRIPT_DIR=$(dirname $(realpath ${PWD}/${BASH_SOURCE[0]}))
+#cd ${THIS_SCRIPT_DIR} > /dev/null
+#source ../functions.sh
+#cd - > /dev/null
+
 bucketExists () {
 
   local PROFILE=$1
