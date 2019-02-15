@@ -71,6 +71,13 @@ Resources:
         Image: !Ref CodeBuildEnvironmentImage
         PrivilegedMode: true
         Type: 'LINUX_CONTAINER'
+        EnvironmentVariables:
+          - Name: ASSET_BUCKET_NAME
+            Type: PLAINTEXT
+            Value: !Ref AssetBucketName
+          - Name: REPO_NAME
+            Type: PLAINTEXT
+            Value: !Ref RepoName
       QueuedTimeoutInMinutes: 60
       Source:
         Type: 'CODECOMMIT'
