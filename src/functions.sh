@@ -6,6 +6,19 @@
 FONT_WEIGHT_BOLD=$(tput bold)
 FONT_WEIGHT_NORMAL=$(tput sgr0)
 
+
+# Given an argument, exit with status code
+#   0 if the argument isn't empty
+#   1 if the argument is empty
+assertNotEmpty () {
+  if [[ $# -eq 0 || -z "$1" ]]
+  then
+    echo "Assertion failed" 1>&2
+    return 1
+  fi
+  return 0
+}
+
 echoRandomId () {
   local LENGTH=$1
   LENGTH=${LENGTH:='13'}
