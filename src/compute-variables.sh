@@ -22,6 +22,8 @@ SiteDomainName=${SiteDomainName:='www.example.com'}
 # ----- Defaults
 ProtectAgainstTermination='false'
 
+# Note that stack names generated below are ignored when the stacks are created as nested stacks
+# Typically, they would be created independently of their parent only during testing & development
 
 # ----- Computed regional variables
 
@@ -80,25 +82,18 @@ EventsRepoChangeRuleStackName="${EventsRepoChangeRuleStackName:=${EventsRepoChan
 RepoName="${RepoName:=${ProjectName}}"
 RepoDescription="${RepoDescription:=${ProjectDescription}}"
 
-# --- S3 site
+# --- Website stacks
 
 # Replace `.` with `-` to make a valid stack name
-SiteStackName="${SiteStackName:=${SiteDomainName//./-}-s3-site-stack}"
+SiteStackName="${SiteStackName:=${SiteDomainName//./-}-site-stack}"
 
-# The name of the S3 buckets that host the project assets & website files
-AssetBucketName="${AssetBucketName:=${SiteDomainName}-v${SiteVersion}-assets}"
-SiteBucketName="${SiteBucketName:=${SiteDomainName}-v${SiteVersion}}"
-
-# These stack names are ignored when the stacks are created as nested stacks
-AssetBucketStackName="${AssetBucketStackName:=${AssetBucketName//./-}-bucket-stack}"
-SiteBucketStackName="${SiteBucketStackName:=${SiteBucketName//./-}-bucket-stack}"
+# The name and stack of the S3 bucket that hosts the project's static files
+ProjectBucketName="${ProjectBucketName:=${SiteDomainName}-v${SiteVersion}}"
+ProjectBucketStackName="${ProjectBucketStackName:=${ProjectBucketName//./-}-bucket-stack}"
 
 # Name of the index and error documents for the site (for an SPA, these are typically the same)
 SiteIndexDocument="${SiteIndexDocument:='index.html'}"
 SiteErrorDocument="${SiteErrorDocument:=${SiteIndexDocument}}"
 
 # --- CloudFront distribution
-
-# This value is used only when the distribution is created independently of its parent stack
-# (i.e., probably only during testing & development)
 CloudfrontDistributionStackName="${CloudfrontDistributionStackName:=${ProjectName}-cdn-stack}"

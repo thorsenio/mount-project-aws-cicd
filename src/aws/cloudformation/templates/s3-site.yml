@@ -4,7 +4,7 @@ Description: 'S3 website served through CloudFront'
 
 Parameters:
   SiteBucketName:
-    Description: 'S3 bucket holding the website'
+    Description: 'S3 bucket for the project'
     Type: String
 
   SiteDomainName:
@@ -34,9 +34,8 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
-        SiteBucketName: !Ref SiteBucketName
-        SiteDomainName: !Ref SiteDomainName
-        SiteErrorDocument: !Ref SiteErrorDocument
-        SiteIndexDocument: !Ref SiteIndexDocument
-      TemplateURL: './site-bucket.yml'
+        BucketName: !Ref SiteBucketName
+        ErrorDocument: !Ref SiteErrorDocument
+        IndexDocument: !Ref SiteIndexDocument
+      TemplateURL: './s3-site-bucket.yml'
       TimeoutInMinutes: 10

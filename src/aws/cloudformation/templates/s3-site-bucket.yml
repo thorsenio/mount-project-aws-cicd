@@ -1,0 +1,26 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'S3 bucket for static website'
+
+Parameters:
+  BucketName:
+    Description: 'Name of the S3 bucket'
+    Type: String
+
+  ErrorDocument:
+    Description: 'Path to the error document'
+    Type: String
+
+  IndexDocument:
+    Description: 'Path to the index document'
+    Type: String
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: 'PublicRead'
+      BucketName: !Ref BucketName
+      WebsiteConfiguration:
+        ErrorDocument: !Ref ErrorDocument
+        IndexDocument: !Ref IndexDocument

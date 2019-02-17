@@ -6,7 +6,7 @@
 
 # TODO: REFACTOR: Reduce code duplication with `put-site-bucket-stack.sh`.
 
-CLOUDFORMATION_TEMPLATE='templates/asset-bucket.yml'
+CLOUDFORMATION_TEMPLATE='templates/s3-asset-bucket.yml'
 
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
@@ -15,7 +15,7 @@ source ../aws-functions.sh
 source ../../compute-variables.sh
 
 # Skip creation of the bucket if it already exists
-bucketExists ${PROFILE} ${AssetBucketName}
+bucketExists ${PROFILE} ${ProjectBucketName}
 ERROR_STATUS=$?
 if [[ ${ERROR_STATUS} -eq 0 ]]
 then
@@ -23,15 +23,15 @@ then
 fi
 
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${AssetBucketStackName})
+PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${ProjectBucketStackName})
 
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${PROFILE} \
   --region ${Region} \
-  --stack-name ${AssetBucketStackName} \
+  --stack-name ${ProjectBucketStackName} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
-    ParameterKey=BucketName,ParameterValue=${AssetBucketName} \
+    ParameterKey=BucketName,ParameterValue=${ProjectBucketName} \
 )
 
 EXIT_STATUS=$?

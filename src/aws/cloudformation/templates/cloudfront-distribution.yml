@@ -4,7 +4,7 @@ Description: 'CloudFront distribution for S3 website'
 
 Parameters:
   SiteBucketName:
-    Description: 'S3 bucket holding the website'
+    Description: 'S3 bucket for the site'
     Type: String
 
   SiteDomainName:

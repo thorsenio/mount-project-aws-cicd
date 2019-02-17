@@ -35,17 +35,16 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --stack-name ${CodeBuildProjectStackName} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
-    ParameterKey=AssetBucketName,ParameterValue=${AssetBucketName} \
     ParameterKey=CodeBuildArtifactBucketName,ParameterValue=${CodeBuildArtifactBucketName} \
     ParameterKey=CodeBuildEnvironmentImage,ParameterValue=${CodeBuildEnvironmentImage} \
     ParameterKey=CodeBuildProjectName,ParameterValue=${CodeBuildProjectName} \
     ParameterKey=CodeBuildServiceRoleName,ParameterValue=${CodeBuildServiceRoleName} \
     ParameterKey=CodeBuildServiceRolePolicyName,ParameterValue=${CodeBuildServiceRolePolicyName} \
     ParameterKey=CodePipelineArtifactBucketName,ParameterValue=${CodePipelineArtifactBucketName} \
+    ParameterKey=ProjectBucketName,ParameterValue=${ProjectBucketName} \
     ParameterKey=ProjectDescription,ParameterValue="${ProjectDescription}" \
     ParameterKey=ProjectName,ParameterValue=${ProjectName} \
     ParameterKey=RepoName,ParameterValue=${RepoName} \
-    ParameterKey=SiteBucketName,ParameterValue=${SiteBucketName} \
   --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
 )
 
