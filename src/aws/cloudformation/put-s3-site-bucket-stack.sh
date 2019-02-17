@@ -10,7 +10,7 @@
 # bucket to delete. If it's necessary to have a deletion script, use Outputs to create a
 # persistent reference.
 
-CLOUDFORMATION_TEMPLATE='templates/site-bucket.yml'
+CLOUDFORMATION_TEMPLATE='templates/s3-site-bucket.yml'
 
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")

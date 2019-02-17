@@ -6,7 +6,7 @@
 
 # TODO: REFACTOR: Reduce code duplication with `put-site-bucket-stack.sh`.
 
-CLOUDFORMATION_TEMPLATE='templates/asset-bucket.yml'
+CLOUDFORMATION_TEMPLATE='templates/s3-asset-bucket.yml'
 
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")

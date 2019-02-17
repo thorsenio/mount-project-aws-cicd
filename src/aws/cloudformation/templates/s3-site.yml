@@ -37,5 +37,5 @@ Resources:
         BucketName: !Ref SiteBucketName
         ErrorDocument: !Ref SiteErrorDocument
         IndexDocument: !Ref SiteIndexDocument
-      TemplateURL: './site-bucket.yml'
+      TemplateURL: './s3-site-bucket.yml'
       TimeoutInMinutes: 10

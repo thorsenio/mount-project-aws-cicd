@@ -4,15 +4,16 @@
 cd $(dirname "$0")
 
 for TEMPLATE in \
+  'bastion.yml' \
   'cloudfront-distribution.yml' \
   'codebuild-project.yml' \
   'codepipeline.yml' \
   'codepipeline-service-role.yml' \
   'ecs-stack.yml' \
-  'bastion.yml' \
   'events-repo-change-rule.yml' \
   's3-site.yml' \
-  'site-bucket.yml' \
+  's3-asset-bucket.yml' \
+  's3-site-bucket.yml' \
   'vpc-stack.yml' \
 ; do
   ./validate-template.sh "templates/${TEMPLATE}"
