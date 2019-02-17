@@ -21,4 +21,6 @@ aws cloudformation validate-template \
 if [[ $? -eq 0 ]]
 then
   echo "Template '${TEMPLATE}' is valid"
+else
+  echo "Template '${TEMPLATE}' is invalid"
 fi
