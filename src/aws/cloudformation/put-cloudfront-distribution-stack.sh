@@ -17,7 +17,7 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --stack-name ${CloudfrontDistributionStackName} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
-    ParameterKey=SiteBucketName,ParameterValue=${SiteBucketName} \
+    ParameterKey=SiteBucketName,ParameterValue=${ProjectBucketName} \
     ParameterKey=SiteDomainName,ParameterValue=${SiteDomainName} \
     ParameterKey=SiteErrorDocument,ParameterValue=${SiteErrorDocument} \
     ParameterKey=SiteIndexDocument,ParameterValue=${SiteIndexDocument} \

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This script updates a stack if it exists or creates the stack if it doesn't exist
+# This script creates the code pipeline stack, or updates it if it already exists
 
 CLOUDFORMATION_TEMPLATE='templates/codepipeline.yml'
 
@@ -52,7 +52,6 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --stack-name ${CodePipelineStackName} \
   --template-body file://${TEMPLATE_BASENAME}--expanded.yml \
   --parameters \
-    ParameterKey=AssetBucketName,ParameterValue=${AssetBucketName} \
     ParameterKey=CodeBuildArtifactBucketName,ParameterValue=${CodeBuildArtifactBucketName} \
     ParameterKey=CodeBuildEnvironmentImage,ParameterValue=${CodeBuildEnvironmentImage} \
     ParameterKey=CodeBuildProjectName,ParameterValue=${CodeBuildProjectName} \
@@ -63,10 +62,10 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     ParameterKey=CodePipelineServiceRoleExists,ParameterValue=${CP_SERVICE_ROLE_EXISTS} \
     ParameterKey=CodePipelineServiceRoleName,ParameterValue=${CodePipelineServiceRoleName} \
     ParameterKey=EventsRuleRandomId,ParameterValue=${EventsRuleRandomId} \
+    ParameterKey=ProjectBucketName,ParameterValue=${ProjectBucketName} \
     ParameterKey=ProjectDescription,ParameterValue="${ProjectDescription}" \
     ParameterKey=ProjectName,ParameterValue=${ProjectName} \
     ParameterKey=RepoName,ParameterValue=${RepoName} \
-    ParameterKey=SiteBucketName,ParameterValue=${SiteBucketName} \
   --capabilities \
     CAPABILITY_AUTO_EXPAND \
     CAPABILITY_IAM \

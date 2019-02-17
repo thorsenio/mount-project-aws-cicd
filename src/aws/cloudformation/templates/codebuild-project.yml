@@ -3,10 +3,6 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'CodeBuild project stack'
 
 Parameters:
-  AssetBucketName:
-    Description: 'S3 bucket used for project assets'
-    Type: String
-
   CodeBuildArtifactBucketName:
     Description: 'S3 bucket used for CodeBuild artifacts for the project'
     Type: String
@@ -31,6 +27,10 @@ Parameters:
     Description: 'S3 bucket used for all CodePipeline pipelines in the region'
     Type: String
 
+  ProjectBucketName:
+    Description: 'S3 bucket used for the project'
+    Type: String
+
   ProjectDescription:
     Description: 'Description of the project'
     Type: String
@@ -41,10 +41,6 @@ Parameters:
 
   RepoName:
     Description: "Name of the CodeCommit repo holding the project's source code"
-    Type: String
-
-  SiteBucketName:
-    Description: 'S3 bucket holding the website'
     Type: String
 
 Resources:
@@ -74,7 +70,7 @@ Resources:
         EnvironmentVariables:
           - Name: ASSET_BUCKET_NAME
             Type: PLAINTEXT
-            Value: !Ref AssetBucketName
+            Value: !Ref ProjectBucketName
           - Name: REPO_NAME
             Type: PLAINTEXT
             Value: !Ref RepoName
@@ -124,10 +120,6 @@ Resources:
               -
                 Effect: 'Allow'
                 Action: 's3:*'
-                Resource: !Sub "arn:aws:s3:::${AssetBucketName}/*"
-              -
-                Effect: 'Allow'
-                Action: 's3:*'
                 Resource: !Sub "arn:aws:s3:::${CodeBuildArtifactBucketName}/*"
               -
                 Effect: 'Allow'
@@ -136,4 +128,4 @@ Resources:
               -
                 Effect: 'Allow'
                 Action: 's3:*'
-                Resource: !Sub "arn:aws:s3:::${SiteBucketName}/*"
+                Resource: !Sub "arn:aws:s3:::${ProjectBucketName}/*"

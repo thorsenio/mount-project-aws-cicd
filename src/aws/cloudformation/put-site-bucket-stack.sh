@@ -19,7 +19,7 @@ source ../aws-functions.sh
 source ../../compute-variables.sh
 
 # Skip creation of the bucket if it already exists
-bucketExists ${PROFILE} ${SiteBucketName}
+bucketExists ${PROFILE} ${ProjectBucketName}
 ERROR_STATUS=$?
 if [[ ${ERROR_STATUS} -eq 0 ]]
 then
@@ -27,18 +27,17 @@ then
 fi
 
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${SiteBucketStackName})
+PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${ProjectBucketStackName})
 
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${PROFILE} \
   --region ${Region} \
-  --stack-name ${SiteBucketStackName} \
+  --stack-name ${ProjectBucketStackName} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
-    ParameterKey=SiteErrorDocument,ParameterValue=${SiteErrorDocument} \
-    ParameterKey=SiteIndexDocument,ParameterValue=${SiteIndexDocument} \
-    ParameterKey=SiteBucketName,ParameterValue=${SiteBucketName} \
-    ParameterKey=SiteDomainName,ParameterValue=${SiteDomainName} \
+    ParameterKey=BucketName,ParameterValue=${ProjectBucketName} \
+    ParameterKey=ErrorDocument,ParameterValue=${SiteErrorDocument} \
+    ParameterKey=IndexDocument,ParameterValue=${SiteIndexDocument} \
 )
 
 EXIT_STATUS=$?
