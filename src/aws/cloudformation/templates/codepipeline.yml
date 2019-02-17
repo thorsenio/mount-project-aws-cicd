@@ -7,6 +7,11 @@ Conditions:
   CreateCodePipelineServiceRole: !Equals [!Ref CodePipelineServiceRoleExists, false]
 
 Parameters:
+  BranchName:
+    Description: 'The source code branch associated with the pipeline'
+    Type: String
+    Default: 'master'
+
   CodeBuildArtifactBucketName:
     Description: 'S3 bucket used for CodeBuild artifacts for the project'
     Type: String
@@ -114,7 +119,7 @@ Resources:
                 Provider: 'CodeCommit'
                 Version: '1'
               Configuration:
-                BranchName: 'develop'
+                BranchName: !Ref BranchName
                 PollForSourceChanges: false
                 RepositoryName: !Ref RepoName
               OutputArtifacts:
@@ -144,5 +149,7 @@ Resources:
     Description: 'Allows CodePipeline to call AWS services.'
     Condition: CreateCodePipelineServiceRole
     Properties:
+      Parameters:
+        CodePipelineServiceRoleName: !Ref CodePipelineServiceRoleName
       TemplateURL: './codepipeline-service-role.yml'
       TimeoutInMinutes: 2

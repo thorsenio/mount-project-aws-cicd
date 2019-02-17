@@ -52,6 +52,7 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --stack-name ${CodePipelineStackName} \
   --template-body file://${TEMPLATE_BASENAME}--expanded.yml \
   --parameters \
+    ParameterKey=BranchName,ParameterValue=${BranchName} \
     ParameterKey=CodeBuildArtifactBucketName,ParameterValue=${CodeBuildArtifactBucketName} \
     ParameterKey=CodeBuildEnvironmentImage,ParameterValue=${CodeBuildEnvironmentImage} \
     ParameterKey=CodeBuildProjectName,ParameterValue=${CodeBuildProjectName} \
