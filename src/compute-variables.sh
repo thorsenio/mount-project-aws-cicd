@@ -20,6 +20,7 @@ PlatformVersion=${PLATFORM_VERSION:='1.0.0'}
 PlatformVersionPostfix=${PLATFORM_VERSION_POSTFIX:=''}
 PlatformMajorVersion=$(echo ${PlatformVersion} | head -n 1 | cut -d . -f 1)
 PlatformId="${PlatformName}-p${PlatformMajorVersion}${PlatformVersionPostfix}"
+RegionalPlatformStackName="${PlatformId}-regional-stack"
 
 # Application deployment ID
 BranchName=${BranchName:='master'}
@@ -65,16 +66,15 @@ CodePipelineServiceRoleArn="arn:aws:iam::${AccountNumber}:role/${CodePipelineSer
 
 # Name of the S3 bucket that hosts CodeBuild & CodePipeline artifacts for all projects in the region
 # Here CodeBuild & CodePipeline share the same bucket
-CodeBuildArtifactBucketName="${CodeBuildArtifactBucketName:=cicd-artifacts-${AccountName}-${PlatformId}-${Region//-/}}"
-CodePipelineArtifactBucketName="${CodePipelineArtifactBucketName:=cicd-artifacts-${AccountName}-${PlatformId}-${Region//-/}}"
+CicdArtifactsBucketName="${CicdArtifactsBucketName:=cicd-artifacts-${AccountName}-${PlatformId}-${Region//-/}}"
 
 # Name of the service role & policy used by CodeBuild to call AWS services for this project
 CodeBuildServiceRoleName=${CodeBuildServiceRoleName:="cb-service-role-${PlatformId}-${Region//-/}"}
 CodeBuildServiceRolePolicyName=${CodeBuildServiceRolePolicyName:="cb-service-role-policy-${PlatformId}-${Region//-/}"}
 
-# Name of the S3 bucket that holds CloudFormation templates for the region. It must be created
-# ndependently if it does not already exist. Use `create-cf-templates-bucket.sh`
-TemplateBucketName="${TemplateBucketName:=cf-templates-${AccountName}-${PlatformId}-${Region//-/}}"
+# Name of the S3 bucket that holds CloudFormation templates for the region. It is part of the
+# regional platform stack
+CfTemplatesBucketName="${CfTemplatesBucketName:=cf-templates-${AccountName}-${PlatformId}-${Region//-/}}"
 
 
 # ----- Cluster-wide variables
