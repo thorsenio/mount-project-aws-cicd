@@ -46,11 +46,11 @@ ProtectAgainstTermination='false'
 # Here they are configured to share a bucket
 CodeBuildArtifactBucketName="${CodeBuildArtifactBucketName:=cicd-artifacts-${AccountName}-${Region//-/}}"
 CodePipelineArtifactBucketName="${CodePipelineArtifactBucketName:=cicd-artifacts-${AccountName}-${Region//-/}}"
-CodeBuildServiceRoleName="codebuild-service-role-${ProjectBranchVersion}-${Region}"
-CodeBuildServiceRolePolicyName="codebuild-service-role-policy-${ProjectBranchVersion}-${Region}"
+CodeBuildServiceRoleName="cb-service-role-${ProjectBranchVersion}-${Region//-/}"
+CodeBuildServiceRolePolicyName="cb-service-role-policy-${ProjectBranchVersion}-${Region//-/}"
 
 # Name and ARN of the service role used by CodePipeline to call AWS services
-CodePipelineServiceRoleName='codepipeline-service-role'
+CodePipelineServiceRoleName='cp-service-role'
 CodePipelineServiceRoleArn="arn:aws:iam::${AccountNumber}:role/${CodePipelineServiceRoleName}"
 
 # Name of the S3 bucket that holds CloudFormation templates for the region
@@ -63,33 +63,33 @@ EcsClusterName="${EcsClusterName:=${ProjectBranchVersion}-cluster}"
 
 # These resources are shared by the cluster, so there should be only one of each
 BastionInstanceName="${BastionInstanceName:=${EcsClusterName}-bastion}"
-BastionStackName="${BastionStackName:=${BastionInstanceName}-stack}"
-EcsStackName="${EcsStackName:=${EcsClusterName}-stack}"
+BastionStackName="${BastionStackName:=${BastionInstanceName}-stk}"
+EcsStackName="${EcsStackName:=${EcsClusterName}-stk}"
 KeyPairKeyName="${KeyPairKeyName:=${EcsClusterName}-${Region//-/}}"
 
 # TODO: Build in support for per-project subnets
 VpcName="${VpcName:=${ProjectBranchVersion}-vpc}"
-VpcStackName="${VpcStackName:=${VpcName}-stack}"
+VpcStackName="${VpcStackName:=${VpcName}-stk}"
 VpcDefaultSecurityGroupName="${VpcDefaultSecurityGroupName:=${VpcName}-sg}"
 
 # ----- Other computed project variables
 
 # --- CodeBuild project
-CodeBuildProjectName="${CodeBuildProjectName:=${ProjectBranchVersion}-codebuild-project}"
-CodeBuildProjectStackName="${CodeBuildProjectStackName:=${CodeBuildProjectName}-stack}"
+CodeBuildProjectName="${CodeBuildProjectName:=${ProjectBranchVersion}-cb-project}"
+CodeBuildProjectStackName="${CodeBuildProjectStackName:=${CodeBuildProjectName}-stk}"
 CodeBuildEnvironmentImage="${CodeBuildEnvironmentImage:='aws/codebuild/docker:18.09.0'}"
 
 # --- CodePipeline pipeline
-CodePipelineName="${CodePipelineName:=${ProjectBranchVersion}-codepipeline}"
-CodePipelineStackName="${CodePipelineStackName:=${CodePipelineName}-stack}"
+CodePipelineName="${CodePipelineName:=${ProjectBranchVersion}-cp}"
+CodePipelineStackName="${CodePipelineStackName:=${CodePipelineName}-stk}"
 
 # --- Events rule
 EventsRuleRandomId=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9-' | fold -w 24 | head -n 1)
 
 # These values are used only when the rule is created independently of its parent stack
 # (i.e., probably only during testing & development)
-EventsRepoChangeRuleName="${EventsRepoChangeRuleName:=${CodePipelineName}-events-repo-change-rule}"
-EventsRepoChangeRuleStackName="${EventsRepoChangeRuleStackName:=${EventsRepoChangeRuleName}-stack}"
+EventsRepoChangeRuleName="${EventsRepoChangeRuleName:=${CodePipelineName}-events-repochangerule}"
+EventsRepoChangeRuleStackName="${EventsRepoChangeRuleStackName:=${EventsRepoChangeRuleName}-stk}"
 
 # --- CodeCommit repo
 RepoName="${RepoName:=${ProjectName}}"
@@ -97,15 +97,15 @@ RepoDescription="${RepoDescription:=${ProjectDescription}}"
 
 # --- Website stacks
 
-SiteStackName="${SiteStackName:=${ProjectBranchVersion}-site-stack}"
+SiteStackName="${SiteStackName:=${ProjectBranchVersion}-site-stk}"
 
 # The name and stack of the S3 bucket that hosts the project's static files
 ProjectBucketName="${ProjectBucketName:=${ProjectBranchVersion}-bucket}"
-ProjectBucketStackName="${ProjectBucketStackName:=${ProjectBucketName}-stack}"
+ProjectBucketStackName="${ProjectBucketStackName:=${ProjectBucketName}-stk}"
 
 # Name of the index and error documents for the site (for an SPA, these are typically the same)
 SiteIndexDocument="${SiteIndexDocument:='index.html'}"
 SiteErrorDocument="${SiteErrorDocument:=${SiteIndexDocument}}"
 
 # --- CloudFront distribution
-CloudfrontDistributionStackName="${CloudfrontDistributionStackName:=${ProjectBranchVersion}-cdn-stack}"
+CloudfrontDistributionStackName="${CloudfrontDistributionStackName:=${ProjectBranchVersion}-cdn-stk}"
