@@ -14,7 +14,9 @@ cd - > /dev/null
 # ----- Dummy values for required variables
 # TODO: Verify that all required values exist
 ProjectDescription="${ProjectDescription:=${ProjectName}}"
-ProjectVersion="${ProjectVersion:=1}"
+ProjectVersion="${ProjectVersion:=0.0.1}"
+ProjectMajorVersion=$(echo ${ProjectVersion} | head -n 1 | cut -d . -f 1)
+
 BranchName=${BranchName:=master}
 
 SiteDomainName=${SiteDomainName:='www.example.com'}
@@ -88,7 +90,7 @@ RepoDescription="${RepoDescription:=${ProjectDescription}}"
 SiteStackName="${SiteStackName:=${SiteDomainName//./-}-site-stack}"
 
 # The name and stack of the S3 bucket that hosts the project's static files
-ProjectBucketName="${ProjectBucketName:=${SiteDomainName}-v${SiteVersion}}"
+ProjectBucketName="${ProjectBucketName:=${SiteDomainName}-v${ProjectMajorVersion}}"
 ProjectBucketStackName="${ProjectBucketStackName:=${ProjectBucketName//./-}-bucket-stack}"
 
 # Name of the index and error documents for the site (for an SPA, these are typically the same)
