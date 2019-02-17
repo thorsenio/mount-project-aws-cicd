@@ -11,8 +11,7 @@
 .githooks
 
 # Local variables
-#src/config/project-variables.*sh
-#src/config/regional-variables.*sh
+/config/
 src/config/
 
 # Local-only files
