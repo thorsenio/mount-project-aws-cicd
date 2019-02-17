@@ -46,11 +46,11 @@ ProtectAgainstTermination='false'
 # Here they are configured to share a bucket
 CodeBuildArtifactBucketName="${CodeBuildArtifactBucketName:=cicd-artifacts-${AccountName}-${Region//-/}}"
 CodePipelineArtifactBucketName="${CodePipelineArtifactBucketName:=cicd-artifacts-${AccountName}-${Region//-/}}"
-CodeBuildServiceRoleName="cb-service-role-${ProjectBranchVersion}-${Region//-/}"
-CodeBuildServiceRolePolicyName="cb-service-role-policy-${ProjectBranchVersion}-${Region//-/}"
+CodeBuildServiceRoleName=${CodeBuildServiceRoleName:="cb-service-role-${ProjectBranchVersion}-${Region//-/}"}
+CodeBuildServiceRolePolicyName=${CodeBuildServiceRolePolicyName:="cb-service-role-policy-${ProjectBranchVersion}-${Region//-/}"}
 
 # Name and ARN of the service role used by CodePipeline to call AWS services
-CodePipelineServiceRoleName='cp-service-role'
+CodePipelineServiceRoleName=${CodePipelineServiceRoleName:='cp-service-role'}
 CodePipelineServiceRoleArn="arn:aws:iam::${AccountNumber}:role/${CodePipelineServiceRoleName}"
 
 # Name of the S3 bucket that holds CloudFormation templates for the region
