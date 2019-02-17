@@ -15,6 +15,8 @@ cd - > /dev/null
 # TODO: Verify that all required values exist
 ProjectDescription="${ProjectDescription:=${ProjectName}}"
 ProjectVersion="${ProjectVersion:=1}"
+BranchName=${BranchName:=master}
+
 SiteDomainName=${SiteDomainName:='www.example.com'}
 
 # ----- Defaults
@@ -63,16 +65,16 @@ CodeBuildProjectStackName="${CodeBuildProjectStackName:=${CodeBuildProjectName}-
 CodeBuildEnvironmentImage="${CodeBuildEnvironmentImage:='aws/codebuild/docker:18.09.0'}"
 
 # --- CodePipeline pipeline
-CodePipelineName="${ProjectName}-codepipeline"
-CodePipelineStackName="${ProjectName}-codepipeline-stack"
+CodePipelineName="${CodePipelineName:=${ProjectName}-codepipeline}"
+CodePipelineStackName="${CodePipelineStackName:=${ProjectName}-codepipeline-stack}"
 
 # --- Events rule
 EventsRuleRandomId=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9-' | fold -w 24 | head -n 1)
 
 # These values are used only when the rule is created independently of its parent stack
 # (i.e., probably only during testing & development)
-EventsRepoChangeRuleName="${CodePipelineName}-events-repo-change-rule"
-EventsRepoChangeRuleStackName="${EventsRepoChangeRuleName}-stack"
+EventsRepoChangeRuleName="${EventsRepoChangeRuleName:=${CodePipelineName}-events-repo-change-rule}"
+EventsRepoChangeRuleStackName="${EventsRepoChangeRuleStackName:=${EventsRepoChangeRuleName}-stack}"
 
 # --- CodeCommit repo
 RepoName="${RepoName:=${ProjectName}}"
