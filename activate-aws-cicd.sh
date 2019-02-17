@@ -26,13 +26,22 @@ fi
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
+# Read environment variables
+if [[ -f '.env' ]]
+then
+  source .env
+fi
+PROJECT_DIR=${PROJECT_DIR:='/var/project'}
+
+# TODO: Allow different sources to be specified for `.aws`, `.ecs`, .ssh`
+
 mkdir -p config
 
 docker container run \
   --interactive \
   --rm \
   --tty \
-  --mount type=bind,source=${PWD},target=/var/project \
+  --mount type=bind,source=${PWD},target=${PROJECT_DIR} \
   --mount type=bind,source=${PWD}/config,target=/var/lib/config \
   --mount type=bind,source="${HOME}/.aws",target=/root/.aws \
   --mount type=bind,source="${HOME}/.ecs",target=/root/.ecs \
