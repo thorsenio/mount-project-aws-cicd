@@ -19,7 +19,17 @@ ProjectMajorVersion=$(echo ${ProjectVersion} | head -n 1 | cut -d . -f 1)
 
 BranchName=${BranchName:=master}
 
+# TODO: FEATURE: Possibly add SiteUrl to allow for microservices hosted at the
+#  same domain
 SiteDomainName=${SiteDomainName:='www.example.com'}
+# TODO: FEATURE: Support multiple domain names
+# TODO: FEATURE: Support URLs instead of domain names
+
+ProjectVersion="${ProjectVersion:=0.0.1}"
+ProjectMajorVersion=$(echo ${ProjectVersion} | head -n 1 | cut -d . -f 1)
+
+# Combine project, branch, and major version into a single value that can be used in resource names
+ProjectBranchVersion="${ProjectName}-${BranchName}-v${ProjectMajorVersion}"
 
 # ----- Defaults
 ProtectAgainstTermination='false'
@@ -36,8 +46,8 @@ ProtectAgainstTermination='false'
 # Here they are configured to share a bucket
 CodeBuildArtifactBucketName="${CodeBuildArtifactBucketName:=cicd-artifacts-${AccountName}-${Region//-/}}"
 CodePipelineArtifactBucketName="${CodePipelineArtifactBucketName:=cicd-artifacts-${AccountName}-${Region//-/}}"
-CodeBuildServiceRoleName="codebuild-service-role-${ProjectName}-${Region}"
-CodeBuildServiceRolePolicyName="codebuild-service-role-policy-${ProjectName}-${Region}"
+CodeBuildServiceRoleName="codebuild-service-role-${ProjectBranchVersion}-${Region}"
+CodeBuildServiceRolePolicyName="codebuild-service-role-policy-${ProjectBranchVersion}-${Region}"
 
 # Name and ARN of the service role used by CodePipeline to call AWS services
 CodePipelineServiceRoleName='codepipeline-service-role'
@@ -49,28 +59,29 @@ TemplateBucketName="${TemplateBucketName:=cf-templates-${AccountName}-${Region//
 
 # ----- Computed cluster variables for the project
 # If the project specifies a cluster, it will be used; otherwise, the project gets its own cluster
-EcsClusterName="${EcsClusterName:-${ProjectName}-cluster}"
+EcsClusterName="${EcsClusterName:=${ProjectBranchVersion}-cluster}"
 
 # These resources are shared by the cluster, so there should be only one of each
 BastionInstanceName="${BastionInstanceName:=${EcsClusterName}-bastion}"
-BastionStackName="${BastionStackName:=${EcsClusterName}-bastion-stack}"
+BastionStackName="${BastionStackName:=${BastionInstanceName}-stack}"
 EcsStackName="${EcsStackName:=${EcsClusterName}-stack}"
 KeyPairKeyName="${KeyPairKeyName:=${EcsClusterName}-${Region//-/}}"
 
 # TODO: Build in support for per-project subnets
-VpcDefaultSecurityGroupName="${VpcDefaultSecurityGroupName:=${EcsClusterName}-sg}"
-VpcStackName="${VpcStackName:=${EcsClusterName}-vpc-stack}"
+VpcName="${VpcName:=${ProjectBranchVersion}-vpc}"
+VpcStackName="${VpcStackName:=${VpcName}-stack}"
+VpcDefaultSecurityGroupName="${VpcDefaultSecurityGroupName:=${VpcName}-sg}"
 
 # ----- Other computed project variables
 
 # --- CodeBuild project
-CodeBuildProjectName="${CodeBuildProjectName:=${ProjectName}-codebuild-project}"
+CodeBuildProjectName="${CodeBuildProjectName:=${ProjectBranchVersion}-codebuild-project}"
 CodeBuildProjectStackName="${CodeBuildProjectStackName:=${CodeBuildProjectName}-stack}"
 CodeBuildEnvironmentImage="${CodeBuildEnvironmentImage:='aws/codebuild/docker:18.09.0'}"
 
 # --- CodePipeline pipeline
-CodePipelineName="${CodePipelineName:=${ProjectName}-codepipeline}"
-CodePipelineStackName="${CodePipelineStackName:=${ProjectName}-codepipeline-stack}"
+CodePipelineName="${CodePipelineName:=${ProjectBranchVersion}-codepipeline}"
+CodePipelineStackName="${CodePipelineStackName:=${CodePipelineName}-stack}"
 
 # --- Events rule
 EventsRuleRandomId=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9-' | fold -w 24 | head -n 1)
@@ -86,16 +97,15 @@ RepoDescription="${RepoDescription:=${ProjectDescription}}"
 
 # --- Website stacks
 
-# Replace `.` with `-` to make a valid stack name
-SiteStackName="${SiteStackName:=${SiteDomainName//./-}-site-stack}"
+SiteStackName="${SiteStackName:=${ProjectBranchVersion}-site-stack}"
 
 # The name and stack of the S3 bucket that hosts the project's static files
-ProjectBucketName="${ProjectBucketName:=${SiteDomainName}-v${ProjectMajorVersion}}"
-ProjectBucketStackName="${ProjectBucketStackName:=${ProjectBucketName//./-}-bucket-stack}"
+ProjectBucketName="${ProjectBucketName:=${ProjectBranchVersion}-bucket}"
+ProjectBucketStackName="${ProjectBucketStackName:=${ProjectBucketName}-stack}"
 
 # Name of the index and error documents for the site (for an SPA, these are typically the same)
 SiteIndexDocument="${SiteIndexDocument:='index.html'}"
 SiteErrorDocument="${SiteErrorDocument:=${SiteIndexDocument}}"
 
 # --- CloudFront distribution
-CloudfrontDistributionStackName="${CloudfrontDistributionStackName:=${ProjectName}-cdn-stack}"
+CloudfrontDistributionStackName="${CloudfrontDistributionStackName:=${ProjectBranchVersion}-cdn-stack}"
