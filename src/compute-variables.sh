@@ -63,25 +63,25 @@ EcsClusterName="${EcsClusterName:=${ProjectBranchVersion}-cluster}"
 
 # These resources are shared by the cluster, so there should be only one of each
 BastionInstanceName="${BastionInstanceName:=${EcsClusterName}-bastion}"
-BastionStackName="${BastionStackName:=${BastionInstanceName}-stk}"
-EcsStackName="${EcsStackName:=${EcsClusterName}-stk}"
+BastionStackName="${BastionStackName:=${BastionInstanceName}}"
+EcsStackName="${EcsStackName:=${EcsClusterName}}"
 KeyPairKeyName="${KeyPairKeyName:=${EcsClusterName}-${Region//-/}}"
 
 # TODO: Build in support for per-project subnets
 VpcName="${VpcName:=${ProjectBranchVersion}-vpc}"
-VpcStackName="${VpcStackName:=${VpcName}-stk}"
+VpcStackName="${VpcStackName:=${VpcName}}"
 VpcDefaultSecurityGroupName="${VpcDefaultSecurityGroupName:=${VpcName}-sg}"
 
 # ----- Other computed project variables
 
 # --- CodeBuild project
 CodeBuildProjectName="${CodeBuildProjectName:=${ProjectBranchVersion}-cb-project}"
-CodeBuildProjectStackName="${CodeBuildProjectStackName:=${CodeBuildProjectName}-stk}"
+CodeBuildProjectStackName="${CodeBuildProjectStackName:=${CodeBuildProjectName}}"
 CodeBuildEnvironmentImage="${CodeBuildEnvironmentImage:='aws/codebuild/docker:18.09.0'}"
 
 # --- CodePipeline pipeline
 CodePipelineName="${CodePipelineName:=${ProjectBranchVersion}-cp}"
-CodePipelineStackName="${CodePipelineStackName:=${CodePipelineName}-stk}"
+CodePipelineStackName="${CodePipelineStackName:=${CodePipelineName}}"
 
 # --- Events rule
 EventsRuleRandomId=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9-' | fold -w 24 | head -n 1)
@@ -89,7 +89,7 @@ EventsRuleRandomId=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9-' | fold -w 24 | head 
 # These values are used only when the rule is created independently of its parent stack
 # (i.e., probably only during testing & development)
 EventsRepoChangeRuleName="${EventsRepoChangeRuleName:=${CodePipelineName}-events-repochangerule}"
-EventsRepoChangeRuleStackName="${EventsRepoChangeRuleStackName:=${EventsRepoChangeRuleName}-stk}"
+EventsRepoChangeRuleStackName="${EventsRepoChangeRuleStackName:=${EventsRepoChangeRuleName}}"
 
 # --- CodeCommit repo
 RepoName="${RepoName:=${ProjectName}}"
@@ -97,15 +97,15 @@ RepoDescription="${RepoDescription:=${ProjectDescription}}"
 
 # --- Website stacks
 
-SiteStackName="${SiteStackName:=${ProjectBranchVersion}-site-stk}"
+SiteStackName="${SiteStackName:=${ProjectBranchVersion}-site}"
 
 # The name and stack of the S3 bucket that hosts the project's static files
 ProjectBucketName="${ProjectBucketName:=${ProjectBranchVersion}-bucket}"
-ProjectBucketStackName="${ProjectBucketStackName:=${ProjectBucketName}-stk}"
+ProjectBucketStackName="${ProjectBucketStackName:=${ProjectBucketName}}"
 
 # Name of the index and error documents for the site (for an SPA, these are typically the same)
 SiteIndexDocument="${SiteIndexDocument:='index.html'}"
 SiteErrorDocument="${SiteErrorDocument:=${SiteIndexDocument}}"
 
 # --- CloudFront distribution
-CloudfrontDistributionStackName="${CloudfrontDistributionStackName:=${ProjectBranchVersion}-cdn-stk}"
+CloudfrontDistributionStackName="${CloudfrontDistributionStackName:=${ProjectBranchVersion}-cdn}"
