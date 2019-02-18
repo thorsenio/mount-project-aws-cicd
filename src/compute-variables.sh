@@ -7,6 +7,7 @@
 # then switch back after the variables files have been sourced
 THIS_SCRIPT_DIR=$(dirname $(realpath ${PWD}/${BASH_SOURCE[0]}))
 cd ${THIS_SCRIPT_DIR} > /dev/null
+source ./config/global-variables.sh
 source ./config/regional-variables.sh
 source ./config/project-variables.sh
 cd - > /dev/null
@@ -21,6 +22,7 @@ PlatformVersionPostfix=${PLATFORM_VERSION_POSTFIX:=''}
 PlatformMajorVersion=$(echo ${PlatformVersion} | head -n 1 | cut -d . -f 1)
 PlatformId="${PlatformName}-p${PlatformMajorVersion}${PlatformVersionPostfix}"
 RegionalPlatformStackName="${PlatformId}-regional-stack"
+GlobalPlatformStackName="${PlatformId}-global-stack"
 
 # Application deployment ID
 BranchName=${BranchName:='master'}
