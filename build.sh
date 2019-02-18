@@ -1,48 +1,74 @@
 #!/usr/bin/env bash
 
-# This script builds the Docker image and tags it with the version number found in `.version`
+# This script builds the Docker image and tags it with the version information
+# contained in `platform-variables.sh`
 
-BASE_NAME='skypilot/aws-cicd'
-
-if [[ ${#} -gt 1 ]]
+# Handle arguments
+if [[ $# -gt 1 ]]
 then
-  VERSION=$(head -n 1 .version) &> /dev/null
-  VERSION="${VERSION:=1.0.0}"
-  echo "Usage: ${0} [TAG_LABEL]"
-  echo "Examples:"
-  echo "  ${0}"
-  echo "  tags the image with these tags: '${BASE_NAME}:latest', '${BASE_NAME}:${VERSION}'"
-  echo
-  echo "  ${0} 'edge'"
-  echo "  tags the image with these tags: '${BASE_NAME}:edge', '${BASE_NAME}:edge-${VERSION}'"
-  exit 1
-fi
-
-if [[ ${#} -eq 1 ]]
-then
-  TAG="${1}"
-  VERSION_TAG_PREFIX="${TAG}-"
-else
-  TAG="latest"
-  VERSION_TAG_PREFIX=""
+  SHOW_USAGE='true'
 fi
 
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
+source platform-variables.sh
 
-VERSION_TAG="${VERSION_TAG_PREFIX}$(head -n 1 .version)"
-
-if [[ ${?} -ne 0 ]]
+if [[ $? -ne 0 ]]
 then
-  echo "The version number was not found" 1>&2
+  echo "The variables file, 'platform-variables.sh', was not found" 1>&2
   exit 1
 fi
 
-echo "Tag: ${TAG}"
-echo "Version tag: ${VERSION_TAG}"
+embold () {
+  local bold=$(tput bold)
+  local normal=$(tput sgr0)
 
-# Tag the build with `latest` or the custom tag passed as an argument
-docker build -t ${BASE_NAME}:${TAG} .
+  local TextToEmbold=$1
+  echo "${bold}${TextToEmbold}${normal}"
+}
+
+if [[ -z ${ACCOUNT_NAME} || -z ${PACKAGE_NAME} || -z ${VERSION} ]]
+then
+  echo "platform-variables.sh must define ACCOUNT_NAME, PACKAGE_NAME, and VERSION" 1>&2
+  exit 1
+fi
+
+IMAGE_NAME="${ACCOUNT_NAME}/${PACKAGE_NAME}"
+
+if [[ ${SHOW_USAGE} == 'true' ]]
+then
+  echo "Usage: ${0} [LABEL]"
+  echo "Examples:"
+  echo $(embold "  $0")
+  echo "  tags the image with these tags: $(embold "${IMAGE_NAME}:latest"), $(embold "${IMAGE_NAME}:${VERSION}")"
+  echo
+  echo $(embold "  $0 edge")
+  echo "  tags the image with these tags: $(embold "${IMAGE_NAME}:edge"), $(embold "${IMAGE_NAME}:edge-${VERSION}")"
+  exit 1
+fi
+
+# Build the tag: label + version number
+if [[ $# -eq 1 ]]
+then
+  LABEL=$1
+  VERSION_PREFIX="${LABEL}-"
+  VERSION_POSTFIX=${LABEL}
+else
+  LABEL='latest'
+  VERSION_PREFIX=''
+  VERSION_POSTFIX=''
+fi
+
+TAG="${VERSION_PREFIX}${VERSION}"
+
+
+echo "Label: ${LABEL}"
+echo "Tag: ${TAG}"
+
+# Tag the build
+docker build -t ${IMAGE_NAME}:${LABEL} . \
+  --build-arg VERSION=${VERSION} \
+  --build-arg VERSION_POSTFIX=${VERSION_POSTFIX}
 
 if [[ ${?} -ne 0 ]]
 then
@@ -50,4 +76,4 @@ then
 fi
 
 # Also tag the image with the version number, prefixed by the custom tag (if any)
-docker tag ${BASE_NAME}:${TAG} ${BASE_NAME}:${VERSION_TAG}
+docker tag ${IMAGE_NAME}:${LABEL} ${IMAGE_NAME}:${TAG}

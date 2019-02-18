@@ -11,7 +11,6 @@ Resources:
   CodePipelineServiceRole:
     Type: AWS::IAM::Role
     Description: 'Allows CodePipeline to call AWS services.'
-    DeletionPolicy: Retain
     Properties:
       RoleName: !Ref CodePipelineServiceRoleName
       AssumeRolePolicyDocument:
@@ -22,7 +21,7 @@ Resources:
               Service: 'codepipeline.amazonaws.com'
             Action: 'sts:AssumeRole'
       Policies:
-        - PolicyName: 'codepipeline-service-role-policy'
+        - PolicyName: !Sub "${CodePipelineServiceRoleName}-policy"
           PolicyDocument:
             Version: '2012-10-17'
             Statement:

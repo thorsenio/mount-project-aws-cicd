@@ -1,0 +1,22 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Global platform resources'
+
+Parameters:
+  CodePipelineServiceRoleName:
+    Description: 'Name of the service role used by CodePipeline to call AWS services'
+    Type: String
+
+  PlatformId:
+    Description: "Platform version ID and label"
+    Type: String
+
+Resources:
+  CodePipelineServiceRoleStack:
+    Type: AWS::CloudFormation::Stack
+    Description: 'Allows CodePipeline to call AWS services.'
+    Properties:
+      Parameters:
+        CodePipelineServiceRoleName: !Ref CodePipelineServiceRoleName
+      TemplateURL: './codepipeline-service-role.yml'
+      TimeoutInMinutes: 2

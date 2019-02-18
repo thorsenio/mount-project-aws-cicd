@@ -11,6 +11,8 @@ for TEMPLATE in \
   'codepipeline-service-role.yml' \
   'ecs-stack.yml' \
   'events-repo-change-rule.yml' \
+  'global-platform.yml' \
+  'regional-platform.yml' \
   's3-site.yml' \
   's3-asset-bucket.yml' \
   's3-site-bucket.yml' \
