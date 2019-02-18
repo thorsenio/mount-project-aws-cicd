@@ -21,8 +21,8 @@ PlatformVersion=${PLATFORM_VERSION:='1.0.0'}
 PlatformVersionPostfix=${PLATFORM_VERSION_POSTFIX:=''}
 PlatformMajorVersion=$(echo ${PlatformVersion} | head -n 1 | cut -d . -f 1)
 PlatformId="${PlatformName}-p${PlatformMajorVersion}${PlatformVersionPostfix}"
-RegionalPlatformStackName="${PlatformId}-regional-stack"
-GlobalPlatformStackName="${PlatformId}-global-stack"
+RegionalPlatformStackName="${PlatformId}-regional"
+GlobalPlatformStackName="${PlatformId}-global"
 
 # Application deployment ID
 BranchName=${BranchName:='master'}
