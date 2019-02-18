@@ -3,6 +3,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'CloudFront distribution for S3 website'
 
 Parameters:
+  AcmCertificateArn:
+    Description: 'ARN ofthe ACM Certificate for the domain'
+    Type: String
+
   SiteBucketName:
     Description: 'S3 bucket for the site'
     Type: String
@@ -20,12 +24,6 @@ Parameters:
     Type: String
 
 Resources:
-  AcmCertificate:
-    Type: AWS::CertificateManager::Certificate
-    Properties:
-      DomainName: !Ref SiteDomainName
-      ValidationMethod: 'DNS'
-
   CdnDistro:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -66,6 +64,6 @@ Resources:
               OriginAccessIdentity: ''
         PriceClass: 'PriceClass_100'
         ViewerCertificate:
-          AcmCertificateArn: !Ref AcmCertificate
+          AcmCertificateArn: !Ref AcmCertificateArn
           MinimumProtocolVersion: 'TLSv1.1_2016'
           SslSupportMethod: 'sni-only'

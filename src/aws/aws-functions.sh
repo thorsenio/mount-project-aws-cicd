@@ -117,31 +117,19 @@ stackExists () {
   fi
 }
 
-# Echo the ARN of the ACM certificate created in the stack
+# Echo the ARN of the ACM certificate for the specified domain
 echoAcmCertificateArn () {
 
   local PROFILE=$1
-  local REGION=$2
-  local STACK_NAME=$3
-
-  local CLOUDFRONT_STACK_NAME=$(
-    aws cloudformation describe-stack-resource \
-      --profile ${PROFILE} \
-      --region ${REGION} \
-      --stack-name ${STACK_NAME} \
-      --logical-resource-id CdnDistroStack \
-    | jq '.StackResourceDetail.PhysicalResourceId' \
-    | cut -d/ -f 2 \
-  )
+  local DOMAIN_NAME=$2
+  local GLOBAL_REGION='us-east-1'
 
   local ACM_CERTIFICATE_ARN=$(
-    aws cloudformation describe-stack-resource \
+    aws acm list-certificates \
       --profile ${PROFILE} \
-      --region ${REGION} \
-      --stack-name ${CLOUDFRONT_STACK_NAME} \
-      --logical-resource-id AcmCertificate \
-    | jq '.StackResourceDetail.PhysicalResourceId' \
-    | cut -d\" -f 2 \
+      --region ${GLOBAL_REGION} \
+    | jq ".CertificateSummaryList[] | select(.DomainName==\"${DOMAIN_NAME}\").CertificateArn" \
+    | cut -d \" -f 2 \
   )
 
   echo ${ACM_CERTIFICATE_ARN}

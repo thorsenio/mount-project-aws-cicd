@@ -3,6 +3,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'S3 website served through CloudFront'
 
 Parameters:
+  AcmCertificateArn:
+    Description: 'ARN ofthe ACM Certificate for the domain'
+    Type: String
+
   SiteBucketName:
     Description: 'S3 bucket for the project'
     Type: String
@@ -34,6 +38,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
+        AcmCertificateArn: !Ref AcmCertificateArn
         BucketName: !Ref SiteBucketName
         ErrorDocument: !Ref SiteErrorDocument
         IndexDocument: !Ref SiteIndexDocument
