@@ -12,6 +12,9 @@ RUN mkdir -p \
   /var/lib \
   /var/project
 
+RUN touch /root/.bashrc && \
+  echo "export PS1=\"\u@${PACKAGE_NAME} [\w] \$ \"" >> /root/.bashrc
+
 COPY src/ /var/lib/
 
 WORKDIR /var/project

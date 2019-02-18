@@ -68,7 +68,8 @@ echo "Tag: ${TAG}"
 # Tag the build
 docker build -t ${IMAGE_NAME}:${LABEL} . \
   --build-arg VERSION=${VERSION} \
-  --build-arg VERSION_POSTFIX=${VERSION_POSTFIX}
+  --build-arg VERSION_POSTFIX=${VERSION_POSTFIX} \
+  --build-arg PACKAGE_NAME=${PACKAGE_NAME}
 
 if [[ ${?} -ne 0 ]]
 then
