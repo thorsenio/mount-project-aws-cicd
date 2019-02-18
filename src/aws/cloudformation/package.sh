@@ -16,17 +16,22 @@ source ../../compute-variables.sh
 
 TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }' | cut -d. -f1)
 
-bucketExists ${PROFILE} ${TemplateBucketName}
-if [[ $? -ne 0 ]]
+bucketExists ${PROFILE} ${CfTemplatesBucketName}
+ERROR_STATUS=$?
+if [[ ${ERROR_STATUS} -ne 0 ]]
 then
-  ../s3/create-cf-templates-bucket.sh
+  echo "The CloudFormation templates bucket for the '${Region}' region was not found." 1>&2
+  echo "Make sure that the '${RegionalPlatformStackName}' stack is running in that region" 1>&2
+  # TODO: USABILITY: Move scripts to more convenient path
+  echo "(../lib/aws/cloudformation/put-regional-platform-stack.sh)"
+  exit ${ERROR_STATUS}
 fi
 
 OUTPUT=$(aws cloudformation package \
   --profile ${PROFILE} \
   --region ${Region} \
   --template-file ${CLOUDFORMATION_TEMPLATE} \
-  --s3-bucket ${TemplateBucketName} \
+  --s3-bucket ${CfTemplatesBucketName} \
   --output-template-file ${TEMPLATE_BASENAME}--expanded.yml \
 )
 
