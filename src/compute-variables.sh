@@ -88,7 +88,7 @@ EcsClusterName="${EcsClusterName:=${DeploymentId}-cluster}"
 BastionInstanceName="${BastionInstanceName:=${EcsClusterName}-bastion}"
 BastionStackName="${BastionStackName:=${BastionInstanceName}}"
 EcsClusterStackName="${EcsClusterStackName:=${EcsClusterName}}"
-KeyPairKeyName="${KeyPairKeyName:=${EcsClusterName}-${Region//-/}}"
+KeyPairKeyName="${KeyPairKeyName:=${AccountName}-${Region//-/}-${EcsClusterName}}"
 EcsClusterVpcName="${VpcName:=${EcsClusterName}-vpc}"
 
 # TODO: Build in support for per-project subnets
