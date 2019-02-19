@@ -204,6 +204,18 @@ Outputs:
     Description: 'Name of autoscaling group.'
     Value: !Ref AutoscalingGroup
 
-  VpcName:
-    Description: 'Name of VPC'
-    Value: !Ref VpcStack
+  PrivateSubnetA:
+    Description: 'ID of private subnet in AZ a'
+    Value: !GetAtt VpcStack.Outputs.PrivateSubnet1
+
+  PrivateSubnetB:
+    Description: 'ID of private subnet in AZ b'
+    Value: !GetAtt VpcStack.Outputs.PrivateSubnet2
+
+  PrivateSubnetC:
+    Description: 'ID of private subnet in AZ c'
+    Value: !GetAtt VpcStack.Outputs.PrivateSubnet3
+
+  VpcId:
+    Description: 'ID of the VPC'
+    Value: !GetAtt VpcStack.Outputs.VpcId
