@@ -11,7 +11,7 @@ source ../aws-functions.sh
 source ../../compute-variables.sh
 
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${EcsStackName})
+PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${EcsClusterStackName})
 
 ./package.sh ${CLOUDFORMATION_TEMPLATE}
 
@@ -27,7 +27,7 @@ OUTPUT=$(aws cloudformation create-stack \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
     ParameterKey=DefaultSecurityGroupName,ParameterValue=${VpcDefaultSecurityGroupName} \
-    ParameterKey=StackName,ParameterValue=${EcsStackName} \
+    ParameterKey=StackName,ParameterValue=${EcsClusterStackName} \
   --capabilities CAPABILITY_IAM \
 )
 

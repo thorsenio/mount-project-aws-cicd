@@ -203,3 +203,7 @@ Outputs:
   AutoscalingGroupName:
     Description: 'Name of autoscaling group.'
     Value: !Ref AutoscalingGroup
+
+  VpcName:
+    Description: 'Name of VPC'
+    Value: !Ref VpcStack

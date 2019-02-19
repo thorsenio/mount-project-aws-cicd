@@ -87,8 +87,9 @@ EcsClusterName="${EcsClusterName:=${DeploymentId}-cluster}"
 # These resources are shared by the cluster, so there should be only one of each
 BastionInstanceName="${BastionInstanceName:=${EcsClusterName}-bastion}"
 BastionStackName="${BastionStackName:=${BastionInstanceName}}"
-EcsStackName="${EcsStackName:=${EcsClusterName}}"
+EcsClusterStackName="${EcsClusterStackName:=${EcsClusterName}}"
 KeyPairKeyName="${KeyPairKeyName:=${EcsClusterName}-${Region//-/}}"
+EcsClusterVpcName="${VpcName:=${EcsClusterName}-vpc}"
 
 # TODO: Build in support for per-project subnets
 VpcName="${VpcName:=${DeploymentId}-vpc}"

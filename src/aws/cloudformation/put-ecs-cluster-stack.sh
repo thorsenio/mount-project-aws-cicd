@@ -3,7 +3,7 @@
 # This script creates a CloudFormation stack. It automatically expands nested templates.
 # It will fail if the stack already exists.
 
-CLOUDFORMATION_TEMPLATE='templates/ecs-stack.yml'
+CLOUDFORMATION_TEMPLATE='templates/ecs-cluster-stack.yml'
 
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
@@ -12,7 +12,7 @@ source ../aws-functions.sh
 source ../../compute-variables.sh
 
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${EcsStackName})
+PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${EcsClusterStackName})
 
 ./package.sh ${CLOUDFORMATION_TEMPLATE}
 
@@ -33,7 +33,7 @@ TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }'
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${PROFILE} \
   --region ${Region} \
-  --stack-name ${EcsStackName} \
+  --stack-name ${EcsClusterStackName} \
   --template-body file://${TEMPLATE_BASENAME}--expanded.yml \
   --parameters \
     ParameterKey=DefaultSecurityGroupName,ParameterValue=${VpcDefaultSecurityGroupName} \
