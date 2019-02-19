@@ -15,3 +15,7 @@ OUTPUT=$(aws cloudformation delete-stack \
 EXIT_STATUS=$?
 echoPutStackOutput 'delete' ${Region} ${EXIT_STATUS} ${OUTPUT}
 
+if [[ ${EXIT_STATUS} -eq 0 ]]
+then
+  ../ec2/delete-key-pair.sh ${PROFILE} ${Region} ${KeyPairKeyName}
+fi
