@@ -52,11 +52,11 @@ if [[ $# -eq 1 ]]
 then
   LABEL=$1
   VERSION_PREFIX="${LABEL}-"
-  VERSION_POSTFIX=${LABEL}
+  VERSION_STAGE=${LABEL}
 else
   LABEL='latest'
   VERSION_PREFIX=''
-  VERSION_POSTFIX=''
+  VERSION_STAGE=''
 fi
 
 TAG="${VERSION_PREFIX}${VERSION}"
@@ -68,7 +68,7 @@ echo "Tag: ${TAG}"
 # Tag the build
 docker build -t ${IMAGE_NAME}:${LABEL} . \
   --build-arg VERSION=${VERSION} \
-  --build-arg VERSION_POSTFIX=${VERSION_POSTFIX} \
+  --build-arg VERSION_STAGE=${VERSION_STAGE} \
   --build-arg PACKAGE_NAME=${PACKAGE_NAME}
 
 if [[ ${?} -ne 0 ]]

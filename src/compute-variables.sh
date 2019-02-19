@@ -15,12 +15,12 @@ cd - > /dev/null
 # TODO: Verify that all required values exist
 
 # Platform deployment ID
-# The Dockerfile sets `PLATFORM_NAME`, `PLATFORM_VERSION` & `PLATFORM_VERSION_POSTFIX` as env vars
+# The Dockerfile sets `PLATFORM_NAME`, `PLATFORM_VERSION` & `PLATFORM_VERSION_STAGE` as env vars
 PlatformName=${PLATFORM_NAME:='aws-cicd'}
 PlatformVersion=${PLATFORM_VERSION:='1.0.0'}
-PlatformVersionPostfix=${PLATFORM_VERSION_POSTFIX:=''}
+PlatformVersionStage=${PLATFORM_VERSION_STAGE:=''}
 PlatformMajorVersion=$(echo ${PlatformVersion} | head -n 1 | cut -d . -f 1)
-PlatformId="${PlatformName}-p${PlatformMajorVersion}${PlatformVersionPostfix}"
+PlatformId="${PlatformName}-p${PlatformMajorVersion}${PlatformVersionStage}"
 RegionalPlatformStackName="${PlatformId}-regional"
 GlobalPlatformStackName="${PlatformId}-global"
 
@@ -28,10 +28,10 @@ GlobalPlatformStackName="${PlatformId}-global"
 BranchName=${BranchName:='master'}
 if [[ ${BranchName} == 'master' ]]
 then
-  VersionPostfix=''
+  VersionStage=''
 else
   # Use a deployment name if provided; otherwise, use the branch name (converting `/` to `-`)
-  VersionPostfix=${DeploymentName:=${BranchName//\//-}}
+  VersionStage=${DeploymentName:=${BranchName//\//-}}
 fi
 
 # Project, version, and branch are combined into a value usable by the project
@@ -39,7 +39,7 @@ ProjectDescription="${ProjectDescription:=${ProjectName}}"
 ProjectVersion="${ProjectVersion:=0.0.1}"
 ProjectMajorVersion=$(echo ${ProjectVersion} | head -n 1 | cut -d . -f 1)
 ProjectVersionBranch="${ProjectName}-v${ProjectMajorVersion}-${BranchName}"
-DeploymentId="${ProjectName}-v${ProjectMajorVersion}${VersionPostfix}"
+DeploymentId="${ProjectName}-v${ProjectMajorVersion}${VersionStage}"
 
 SiteDomainName=${SiteDomainName:='www.example.com'}
 # TODO: FEATURE: Possibly add SiteUrl to allow for microservices hosted at the same domain
