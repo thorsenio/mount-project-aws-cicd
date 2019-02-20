@@ -7,6 +7,7 @@ CLOUDFORMATION_TEMPLATE='templates/vpc-stack.yml'
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
+source ../../functions.sh
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
@@ -20,6 +21,10 @@ then
   exit 1
 fi
 
+AZ_COUNT=$(echoCountAzsInRegion ${PROFILE} ${Region})
+MAX_AZ_COUNT=3
+DESIRED_AZ_COUNT=$(echoMin AZ_COUNT MAX_AZ_COUNT)
+
 OUTPUT=$(aws cloudformation create-stack \
   --profile ${PROFILE} \
   --region ${Region} \
@@ -27,6 +32,7 @@ OUTPUT=$(aws cloudformation create-stack \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
     ParameterKey=DefaultSecurityGroupName,ParameterValue=${VpcDefaultSecurityGroupName} \
+    ParameterKey=DesiredAzCount,ParameterValue=${DESIRED_AZ_COUNT} \
     ParameterKey=VpcName,ParameterValue=${VpcName} \
   --capabilities CAPABILITY_IAM \
 )

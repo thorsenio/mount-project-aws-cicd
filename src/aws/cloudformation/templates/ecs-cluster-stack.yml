@@ -7,9 +7,17 @@ Parameters:
   DefaultSecurityGroupName:
     Description: 'Name of the default security group for the VPC'
     Type: String
+
+  DesiredAzCount:
+    Description: 'Desired number of AZs in the VPC (2-3)'
+    Type: Number
+    MinValue: 2
+    MaxValue: 3
+
   EcsClusterName:
     Description: 'Name of the ECS cluster.'
     Type: String
+
   ImageId:
     # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html
     Description: ID of ECS-optimized AMI optimized for the region.
@@ -108,9 +116,9 @@ Resources:
       - TargetGroup
     Properties:
       VPCZoneIdentifier:
-        - !GetAtt VpcStack.Outputs.PrivateSubnet1
-        - !GetAtt VpcStack.Outputs.PrivateSubnet2
-        - !GetAtt VpcStack.Outputs.PrivateSubnet3
+        - !GetAtt VpcStack.Outputs.PrivateSubnetA
+        - !GetAtt VpcStack.Outputs.PrivateSubnetB
+        - !GetAtt VpcStack.Outputs.PrivateSubnetC
       HealthCheckType: EC2
       LaunchConfigurationName: !Ref AutoscalingLaunchConfig
       TargetGroupARNs:
@@ -166,9 +174,9 @@ Resources:
         - !Ref AlbSecurityGroup
         - !GetAtt VpcStack.Outputs.SecurityGroupId
       Subnets:
-        - !GetAtt VpcStack.Outputs.PublicSubnet1
-        - !GetAtt VpcStack.Outputs.PublicSubnet2
-        - !GetAtt VpcStack.Outputs.PublicSubnet3
+        - !GetAtt VpcStack.Outputs.PublicSubnetA
+        - !GetAtt VpcStack.Outputs.PublicSubnetB
+        - !GetAtt VpcStack.Outputs.PublicSubnetC
 
   AlbSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -200,6 +208,7 @@ Resources:
     Properties:
       Parameters:
         DefaultSecurityGroupName: !Ref DefaultSecurityGroupName
+        DesiredAzCount: !Ref DesiredAzCount
         VpcName: !Ref VpcName
       TemplateURL: './vpc-stack.yml'
       TimeoutInMinutes: 5
@@ -211,15 +220,15 @@ Outputs:
 
   PrivateSubnetA:
     Description: 'ID of private subnet in AZ a'
-    Value: !GetAtt VpcStack.Outputs.PrivateSubnet1
+    Value: !GetAtt VpcStack.Outputs.PrivateSubnetA
 
   PrivateSubnetB:
     Description: 'ID of private subnet in AZ b'
-    Value: !GetAtt VpcStack.Outputs.PrivateSubnet2
+    Value: !GetAtt VpcStack.Outputs.PrivateSubnetB
 
   PrivateSubnetC:
     Description: 'ID of private subnet in AZ c'
-    Value: !GetAtt VpcStack.Outputs.PrivateSubnet3
+    Value: !GetAtt VpcStack.Outputs.PrivateSubnetC
 
   VpcId:
     Description: 'ID of the VPC'

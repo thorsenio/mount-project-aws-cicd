@@ -8,6 +8,7 @@ CLOUDFORMATION_TEMPLATE='templates/ecs-cluster-stack.yml'
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
+source ../../functions.sh
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
@@ -30,6 +31,10 @@ fi
 
 TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }' | cut -d. -f1)
 
+AZ_COUNT=$(echoCountAzsInRegion ${PROFILE} ${Region})
+MAX_AZ_COUNT=3
+DESIRED_AZ_COUNT=$(echoMin AZ_COUNT MAX_AZ_COUNT)
+
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${PROFILE} \
   --region ${Region} \
@@ -37,6 +42,7 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --template-body file://${TEMPLATE_BASENAME}--expanded.yml \
   --parameters \
     ParameterKey=DefaultSecurityGroupName,ParameterValue=${VpcDefaultSecurityGroupName} \
+    ParameterKey=DesiredAzCount,ParameterValue=${DESIRED_AZ_COUNT} \
     ParameterKey=EcsClusterName,ParameterValue=${EcsClusterName} \
     ParameterKey=KeyPairKeyName,ParameterValue=${KeyPairKeyName} \
     ParameterKey=VpcName,ParameterValue=${EcsClusterVpcName} \
