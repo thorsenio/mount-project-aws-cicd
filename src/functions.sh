@@ -30,3 +30,13 @@ echoRandomLowercaseId () {
   LENGTH=${LENGTH:='13'}
   echo $(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w ${LENGTH} | head -n 1)
 }
+
+# Given 2 values, echo the greater of them
+echoMax () {
+  echo $(( $1 > $2 ? $1 : $2 ))
+}
+
+# Given 2 values, echo the lesser of them
+echoMin () {
+  echo $(( $1 < $2 ? $1 : $2 ))
+}
