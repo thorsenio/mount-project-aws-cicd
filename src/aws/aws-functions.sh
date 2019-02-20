@@ -122,12 +122,12 @@ echoAcmCertificateArn () {
 
   local PROFILE=$1
   local DOMAIN_NAME=$2
-  local GLOBAL_REGION='us-east-1'
+  local AWS_GLOBAL_REGION='us-east-1'
 
   local ACM_CERTIFICATE_ARN=$(
     aws acm list-certificates \
       --profile ${PROFILE} \
-      --region ${GLOBAL_REGION} \
+      --region ${AWS_GLOBAL_REGION} \
     | jq ".CertificateSummaryList[] | select(.DomainName==\"${DOMAIN_NAME}\").CertificateArn" \
     | cut -d \" -f 2 \
   )
