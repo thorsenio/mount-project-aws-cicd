@@ -37,6 +37,7 @@ PROJECT_DIR=${PROJECT_DIR:='/var/project'}
 
 mkdir -p config
 
+# TODO: Update the target directories when `USER` is set to something other than `root`
 docker container run \
   --interactive \
   --rm \
