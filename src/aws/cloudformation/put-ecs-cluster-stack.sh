@@ -39,6 +39,7 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     ParameterKey=DefaultSecurityGroupName,ParameterValue=${VpcDefaultSecurityGroupName} \
     ParameterKey=EcsClusterName,ParameterValue=${EcsClusterName} \
     ParameterKey=KeyPairKeyName,ParameterValue=${KeyPairKeyName} \
+    ParameterKey=VpcName,ParameterValue=${EcsClusterVpcName} \
   --capabilities \
     CAPABILITY_AUTO_EXPAND \
     CAPABILITY_IAM \

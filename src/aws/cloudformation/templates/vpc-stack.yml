@@ -6,8 +6,9 @@ Parameters:
   DefaultSecurityGroupName:
     Description: 'Name of the default security group for the VPC'
     Type: String
-  StackName:
-    Description: 'Name of the stack.'
+
+  VpcName:
+    Description: 'Name of the VPC'
     Type: String
 
 Resources:
@@ -17,7 +18,7 @@ Resources:
       CidrBlock: '10.0.0.0/16'
       Tags:
         - Key: 'Name'
-          Value: !Sub ${StackName}-vpc
+          Value: !Ref VpcName
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway

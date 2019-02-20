@@ -9,7 +9,7 @@ for TEMPLATE in \
   'codebuild-project.yml' \
   'codepipeline.yml' \
   'codepipeline-service-role.yml' \
-  'ecs-stack.yml' \
+  'ecs-cluster-stack.yml' \
   'events-repo-change-rule.yml' \
   'global-platform.yml' \
   'regional-platform.yml' \

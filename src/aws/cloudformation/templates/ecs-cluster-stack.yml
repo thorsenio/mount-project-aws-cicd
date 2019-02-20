@@ -24,9 +24,14 @@ Parameters:
       - 't3.small'
       - 't3.medium'
     Default: 't2.micro'
+
   KeyPairKeyName:
     Description: EC2 key pair for SSH access to the instance.
     Type: AWS::EC2::KeyPair::KeyName
+
+  VpcName:
+    Description: 'Name of the VPC'
+    Type: String
 
 Resources:
   # ----- ECS resources
@@ -195,7 +200,7 @@ Resources:
     Properties:
       Parameters:
         DefaultSecurityGroupName: !Ref DefaultSecurityGroupName
-        StackName: !Sub ${AWS::StackName}
+        VpcName: !Ref VpcName
       TemplateURL: './vpc-stack.yml'
       TimeoutInMinutes: 5
 
