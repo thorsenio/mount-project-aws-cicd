@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-VERSION='0.12.7'
+VERSION='0.12.8'
 ACCOUNT_NAME='skypilot'
 PACKAGE_NAME='aws-cicd'
 PROJECT_DIR="/var/lib/${PACKAGE_NAME}"

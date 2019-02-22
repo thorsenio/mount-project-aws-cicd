@@ -12,8 +12,8 @@ Parameters:
     Type: String
     Default: 'master'
 
-  CodeBuildArtifactBucketName:
-    Description: 'S3 bucket used for CodeBuild artifacts for the project'
+  CicdArtifactsBucketName:
+    Description: 'S3 bucket used for CodeBuild & CodePipeline artifacts'
     Type: String
 
   CodeBuildEnvironmentImage:
@@ -32,10 +32,6 @@ Parameters:
     Description: 'Name of the policy attached to the CodeBuild service role'
     Type: String
 
-  CodePipelineArtifactBucketName:
-    Description: 'S3 bucket used for all CodePipeline pipelines in the region'
-    Type: String
-
   CodePipelineName:
     Description: 'Name of the CI/CD pipeline'
     Type: String
@@ -50,6 +46,10 @@ Parameters:
 
   CodePipelineServiceRoleName:
     Description: 'Name of the service role used by CodePipeline to call AWS services'
+    Type: String
+
+  DeploymentId:
+    Description: 'Identifier of the project, major version, and version stage'
     Type: String
 
   EventsRuleRandomId:
@@ -90,14 +90,13 @@ Resources:
     Properties:
       Parameters:
         CodeBuildProjectName: !Ref CodeBuildProjectName
-        CodeBuildArtifactBucketName: !Ref CodeBuildArtifactBucketName
+        CicdArtifactsBucketName: !Ref CicdArtifactsBucketName
         CodeBuildEnvironmentImage: !Ref CodeBuildEnvironmentImage
         CodeBuildServiceRoleName: !Ref CodeBuildServiceRoleName
         CodeBuildServiceRolePolicyName: !Ref CodeBuildServiceRolePolicyName
-        CodePipelineArtifactBucketName: !Ref CodePipelineArtifactBucketName
+        DeploymentId: !Ref DeploymentId
         ProjectBucketName: !Ref ProjectBucketName
         ProjectDescription: !Ref ProjectDescription
-        ProjectName: !Ref ProjectName
         RepoName: !Ref RepoName
       TemplateURL: './codebuild-project.yml'
       TimeoutInMinutes: 5
@@ -140,8 +139,7 @@ Resources:
               OutputArtifacts:
                 - Name: 'BuildOutputArtifact'
       ArtifactStore:
-        # A single S3 bucket serves as the bucket for all the pipelines in that region
-        Location: !Ref CodePipelineArtifactBucketName
+        Location: !Ref CicdArtifactsBucketName
         Type: 'S3'
 
   CodePipelineServiceRoleStack:

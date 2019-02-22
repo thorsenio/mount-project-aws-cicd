@@ -53,15 +53,15 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --template-body file://${TEMPLATE_BASENAME}--expanded.yml \
   --parameters \
     ParameterKey=BranchName,ParameterValue=${BranchName} \
-    ParameterKey=CodeBuildArtifactBucketName,ParameterValue=${CodeBuildArtifactBucketName} \
+    ParameterKey=CicdArtifactsBucketName,ParameterValue=${CicdArtifactsBucketName} \
     ParameterKey=CodeBuildEnvironmentImage,ParameterValue=${CodeBuildEnvironmentImage} \
     ParameterKey=CodeBuildProjectName,ParameterValue=${CodeBuildProjectName} \
     ParameterKey=CodeBuildServiceRoleName,ParameterValue=${CodeBuildServiceRoleName} \
     ParameterKey=CodeBuildServiceRolePolicyName,ParameterValue=${CodeBuildServiceRolePolicyName} \
-    ParameterKey=CodePipelineArtifactBucketName,ParameterValue=${CodePipelineArtifactBucketName} \
     ParameterKey=CodePipelineName,ParameterValue=${CodePipelineName} \
     ParameterKey=CodePipelineServiceRoleExists,ParameterValue=${CP_SERVICE_ROLE_EXISTS} \
     ParameterKey=CodePipelineServiceRoleName,ParameterValue=${CodePipelineServiceRoleName} \
+    ParameterKey=DeploymentId,ParameterValue=${DeploymentId} \
     ParameterKey=EventsRuleRandomId,ParameterValue=${EventsRuleRandomId} \
     ParameterKey=ProjectBucketName,ParameterValue=${ProjectBucketName} \
     ParameterKey=ProjectDescription,ParameterValue="${ProjectDescription}" \

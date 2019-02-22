@@ -3,8 +3,8 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'CodeBuild project stack'
 
 Parameters:
-  CodeBuildArtifactBucketName:
-    Description: 'S3 bucket used for CodeBuild artifacts for the project'
+  CicdArtifactsBucketName:
+    Description: 'S3 bucket used for CodeBuild & CodePipeline artifacts'
     Type: String
 
   CodeBuildEnvironmentImage:
@@ -23,8 +23,8 @@ Parameters:
     Description: 'Name of the policy attached to the CodeBuild service role'
     Type: String
 
-  CodePipelineArtifactBucketName:
-    Description: 'S3 bucket used for all CodePipeline pipelines in the region'
+  DeploymentId:
+    Description: 'Identifier of the project, major version, and version stage'
     Type: String
 
   ProjectBucketName:
@@ -33,10 +33,6 @@ Parameters:
 
   ProjectDescription:
     Description: 'Description of the project'
-    Type: String
-
-  ProjectName:
-    Description: 'Name of the project'
     Type: String
 
   RepoName:
@@ -51,8 +47,9 @@ Resources:
       Description: !Sub "CodeBuild project for ${ProjectDescription}"
       Artifacts:
         EncryptionDisabled: true
-        Location: !Sub "${CodeBuildArtifactBucketName}"
-        Name: !Sub "codebuild-artifact-${ProjectName}-${AWS::Region}"
+        Location: !Sub "${CicdArtifactsBucketName}"
+        # Name of the build output folder or .zip file
+        Name: !Sub "codebuild-${DeploymentId}-${AWS::Region}"
         NamespaceType: 'BUILD_ID'
         OverrideArtifactName: true
         Packaging: 'NONE'
@@ -120,11 +117,7 @@ Resources:
               -
                 Effect: 'Allow'
                 Action: 's3:*'
-                Resource: !Sub "arn:aws:s3:::${CodeBuildArtifactBucketName}/*"
-              -
-                Effect: 'Allow'
-                Action: 's3:*'
-                Resource: !Sub "arn:aws:s3:::${CodePipelineArtifactBucketName}/*"
+                Resource: !Sub "arn:aws:s3:::${CicdArtifactsBucketName}/*"
               -
                 Effect: 'Allow'
                 Action: 's3:*'
