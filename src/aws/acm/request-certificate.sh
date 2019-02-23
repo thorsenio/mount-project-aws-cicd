@@ -20,9 +20,6 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
-# All certificates must be created in `us-east-1`
-GLOBAL_REGION='us-east-1'
-
 # Generate an idempotency token that is unique for the requested domain & today's date.
 # If a fresh certificate request is needed for the same domain on the same date, increment the
 # attempt number
@@ -31,7 +28,7 @@ IDEMPOTENCY_TOKEN=$(printf "${DOMAIN_NAME} ${DATE_STRING} ${ATTEMPT_NUMBER}" | m
 
 OUTPUT=$(aws acm request-certificate \
   --profile ${PROFILE} \
-  --region ${GLOBAL_REGION} \
+  --region ${AWS_GLOBAL_REGION} \
   --domain-name=${DOMAIN_NAME} \
   --validation-method=DNS \
   --idempotency-token=${IDEMPOTENCY_TOKEN}

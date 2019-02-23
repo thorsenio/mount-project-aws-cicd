@@ -11,16 +11,41 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
-GLOBAL_REGION='us-east-1'
+if [[ ! ${Region} == ${AWS_GLOBAL_REGION} ]]
+then
+  echo "The global platform stack must be created in the ${AWS_GLOBAL_REGION} region" 1>&2
+  exit 1
+fi
+
+stackExists ${PROFILE} ${Region} ${RegionalPlatformStackName}
+if [[ $? -ne 0 ]]
+then
+  ./put-regional-platform-stack.sh
+  EXIT_CODE=$?
+  if [[ $? -ne 0 ]]
+  then
+    echo "The global platform stack depends on regional platform stack '${RegionalPlatformStackName}' in ${Region}" 1>&2
+    exit ${EXIT_CODE}
+  fi
+fi
 
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${PROFILE} ${GLOBAL_REGION} ${GlobalPlatformStackName})
+PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${GlobalPlatformStackName})
+
+./package.sh ${CLOUDFORMATION_TEMPLATE} ${Region}
+
+if [[ $? -ne 0 ]]
+then
+  exit 1
+fi
+
+TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }' | cut -d. -f1)
 
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${PROFILE} \
-  --region ${GLOBAL_REGION} \
+  --region ${Region} \
   --stack-name ${GlobalPlatformStackName} \
-  --template-body file://${CLOUDFORMATION_TEMPLATE} \
+  --template-body file://${TEMPLATE_BASENAME}--expanded.yml \
   --parameters \
     ParameterKey=CodePipelineServiceRoleName,ParameterValue=${CodePipelineServiceRoleName} \
     ParameterKey=PlatformId,ParameterValue=${PlatformId} \
@@ -30,4 +55,4 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
 )
 
 EXIT_STATUS=$?
-echoPutStackOutput ${PUT_MODE} ${GLOBAL_REGION} ${EXIT_STATUS} ${OUTPUT}
+echoPutStackOutput ${PUT_MODE} ${Region} ${EXIT_STATUS} ${OUTPUT}

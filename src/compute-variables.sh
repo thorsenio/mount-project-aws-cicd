@@ -5,14 +5,22 @@
 
 # Change to the script's directory so that the variables files can be located by relative path,
 # then switch back after the variables files have been sourced
-THIS_SCRIPT_DIR=$(dirname $(realpath ${PWD}/${BASH_SOURCE[0]}))
-cd ${THIS_SCRIPT_DIR} > /dev/null
-source ./config/global-variables.sh
-source ./config/regional-variables.sh
-source ./config/project-variables.sh
-cd - > /dev/null
+  THIS_SCRIPT_DIR=$(dirname $(realpath ${PWD}/${BASH_SOURCE[0]}))
+  cd ${THIS_SCRIPT_DIR} > /dev/null
+  source ./config/global-variables.sh
+  source ./config/regional-variables.sh
+  source ./config/project-variables.sh
+  cd - > /dev/null
 
 # TODO: Verify that all required values exist
+if [[ -z ${Region} ]]
+then
+  echo "No value is set for Region" 1>&2
+  exit 1
+fi
+
+# AWS constants
+AWS_GLOBAL_REGION='us-east-1'
 
 # Platform deployment ID
 # The Dockerfile sets `PLATFORM_NAME`, `PLATFORM_VERSION` & `PLATFORM_VERSION_STAGE` as env vars
@@ -20,7 +28,7 @@ PlatformName=${PLATFORM_NAME:='aws-cicd'}
 PlatformVersion=${PLATFORM_VERSION:='1.0.0'}
 PlatformVersionStage=${PLATFORM_VERSION_STAGE:=''}
 PlatformMajorVersion=$(echo ${PlatformVersion} | head -n 1 | cut -d . -f 1)
-PlatformId="${PlatformName}-p${PlatformMajorVersion}${PlatformVersionStage}"
+PlatformId="${PlatformName}-v${PlatformMajorVersion}${PlatformVersionStage}"
 RegionalPlatformStackName="${PlatformId}-regional"
 GlobalPlatformStackName="${PlatformId}-global"
 

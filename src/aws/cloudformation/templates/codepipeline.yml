@@ -2,18 +2,14 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: 'CI/CD pipeline'
 
-Conditions:
-  # Create the service role only if it doesn't already exist.
-  CreateCodePipelineServiceRole: !Equals [!Ref CodePipelineServiceRoleExists, false]
-
 Parameters:
   BranchName:
     Description: 'The source code branch associated with the pipeline'
     Type: String
     Default: 'master'
 
-  CodeBuildArtifactBucketName:
-    Description: 'S3 bucket used for CodeBuild artifacts for the project'
+  CicdArtifactsBucketName:
+    Description: 'S3 bucket used for CodeBuild & CodePipeline artifacts'
     Type: String
 
   CodeBuildEnvironmentImage:
@@ -32,24 +28,16 @@ Parameters:
     Description: 'Name of the policy attached to the CodeBuild service role'
     Type: String
 
-  CodePipelineArtifactBucketName:
-    Description: 'S3 bucket used for all CodePipeline pipelines in the region'
-    Type: String
-
   CodePipelineName:
     Description: 'Name of the CI/CD pipeline'
     Type: String
 
-  CodePipelineServiceRoleExists:
-    Description: 'True if the CodePipeline service role already exists'
-    Type: String
-    AllowedValues:
-      - false
-      - true
-    Default: true
-
   CodePipelineServiceRoleName:
     Description: 'Name of the service role used by CodePipeline to call AWS services'
+    Type: String
+
+  DeploymentId:
+    Description: 'Identifier of the project, major version, and version stage'
     Type: String
 
   EventsRuleRandomId:
@@ -90,14 +78,13 @@ Resources:
     Properties:
       Parameters:
         CodeBuildProjectName: !Ref CodeBuildProjectName
-        CodeBuildArtifactBucketName: !Ref CodeBuildArtifactBucketName
+        CicdArtifactsBucketName: !Ref CicdArtifactsBucketName
         CodeBuildEnvironmentImage: !Ref CodeBuildEnvironmentImage
         CodeBuildServiceRoleName: !Ref CodeBuildServiceRoleName
         CodeBuildServiceRolePolicyName: !Ref CodeBuildServiceRolePolicyName
-        CodePipelineArtifactBucketName: !Ref CodePipelineArtifactBucketName
+        DeploymentId: !Ref DeploymentId
         ProjectBucketName: !Ref ProjectBucketName
         ProjectDescription: !Ref ProjectDescription
-        ProjectName: !Ref ProjectName
         RepoName: !Ref RepoName
       TemplateURL: './codebuild-project.yml'
       TimeoutInMinutes: 5
@@ -107,7 +94,7 @@ Resources:
     DependsOn: CodeBuildProjectStack
     Properties:
       Name: !Ref CodePipelineName
-      RoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/codepipeline-service-role"
+      RoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/${CodePipelineServiceRoleName}"
       Stages:
         - Name: 'Source'
           Actions:
@@ -140,16 +127,5 @@ Resources:
               OutputArtifacts:
                 - Name: 'BuildOutputArtifact'
       ArtifactStore:
-        # A single S3 bucket serves as the bucket for all the pipelines in that region
-        Location: !Ref CodePipelineArtifactBucketName
+        Location: !Ref CicdArtifactsBucketName
         Type: 'S3'
-
-  CodePipelineServiceRoleStack:
-    Type: AWS::CloudFormation::Stack
-    Description: 'Allows CodePipeline to call AWS services.'
-    Condition: CreateCodePipelineServiceRole
-    Properties:
-      Parameters:
-        CodePipelineServiceRoleName: !Ref CodePipelineServiceRoleName
-      TemplateURL: './codepipeline-service-role.yml'
-      TimeoutInMinutes: 2

@@ -18,9 +18,6 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
-# All certificates must be created in `us-east-1`
-GLOBAL_REGION='us-east-1'
-
 CERTIFICATE_ARN=$(echoAcmCertificateArn ${PROFILE} ${DOMAIN_NAME})
 
 if [[ -z ${CERTIFICATE_ARN} ]]
@@ -31,7 +28,7 @@ fi
 
 DESCRIPTION=$(aws acm describe-certificate \
   --profile ${PROFILE} \
-  --region ${GLOBAL_REGION} \
+  --region ${AWS_GLOBAL_REGION} \
   --certificate-arn ${CERTIFICATE_ARN}
 )
 

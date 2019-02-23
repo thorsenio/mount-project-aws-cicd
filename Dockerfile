@@ -13,7 +13,7 @@ RUN mkdir -p \
   /var/project
 
 RUN touch /root/.bashrc && \
-  echo "export PS1=\"\u@${PACKAGE_NAME}-${PLATFORM_VERSION} [\w] \$ \"" >> /root/.bashrc
+  echo "export PS1=\"\u@${PACKAGE_NAME}-${PLATFORM_VERSION}-${VERSION_STAGE} [\w] \$ \"" >> /root/.bashrc
 
 COPY src/ /var/lib/
 
