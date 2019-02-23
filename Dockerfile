@@ -1,5 +1,11 @@
 FROM skypilot/aws:latest
 
+RUN apk update && \
+  apk upgrade && \
+  apk add \
+    --no-cache \
+    docker
+
 ARG PACKAGE_NAME
 ARG VERSION
 ARG VERSION_STAGE
@@ -19,4 +25,3 @@ RUN touch /root/.bashrc && \
 COPY src/ /var/lib/
 
 WORKDIR /var/project
-
