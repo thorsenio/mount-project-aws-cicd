@@ -2,10 +2,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: 'CI/CD pipeline'
 
-Conditions:
-  # Create the service role only if it doesn't already exist.
-  CreateCodePipelineServiceRole: !Equals [!Ref CodePipelineServiceRoleExists, false]
-
 Parameters:
   BranchName:
     Description: 'The source code branch associated with the pipeline'
@@ -35,14 +31,6 @@ Parameters:
   CodePipelineName:
     Description: 'Name of the CI/CD pipeline'
     Type: String
-
-  CodePipelineServiceRoleExists:
-    Description: 'True if the CodePipeline service role already exists'
-    Type: String
-    AllowedValues:
-      - false
-      - true
-    Default: true
 
   CodePipelineServiceRoleName:
     Description: 'Name of the service role used by CodePipeline to call AWS services'
@@ -106,7 +94,7 @@ Resources:
     DependsOn: CodeBuildProjectStack
     Properties:
       Name: !Ref CodePipelineName
-      RoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/codepipeline-service-role"
+      RoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/${CodePipelineServiceRoleName}"
       Stages:
         - Name: 'Source'
           Actions:
@@ -141,13 +129,3 @@ Resources:
       ArtifactStore:
         Location: !Ref CicdArtifactsBucketName
         Type: 'S3'
-
-  CodePipelineServiceRoleStack:
-    Type: AWS::CloudFormation::Stack
-    Description: 'Allows CodePipeline to call AWS services.'
-    Condition: CreateCodePipelineServiceRole
-    Properties:
-      Parameters:
-        CodePipelineServiceRoleName: !Ref CodePipelineServiceRoleName
-      TemplateURL: './codepipeline-service-role.yml'
-      TimeoutInMinutes: 2

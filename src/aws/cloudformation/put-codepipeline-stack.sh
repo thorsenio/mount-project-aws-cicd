@@ -37,15 +37,6 @@ fi
 
 TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }' | cut -d. -f1)
 
-# Check whether the CodePipeline service role exists, and pass a boolean to the template.
-iamRoleExists ${PROFILE} ${Region} ${CodePipelineServiceRoleName}
-if [[ $? -eq 0 ]]
-then
-  CP_SERVICE_ROLE_EXISTS=true
-else
-  CP_SERVICE_ROLE_EXISTS=false
-fi
-
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${PROFILE} \
   --region ${Region} \
@@ -59,7 +50,6 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     ParameterKey=CodeBuildServiceRoleName,ParameterValue=${CodeBuildServiceRoleName} \
     ParameterKey=CodeBuildServiceRolePolicyName,ParameterValue=${CodeBuildServiceRolePolicyName} \
     ParameterKey=CodePipelineName,ParameterValue=${CodePipelineName} \
-    ParameterKey=CodePipelineServiceRoleExists,ParameterValue=${CP_SERVICE_ROLE_EXISTS} \
     ParameterKey=CodePipelineServiceRoleName,ParameterValue=${CodePipelineServiceRoleName} \
     ParameterKey=DeploymentId,ParameterValue=${DeploymentId} \
     ParameterKey=EventsRuleRandomId,ParameterValue=${EventsRuleRandomId} \
