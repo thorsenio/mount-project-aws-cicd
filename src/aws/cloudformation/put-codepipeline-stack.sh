@@ -37,6 +37,26 @@ fi
 
 TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }' | cut -d. -f1)
 
+# -- Check prerequisites
+iamRoleExists ${PROFILE} ${Region} ${CodePipelineServiceRoleName}
+if [[ $? -ne 0 ]]
+then
+  echo 'The code pipeline service role was not found' 1>&2
+  echo "Fix this by creating the global platform stack ('${GlobalPlatformStackName}'):" 1>&2
+  echo "  put-global-platform-stack.sh" 1>&2
+  echo "  (NOTE: The Region must temporarily be set to 'us-west-1' in project-variable.sh.)"
+  exit 1
+fi
+
+bucketExists ${PROFILE} ${CicdArtifactsBucketName}
+if [[ $? -ne 0 ]]
+then
+  echo 'The CI/CD artifacts bucket was not found' 1>&2
+  echo "Fix this by creating the regional platform stack ('${RegionalPlatformStackName}'):" 1>&2
+  echo "  put-regional-platform-stack.sh" 1>&2
+  exit 1
+fi
+
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${PROFILE} \
   --region ${Region} \

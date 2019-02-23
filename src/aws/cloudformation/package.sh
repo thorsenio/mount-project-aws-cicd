@@ -21,7 +21,7 @@ ERROR_STATUS=$?
 if [[ ${ERROR_STATUS} -ne 0 ]]
 then
   echo "The CloudFormation templates bucket for the '${Region}' region was not found." 1>&2
-  echo "Make sure that the '${RegionalPlatformStackName}' stack is running in that region" 1>&2
+  echo "Fix this by creating the regional platform stack ('${RegionalPlatformStackName}'):" 1>&2
   # TODO: USABILITY: Move scripts to more convenient path
   echo "  put-regional-platform-stack.sh"
   exit ${ERROR_STATUS}
