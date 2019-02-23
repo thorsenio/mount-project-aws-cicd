@@ -50,6 +50,29 @@ codecommitRepoExists () {
   fi
 }
 
+ecrRepoExists () {
+
+  local PROFILE=$1
+  local REGION=$2
+  local REPOSITORY_NAME=$3
+
+  # This command will generate an error if the repo doesn't exist
+  aws ecr describe-repositories \
+    --profile ${PROFILE} \
+    --region ${REGION} \
+    --repository-names "${REPOSITORY_NAME}" \
+    &> /dev/null
+
+  if [[ $? -eq 0 ]]
+  then
+    # Repository exists
+    return 0
+  else
+    # Repository does not exist
+    return 1
+  fi
+}
+
 iamRoleExists () {
 
   local PROFILE=$1

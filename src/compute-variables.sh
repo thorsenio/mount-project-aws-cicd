@@ -115,6 +115,9 @@ CodeBuildEnvironmentImage="${CodeBuildEnvironmentImage:='aws/codebuild/docker:18
 CodePipelineName="${CodePipelineName:=${DeploymentId}-cp}"
 CodePipelineStackName="${CodePipelineStackName:=${CodePipelineName}}"
 
+# --- ECR repositories
+EcrRepoNames=${EcrRepoNames:-''}
+
 # --- Events rule
 EventsRuleRandomId=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9-' | fold -w 24 | head -n 1)
 

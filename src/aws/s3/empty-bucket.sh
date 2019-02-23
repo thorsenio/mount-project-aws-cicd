@@ -2,7 +2,7 @@
 
 # This script empties the specified S3 bucket
 
-if [[ ${#} -lt 1 || ${#} -gt 3 ]]
+if [[ ${#} -lt 2 || ${#} -gt 3 ]]
 then
   echo "Usage: ${0} BUCKET_NAME PROFILE [DESCRIPTION]" >&2
   exit 1
