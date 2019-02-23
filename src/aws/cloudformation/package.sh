@@ -23,7 +23,7 @@ then
   echo "The CloudFormation templates bucket for the '${Region}' region was not found." 1>&2
   echo "Make sure that the '${RegionalPlatformStackName}' stack is running in that region" 1>&2
   # TODO: USABILITY: Move scripts to more convenient path
-  echo "(../lib/aws/cloudformation/put-regional-platform-stack.sh)"
+  echo "  put-regional-platform-stack.sh"
   exit ${ERROR_STATUS}
 fi
 

@@ -17,7 +17,7 @@ Enter regional and project-specific settings into
 ##### 2. Activate the containerized environment:
 
 ```bash
-./activate-aws-cicd.sh
+./activate-aws-cicd.sh [DEPLOYMENT_NAME]
 ```
 
 ### ECS cluster stack
@@ -25,19 +25,19 @@ Enter regional and project-specific settings into
 ##### 1. Create a key pair for the ECS cluster (if one doesn't exist already)
 
 ```bash
-../lib/aws/ec2/create-key-pair.sh
+create-key-pair.sh
 ```
 
 ##### 2. Create or update the ECS stack:
 
 ```bash
-../lib/aws/cloudformation/put-ecs-stack.sh
+put-ecs-stack.sh
 ```
 
 ##### Delete the stack when it is no longer needed
 
 ```bash
-../lib/aws/cloudformation/delete-ecs-stack.sh
+delete-ecs-stack.sh
 ```
 
 ### CI/CD pipeline
@@ -45,13 +45,13 @@ Enter regional and project-specific settings into
 ##### 1. Create or update the pipeline stack:
 
 ```bash
-../lib/aws/cloudformation/put-codepipeline-stack.sh
+put-codepipeline-stack.sh
 ```
 
 ##### Delete the stack when it is no longer needed
 
 ```bash
-../lib/aws/cloudformation/delete-codepipeline-stack.sh
+delete-codepipeline-stack.sh
 ```
 
 ### Containerized site in ECS cluster
@@ -59,13 +59,13 @@ Enter regional and project-specific settings into
 ##### 1. Create or update the ECS site stack:
 
 ```bash
-../lib/aws/cloudformation/put-ecs-site-stack.sh
+put-ecs-site-stack.sh
 ```
 
 ##### Delete the stack when it is no longer needed
 
 ```bash
-../lib/aws/cloudformation/delete-ecs-site-stack.sh
+delete-ecs-site-stack.sh
 ```
 
 ### Static site served from S3
@@ -73,23 +73,23 @@ Enter regional and project-specific settings into
 ##### 1. Create or update the S3 site stack:
 
 ```bash
-../lib/aws/cloudformation/put-s3-site-stack.sh
+put-s3-site-stack.sh
 ```
 
 ##### Delete the stack when it is no longer needed
 
 ```bash
-../lib/aws/cloudformation/delete-ecs-site-stack.sh
+delete-ecs-site-stack.sh
 ```
 
 ##### Utility scripts
 
 ```bash
 # Forward a port to one of the EC2 container instances
-../lib/aws/ec2/forward-to-ecs-instance INSTANCE_INDEX PORT
+forward-to-ecs-instance INSTANCE_INDEX PORT
 
 # SSH into one of the EC2 container instances
-../lib/aws/ec2/ssh-into-ecs-instance INSTANCE_INDEX
+ssh-into-ecs-instance INSTANCE_INDEX
 ```
 
 

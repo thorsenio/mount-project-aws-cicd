@@ -6,7 +6,8 @@ ARG VERSION_STAGE
 ENV \
   PLATFORM_NAME=${PACKAGE_NAME} \
   PLATFORM_VERSION=${VERSION} \
-  PLATFORM_VERSION_STAGE=${VERSION_STAGE}
+  PLATFORM_VERSION_STAGE=${VERSION_STAGE} \
+  PATH="/var/lib/aws/cloudformation:/var/lib/aws/ec2:${PATH}"
 
 RUN mkdir -p \
   /var/lib \
