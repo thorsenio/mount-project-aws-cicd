@@ -21,19 +21,7 @@ then
   exit 1
 fi
 
-# TODO: REFACTOR: This snippet is duplicated in `put-codepipeline-stack.sh`
-codecommitRepoExists ${PROFILE} ${Region} ${RepoName}
-if [[ $? -ne 0 ]]
-then
-  ../codecommit/put-codecommit-repository.sh
-  if [[ $? -eq 0 ]]
-  then
-    echo "The CodeCommit repository '${RepoName}' exists and will be used for this project." 1>&2
-  else
-    echo "The CodeCommit repository '${RepoName}' could not be created." 1>&2
-    exit 1
-  fi
-fi
+../codecommit/put-codecommit-repository.sh ${RepoName} ${RepoDescription}
 
 # TODO: REFACTOR: Use a function to generate ParameterKey,ParameterValue strings
 

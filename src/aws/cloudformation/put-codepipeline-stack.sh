@@ -22,18 +22,7 @@ then
   exit 1
 fi
 
-# TODO: REFACTOR: This snippet is duplicated in `put-codebuild-project-stack.sh`
-codecommitRepoExists ${PROFILE} ${Region} ${RepoName}
-if [[ $? -eq 0 ]]
-then
-  echo "The CodeCommit repository '${RepoName}' exists and will be used for this project."
-else
-  ../codecommit/put-codecommit-repository.sh
-  if [[ $? -ne 0 ]]
-  then
-    exit 1
-  fi
-fi
+  ../codecommit/put-codecommit-repository.sh ${RepoName} ${RepoDescription}
 
 TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }' | cut -d. -f1)
 
