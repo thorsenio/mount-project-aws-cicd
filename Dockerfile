@@ -13,7 +13,7 @@ ENV \
   PLATFORM_NAME=${PACKAGE_NAME} \
   PLATFORM_VERSION=${VERSION} \
   PLATFORM_VERSION_STAGE=${VERSION_STAGE} \
-  PATH="/var/lib/aws/cloudformation:/var/lib/aws/ec2:/var/lib/aws/ecr:${PATH}"
+  PATH="/var/lib/aws/cloudformation:/var/lib/aws/ec2:/var/lib/aws/ecr:/var/lib/aws/codecommit:${PATH}"
 
 RUN mkdir -p \
   /var/lib \

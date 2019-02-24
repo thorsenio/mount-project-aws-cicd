@@ -10,7 +10,7 @@ source ../../compute-variables.sh
 
 for REPO_NAME in ${EcrRepoNames}; do
   FULL_REPO_NAME="${DeploymentId}/${REPO_NAME}"
-  ./empty-repository.sh ${PROFILE} ${Region} ${FULL_REPO_NAME}
+  ./empty-ecr-repository.sh ${PROFILE} ${Region} ${FULL_REPO_NAME}
   if [[ $? -ne 0 ]]; then
     exit $?
   fi
