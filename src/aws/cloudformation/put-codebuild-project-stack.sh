@@ -25,7 +25,7 @@ fi
 codecommitRepoExists ${PROFILE} ${Region} ${RepoName}
 if [[ $? -ne 0 ]]
 then
-  ../codecommit/create-repository.sh
+  ../codecommit/put-codecommit-repository.sh
   if [[ $? -eq 0 ]]
   then
     echo "The CodeCommit repository '${RepoName}' exists and will be used for this project." 1>&2
