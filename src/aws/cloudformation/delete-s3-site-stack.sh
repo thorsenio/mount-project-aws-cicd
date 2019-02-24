@@ -12,7 +12,7 @@ source ../aws-functions.sh
 source ../../compute-variables.sh
 
 # If the bucket exists, empty it; otherwise, CloudFormation won't be able to delete it
-../s3/empty-bucket.sh ${ProjectBucketName} ${PROFILE} 'site'
+../s3/empty-bucket.sh ${PROFILE} ${ProjectBucketName} 'site'
 if [[ $? -ne 0 ]]
 then
   echo 'Deletion of the stack has been aborted.'

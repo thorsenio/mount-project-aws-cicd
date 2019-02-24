@@ -4,13 +4,13 @@
 
 if [[ ${#} -lt 2 || ${#} -gt 3 ]]
 then
-  echo "Usage: ${0} BUCKET_NAME PROFILE [DESCRIPTION]" >&2
+  echo "Usage: ${0} PROFILE BUCKET_NAME [DESCRIPTION]" >&2
   exit 1
 fi
 
 # Required arguments
-BUCKET_NAME=$1
-PROFILE=$2
+PROFILE=$1
+BUCKET_NAME=$2
 
 # Optional argument
 if [[ $# -eq 3 ]]
