@@ -204,7 +204,7 @@ echoPutStackOutput () {
   if [[ ${EXIT_STATUS} -eq 0 ]]
   then
     echo "The request to ${PUT_MODE} the stack was accepted by AWS."
-    echo "View the stack at https://${REGION}.console.aws.amazon.com/cloudformation/home?region=${REGION}#/stacks?filter=active"
+    echo "View the stack's status at https://${REGION}.console.aws.amazon.com/cloudformation/home?region=${REGION}#/stacks?filter=active"
   else
     echo "The request to ${PUT_MODE} the stack was not accepted by AWS." 1>&2
     echo ${OUTPUT} 1>&2
