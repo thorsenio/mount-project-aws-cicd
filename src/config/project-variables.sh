@@ -9,8 +9,8 @@
 ProjectName='my-project'
 ProjectDescription='My project'
 
-RepoName='my-project'
-RepoDescription='Description of my project'
+RepoName=${ProjectName}
+RepoDescription="${ProjectDescription}"
 
 ProjectDomain='example.com'
 DevDomain='example.com'

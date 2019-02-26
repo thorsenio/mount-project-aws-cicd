@@ -35,7 +35,10 @@ PROJECT_DIR=${PROJECT_DIR:='/var/project'}
 
 # TODO: Allow different sources to be specified for `.aws`, `.ecs`, .ssh`
 
-mkdir -p config
+mkdir -p config \
+  "${HOME}/.aws" \
+  "${HOME}/.ecs" \
+  "${HOME}/.ssh"
 
 # TODO: Update the target directories when `USER` is set to something other than `root`
 docker container run \

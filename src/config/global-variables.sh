@@ -15,7 +15,7 @@ AccountNumber='123456708901'
 
 # Name of the IAM profile from which to get the credentials to be used by the AWS CLI
 # (Recommended: use the account name as the profile name
-PROFILE='accountname'
+PROFILE=${AccountName}
 
 # Non-production domain name elements. These are used to generate domain names for deployments
 # other than production

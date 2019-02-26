@@ -6,4 +6,6 @@
 # and are overwritten by the values declared in
 # -  `project-variables.sh`
 
-Region='us-east-1'
+# To override the region set in `global-variables.sh`, uncomment the next line
+# and set it to the desired region
+#Region='us-east-1'
