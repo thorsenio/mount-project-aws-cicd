@@ -40,3 +40,12 @@ echoMax () {
 echoMin () {
   echo $(( $1 < $2 ? $1 : $2 ))
 }
+
+embold () {
+  local bold=$(tput bold)
+  local normal=$(tput sgr0)
+
+  local TEXT_TO_EMBOLD=$1
+  echo "${bold}${TEXT_TO_EMBOLD}${normal}"
+}
+

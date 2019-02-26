@@ -27,6 +27,10 @@ Parameters:
     Description: 'Identifier of the project, major version, and version stage'
     Type: String
 
+  PlatformId:
+    Description: 'Identifier of the CI/CD platform'
+    Type: String
+
   ProjectBucketName:
     Description: 'S3 bucket used for the project'
     Type: String

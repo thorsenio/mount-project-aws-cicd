@@ -64,6 +64,7 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     ParameterKey=EventsRuleRandomId,ParameterValue=${EventsRuleRandomId} \
     ParameterKey=ProjectBucketName,ParameterValue=${ProjectBucketName} \
     ParameterKey=ProjectDescription,ParameterValue="${ProjectDescription}" \
+    ParameterKey=PlatformId,ParameterValue=${PlatformId} \
     ParameterKey=ProjectName,ParameterValue=${ProjectName} \
     ParameterKey=RepoName,ParameterValue=${RepoName} \
   --capabilities \

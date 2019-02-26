@@ -44,6 +44,10 @@ Parameters:
     Description: 'A unique, user-definied identifier for the target of an Events rule'
     Type: String
 
+  PlatformId:
+    Description: 'Identifier of the CI/CD platform'
+    Type: String
+
   ProjectBucketName:
     Description: 'S3 bucket for the project'
     Type: String
@@ -66,9 +70,12 @@ Resources:
     DependsOn: CodePipeline
     Properties:
       Parameters:
+        BranchName: !Ref BranchName
         CodePipelineArn: !Sub "arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${CodePipelineName}"
         CodePipelineName: !Ref CodePipelineName
+        DeploymentId: !Ref DeploymentId
         EventsRuleRandomId: !Ref EventsRuleRandomId
+        PlatformId: !Ref PlatformId
         ProjectName: !Ref ProjectName
         RepoName: !Ref RepoName
       TemplateURL: './events-repo-change-rule.yml'
@@ -83,6 +90,7 @@ Resources:
         CodeBuildServiceRoleName: !Ref CodeBuildServiceRoleName
         CodeBuildServiceRolePolicyName: !Ref CodeBuildServiceRolePolicyName
         DeploymentId: !Ref DeploymentId
+        PlatformId: !Ref PlatformId
         ProjectBucketName: !Ref ProjectBucketName
         ProjectDescription: !Ref ProjectDescription
         RepoName: !Ref RepoName

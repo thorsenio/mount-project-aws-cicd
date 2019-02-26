@@ -40,11 +40,18 @@ fi
 BranchName=${BranchName:=${BRANCH}}
 if [[ ${BranchName} == 'master' ]]
 then
-  VersionStage=''
+  DeploymentName=''
 else
-  # Use a deployment name if provided; otherwise, use the branch name (converting `/` to `-`)
-  VersionStage=${DeploymentName:=${BranchName//\//-}}
+  # Use a deployment name if provided; otherwise, use the branch name
+  # (removing `/` and `-`)
+  DeploymentName=${DeploymentName:=${BranchName//\//-}}
+  DeploymentName=${DeploymentName//\//}
+  DeploymentName=${DeploymentName//-/}
 fi
+
+# TODO: Possibly allow a version stage that differs from the deployment name.
+#  Alternatively, eliminate it and use only `DeploymentName`
+VersionStage=${DeploymentName}
 
 # Project, version, and branch are combined into a value usable by the project
 ProjectDescription="${ProjectDescription:=${ProjectName}}"
@@ -52,6 +59,9 @@ ProjectVersion="${ProjectVersion:=0.0.1}"
 ProjectMajorVersion=$(echo ${ProjectVersion} | head -n 1 | cut -d . -f 1)
 ProjectVersionBranch="${ProjectName}-v${ProjectMajorVersion}-${BranchName}"
 DeploymentId="${ProjectName}-v${ProjectMajorVersion}${VersionStage}"
+
+# For now, VersionStage is used only in this file, and its use may be deprecated
+unset VersionStage
 
 SiteDomainName=${SiteDomainName:='www.example.com'}
 # TODO: FEATURE: Possibly add SiteUrl to allow for microservices hosted at the same domain
