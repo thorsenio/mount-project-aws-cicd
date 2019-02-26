@@ -3,12 +3,25 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'Rule triggering the pipeline when the CodeCommit repo is changed'
 
 Parameters:
+  BranchName:
+    Description: 'The source code branch associated with the pipeline'
+    Type: String
+    Default: 'master'
+
   CodePipelineArn:
     Description: 'ARN of the CI/CD pipeline'
     Type: String
 
   CodePipelineName:
     Description: 'Name of the CI/CD pipeline'
+    Type: String
+
+  DeploymentId:
+    Description: 'Identifier of the project, major version, and version stage'
+    Type: String
+
+  PlatformId:
+    Description: 'Identifier of the CI/CD platform'
     Type: String
 
   ProjectName:
@@ -44,7 +57,7 @@ Resources:
           referenceType:
             - 'branch'
           referenceName:
-            - 'develop'
+            - !Ref BranchName
       Targets:
         - Arn: !Ref CodePipelineArn
           Id: !Ref EventsRuleRandomId

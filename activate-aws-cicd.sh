@@ -8,11 +8,13 @@
 
 BASE_NAME='skypilot/aws-cicd'
 
-# TODO: Allow custom path(s) to the variables files
+# TODO: FEATURE: Allow custom path(s) to the variables files
+# TODO: REFACTOR: Move as much code as possible into the platform code
+# TODO: REFACTOR: Don't allow stack to be launched when the working tree is dirty
 
 if [[ $# -gt 1 ]]
 then
-  echo "Usage: ${0} [tag]" 1>&2
+  echo "Usage: $0 [IMAGE_TAG]" 1>&2
   exit 1
 fi
 
