@@ -13,14 +13,6 @@ then
   exit 1
 fi
 
-embold () {
-  local bold=$(tput bold)
-  local normal=$(tput sgr0)
-
-  local TextToEmbold=$1
-  echo "${bold}${TextToEmbold}${normal}"
-}
-
 if [[ -z ${ACCOUNT_NAME} || -z ${PACKAGE_NAME} || -z ${VERSION} ]]
 then
   echo "platform-variables.sh must define ACCOUNT_NAME, PACKAGE_NAME, and VERSION" 1>&2
