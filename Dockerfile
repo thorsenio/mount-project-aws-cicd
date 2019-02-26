@@ -4,6 +4,7 @@ RUN apk update && \
   apk upgrade && \
   apk add \
     --no-cache \
+    git \
     docker
 
 # The aws-cicd source code is copied into this directory
