@@ -32,8 +32,12 @@ PlatformId="${PlatformName}-v${PlatformMajorVersion}${PlatformVersionStage}"
 RegionalPlatformStackName="${PlatformId}-regional"
 GlobalPlatformStackName="${PlatformId}-global"
 
-# Application deployment ID
-BranchName=${BranchName:='master'}
+# TODO: Handle the situation where `BRANCH` is undefined
+if [[ -z ${BRANCH} ]]; then
+  echo 'BRANCH is undefined. Exiting.' 1>&2
+  exit 1
+fi
+BranchName=${BranchName:=${BRANCH}}
 if [[ ${BranchName} == 'master' ]]
 then
   VersionStage=''
