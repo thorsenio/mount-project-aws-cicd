@@ -13,11 +13,13 @@
   cd - > /dev/null
 
 # TODO: Verify that all required values exist
-if [[ -z ${Region} ]]
-then
-  echo "No value is set for Region" 1>&2
-  exit 1
-fi
+for SETTING_NAME in Region ProjectDomain; do
+  if [[ -z ${!SETTING_NAME} ]]
+  then
+    echo "No value is set for ${SETTING_NAME}" 1>&2
+    exit 1
+  fi
+done
 
 # AWS constants
 AWS_GLOBAL_REGION='us-east-1'
@@ -63,7 +65,22 @@ DeploymentId="${ProjectName}-v${ProjectMajorVersion}${VersionStage}"
 # For now, VersionStage is used only in this file, and its use may be deprecated
 unset VersionStage
 
-SiteDomainName=${SiteDomainName:='www.example.com'}
+# ----- Domain names
+NonproductionBaseDomain=${NonproductionBaseDomain:=${ProjectDomain}}
+if [[ ${BranchName} == 'master' ]]; then
+  SiteDomainName=${SiteDomainName:="www.${ProjectDomain}"}
+  CertifiedDomain=${SiteDomainName}
+else
+#  if [[ -z ${NonproductionSiteDomain} ]]; then
+#    # TODO: This hasn't been tested yet
+#    echo "NonproductionSiteDomain: ${NonproductionSiteDomain}"
+#    CertifiedDomain=${NonproductionSiteDomain}
+#    SiteDomainName=${NonproductionSiteDomain}
+#  else
+    CertifiedDomain="*.${NonproductionBaseDomain}"
+    SiteDomainName="${DeploymentId,,}.${NonproductionBaseDomain}"
+#  fi
+fi
 # TODO: FEATURE: Possibly add SiteUrl to allow for microservices hosted at the same domain
 # TODO: FEATURE: Support multiple domain names
 # TODO: FEATURE: Support URLs instead of domain names

@@ -8,11 +8,10 @@
 # Name of the project. This value is used to generate names for some of this project's resources
 ProjectName='my-project'
 ProjectDescription='My project'
+ProjectDomain='example.com'
+SiteDomainName='www.example.com'
 
 RepoName=${ProjectName}
 RepoDescription="${ProjectDescription}"
-
-ProjectDomain='example.com'
-DevDomain='example.com'
 
 ProjectVersion='0.1.0'

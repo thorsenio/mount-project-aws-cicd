@@ -28,6 +28,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
+        AcmCertificateArn: !Ref AcmCertificateArn
         SiteBucketName: !Ref SiteBucketName
         SiteDomainName: !Ref SiteDomainName
         SiteErrorDocument: !Ref SiteErrorDocument
@@ -38,7 +39,6 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       Parameters:
-        AcmCertificateArn: !Ref AcmCertificateArn
         BucketName: !Ref SiteBucketName
         ErrorDocument: !Ref SiteErrorDocument
         IndexDocument: !Ref SiteIndexDocument

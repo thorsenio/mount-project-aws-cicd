@@ -10,14 +10,16 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
+echo "Project bucket name: ${ProjectBucketName}"
+
 # Capture the mode that should be used put the stack: `create` or `update`
 PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${SiteStackName})
 
 # Get the ARN of the ACM certificate for the domain name
-CERTIFICATE_ARN=$(echoAcmCertificateArn ${PROFILE} ${SiteDomainName})
+CERTIFICATE_ARN=$(echoAcmCertificateArn ${PROFILE} ${CertifiedDomain})
 if [[ -z ${CERTIFICATE_ARN} ]]
 then
-  echo "No certificate was found for the domain '${SiteDomainName}'."
+  echo "No certificate was found for the domain '${CertifiedDomain}'."
   echo "The creation of the stack has been aborted."
   exit 1
 fi
@@ -54,5 +56,5 @@ if [[ ${EXIT_STATUS} -eq 0 ]]
 then
   echo 'The stack will not be created unless you create (or have already created)'
   echo 'a CNAME record to allow AWS to validate the domain.'
-  echo 'To display the CNAME hostname and value, run ../cloudfront/describe-cname-record.sh'
+  echo 'To display the CNAME hostname and value, run `describe-cname-record.sh`'
 fi
