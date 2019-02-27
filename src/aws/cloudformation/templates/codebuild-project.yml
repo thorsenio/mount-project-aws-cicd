@@ -69,7 +69,7 @@ Resources:
         PrivilegedMode: true
         Type: 'LINUX_CONTAINER'
         EnvironmentVariables:
-          - Name: ASSET_BUCKET_NAME
+          - Name: PROJECT_BUCKET_NAME
             Type: PLAINTEXT
             Value: !Ref ProjectBucketName
           - Name: REPO_NAME

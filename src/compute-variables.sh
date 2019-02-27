@@ -166,7 +166,7 @@ RepoDescription="${RepoDescription:=${ProjectDescription}}"
 SiteStackName="${SiteStackName:=${DeploymentId}-site}"
 
 # The name and stack of the S3 bucket that hosts the project's static files
-ProjectBucketName="${ProjectBucketName:=${DeploymentId}-bucket}"
+ProjectBucketName="${ProjectBucketName:=${DeploymentId,,}-${Region//-/}-site}"
 ProjectBucketStackName="${ProjectBucketStackName:=${ProjectBucketName}}"
 
 # Name of the index and error documents for the site (for an SPA, these are typically the same)
