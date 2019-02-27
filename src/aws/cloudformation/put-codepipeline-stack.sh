@@ -22,7 +22,7 @@ then
   exit 1
 fi
 
-  ../codecommit/put-codecommit-repository.sh ${RepoName} ${RepoDescription}
+../codecommit/put-codecommit-repository.sh ${RepoName} "${RepoDescription}"
 
 TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }' | cut -d. -f1)
 

@@ -21,7 +21,7 @@ then
   exit 1
 fi
 
-../codecommit/put-codecommit-repository.sh ${RepoName} ${RepoDescription}
+../codecommit/put-codecommit-repository.sh ${RepoName} "${RepoDescription}"
 
 # TODO: REFACTOR: Use a function to generate ParameterKey,ParameterValue strings
 
