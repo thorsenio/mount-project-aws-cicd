@@ -13,11 +13,13 @@
   cd - > /dev/null
 
 # TODO: Verify that all required values exist
-if [[ -z ${Region} ]]
-then
-  echo "No value is set for Region" 1>&2
-  exit 1
-fi
+for SETTING_NAME in Region ProjectDomain; do
+  if [[ -z ${!SETTING_NAME} ]]
+  then
+    echo "No value is set for ${SETTING_NAME}" 1>&2
+    exit 1
+  fi
+done
 
 # AWS constants
 AWS_GLOBAL_REGION='us-east-1'
