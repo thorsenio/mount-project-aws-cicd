@@ -109,10 +109,6 @@ CodePipelineServiceRoleArn="arn:aws:iam::${AccountNumber}:role/${CodePipelineSer
 # Here CodeBuild & CodePipeline share the same bucket
 CicdArtifactsBucketName="${CicdArtifactsBucketName:=cicd-artifacts-${AccountName}-${PlatformId}-${Region//-/}}"
 
-# Name of the service role & policy used by CodeBuild to call AWS services for this project
-CodeBuildServiceRoleName=${CodeBuildServiceRoleName:="cb-service-role-${PlatformId}-${Region//-/}"}
-CodeBuildServiceRolePolicyName=${CodeBuildServiceRolePolicyName:="cb-service-role-policy-${PlatformId}-${Region//-/}"}
-
 # Name of the S3 bucket that holds CloudFormation templates for the region. It is part of the
 # regional platform stack
 CfTemplatesBucketName="${CfTemplatesBucketName:=cf-templates-${AccountName}-${PlatformId}-${Region//-/}}"
@@ -141,6 +137,10 @@ VpcDefaultSecurityGroupName="${VpcDefaultSecurityGroupName:=${VpcName}-sg}"
 CodeBuildProjectName="${CodeBuildProjectName:=${DeploymentId}-cb-project}"
 CodeBuildProjectStackName="${CodeBuildProjectStackName:=${CodeBuildProjectName}}"
 CodeBuildEnvironmentImage="${CodeBuildEnvironmentImage:='aws/codebuild/docker:18.09.0'}"
+
+# Name of the service role & policy used by CodeBuild to call AWS services for this project
+CodeBuildServiceRoleName=${CodeBuildServiceRoleName:="${DeploymentId}-${Region//-/}-cb-service-role"}
+CodeBuildServiceRolePolicyName=${CodeBuildServiceRolePolicyName:="${CodeBuildServiceRoleName}-policy"}
 
 # --- CodePipeline pipeline
 CodePipelineName="${CodePipelineName:=${DeploymentId}-cp}"
