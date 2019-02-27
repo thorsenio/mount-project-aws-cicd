@@ -63,7 +63,22 @@ DeploymentId="${ProjectName}-v${ProjectMajorVersion}${VersionStage}"
 # For now, VersionStage is used only in this file, and its use may be deprecated
 unset VersionStage
 
-SiteDomainName=${SiteDomainName:='www.example.com'}
+# ----- Domain names
+NonproductionBaseDomain=${NonproductionBaseDomain:=${ProjectDomain}}
+if [[ ${BranchName} == 'master' ]]; then
+  SiteDomainName=${SiteDomainName:="www.${ProjectDomain}"}
+  CertifiedDomain=${SiteDomainName}
+else
+#  if [[ -z ${NonproductionSiteDomain} ]]; then
+#    # TODO: This hasn't been tested yet
+#    echo "NonproductionSiteDomain: ${NonproductionSiteDomain}"
+#    CertifiedDomain=${NonproductionSiteDomain}
+#    SiteDomainName=${NonproductionSiteDomain}
+#  else
+    CertifiedDomain="*.${NonproductionBaseDomain}"
+    SiteDomainName="${DeploymentId,,}.${NonproductionBaseDomain}"
+#  fi
+fi
 # TODO: FEATURE: Possibly add SiteUrl to allow for microservices hosted at the same domain
 # TODO: FEATURE: Support multiple domain names
 # TODO: FEATURE: Support URLs instead of domain names

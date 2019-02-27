@@ -17,22 +17,13 @@ AccountNumber='123456708901'
 # (Recommended: use the account name as the profile name
 PROFILE=${AccountName}
 
-# Non-production domain name elements. These are used to generate domain names for deployments
-# other than production
+# This is used to generate domain names for deployments other than production
+NonproductionBaseDomain='example.com'
 
-# Example 1 (preferred)
+# Example of generated name
 #   ProjectDomain: myproject.com
-#   ProjectDomainRoot: myproject
-#   ProjectDeploymentName: dev
+#   ProjectName: myproj
+#   Version: 1.5
+#   DeploymentName: dev
 # //=>
-#   DeploymentDomain: myproject-dev.example.com
-
-# Example 2 (not yet implemented)
-#   ProjectDomain: myproject.com
-#   ProjectDomainRoot: myproject
-#   ProjectDeploymentName: dev
-#   DevDomainName: exampledev.com
-# //=>
-#   DeploymentDomain: myproject.exampledev.com
-
-DevDomain='example.com'
+#   generated SiteDomainName: myproj-v1dev.example.com
