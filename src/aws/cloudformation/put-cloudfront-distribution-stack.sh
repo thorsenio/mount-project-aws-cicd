@@ -28,7 +28,7 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --parameters \
     ParameterKey=AcmCertificateArn,ParameterValue=${CERTIFICATE_ARN} \
     ParameterKey=SiteBucketName,ParameterValue=${ProjectBucketName} \
-    ParameterKey=SiteDomainName,ParameterValue=${SiteDomainName} \
+    ParameterKey=SiteDomain,ParameterValue=${SiteDomain} \
     ParameterKey=SiteErrorDocument,ParameterValue=${SiteErrorDocument} \
     ParameterKey=SiteIndexDocument,ParameterValue=${SiteIndexDocument} \
   --capabilities \

@@ -26,4 +26,4 @@ NonproductionBaseDomain='example.com'
 #   Version: 1.5
 #   DeploymentName: dev
 # //=>
-#   generated SiteDomainName: myproj-v1dev.example.com
+#   generated SiteDomain: myproj-v1dev.example.com

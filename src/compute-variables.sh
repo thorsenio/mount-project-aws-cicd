@@ -68,8 +68,8 @@ unset VersionStage
 # ----- Domain names
 NonproductionBaseDomain=${NonproductionBaseDomain:=${ProjectDomain}}
 if [[ ${BranchName} == 'master' ]]; then
-  SiteDomainName=${SiteDomainName:="www.${ProjectDomain}"}
-  CertifiedDomain=${SiteDomainName}
+  SiteDomain=${SiteDomain:="www.${ProjectDomain}"}
+  CertifiedDomain=${SiteDomain}
 else
 #  if [[ -z ${NonproductionSiteDomain} ]]; then
 #    # TODO: This hasn't been tested yet
@@ -78,7 +78,7 @@ else
 #    SiteDomainName=${NonproductionSiteDomain}
 #  else
     CertifiedDomain="*.${NonproductionBaseDomain}"
-    SiteDomainName="${DeploymentId,,}.${NonproductionBaseDomain}"
+    SiteDomain="${DeploymentId,,}.${NonproductionBaseDomain}"
 #  fi
 fi
 # TODO: FEATURE: Possibly add SiteUrl to allow for microservices hosted at the same domain
