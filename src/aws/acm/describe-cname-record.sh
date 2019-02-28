@@ -22,7 +22,7 @@ CERTIFICATE_ARN=$(echoAcmCertificateArn ${PROFILE} ${DOMAIN_NAME})
 
 if [[ -z ${CERTIFICATE_ARN} ]]
 then
-  echo "No certificate was found for the domain '${SiteDomainName}'." 1>&2
+  echo "No certificate was found for the domain '${DOMAIN_NAME}'." 1>&2
   exit 1
 fi
 
