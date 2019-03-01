@@ -13,10 +13,19 @@
   cd - > /dev/null
 
 # TODO: Verify that all required values exist
-for SETTING_NAME in Region ProjectDomain; do
+for SETTING_NAME in \
+    BRANCH \
+    COMMIT_HASH \
+    PLATFORM_COMMIT_HASH \
+    PLATFORM_NAME \
+    PLATFORM_VERSION \
+    PLATFORM_VERSION_LABEL \
+    PLATFORM_VERSION_STAGE \
+    Region \
+    ProjectDomain; do
   if [[ -z ${!SETTING_NAME} ]]
   then
-    echo "No value is set for ${SETTING_NAME}" 1>&2
+    echo -e "No value is set for ${SETTING_NAME}\nAborting." 1>&2
     exit 1
   fi
 done
@@ -34,11 +43,6 @@ PlatformId="${PlatformName}-v${PlatformMajorVersion}${PlatformVersionStage}"
 RegionalPlatformStackName="${PlatformId}-regional"
 GlobalPlatformStackName="${PlatformId}-global"
 
-# TODO: Handle the situation where `BRANCH` is undefined
-if [[ -z ${BRANCH} ]]; then
-  echo 'BRANCH is undefined. Exiting.' 1>&2
-  exit 1
-fi
 BranchName=${BranchName:=${BRANCH}}
 if [[ ${BranchName} == 'master' ]]
 then
