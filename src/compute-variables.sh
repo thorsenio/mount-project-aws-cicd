@@ -22,7 +22,8 @@ for SETTING_NAME in \
     PLATFORM_VERSION_LABEL \
     PLATFORM_VERSION_STAGE \
     Region \
-    ProjectDomain; do
+    ProjectDomain \
+    ProjectVersion; do
   if [[ -z ${!SETTING_NAME} ]]
   then
     echo -e "No value is set for ${SETTING_NAME}\nAborting." 1>&2
@@ -33,39 +34,41 @@ done
 # AWS constants
 AWS_GLOBAL_REGION='us-east-1'
 
-# Platform deployment ID
+# -- Platform descriptors
 # The Dockerfile stores the `PLATFORM_*` values in environment variables
 PlatformCommitHash=${PLATFORM_COMMIT_HASH}
 PlatformName=${PLATFORM_NAME}
 PlatformVersion=${PLATFORM_VERSION}
-PlatformMajorVersion=$(echo ${PlatformVersion} | head -n 1 | cut -d . -f 1)
 PlatformVersionLabel=${PLATFORM_VERSION_LABEL}
 PlatformVersionStage=${PLATFORM_VERSION_STAGE}
-PlatformId="${PlatformName}-v${PlatformMajorVersion}${PlatformVersionStage}"
+PlatformMajorVersion=$(echo ${PlatformVersion} | head -n 1 | cut -d . -f 1)
+
+if [[ ${PlatformVersionStage} == 'master' ]]; then
+  PlatformId="${PlatformName}-v${PlatformMajorVersion}"
+else
+  PlatformId="${PlatformName}-v${PlatformMajorVersion}${PlatformVersionStage}"
+fi
+
 RegionalPlatformStackName="${PlatformId}-regional"
 GlobalPlatformStackName="${PlatformId}-global"
 
+# -- Project descriptors
 # The values of `BRANCH` and `COMMIT_HASH` are set in the activation script
 BranchName=${BranchName:=${BRANCH}}
-if [[ ${BranchName} == 'master' ]]; then
-  ProjectVersionStage=''
-else
-  # By default use the current branch name as the version stage (remove / and -)
-  ProjectVersionStage=${ProjectVersionStage:=${BranchName}}
-  ProjectVersionStage=${ProjectVersionStage//\//}
-  ProjectVersionStage=${ProjectVersionStage//-/}
-fi
+ProjectVersionStage=${ProjectVersionStage:=${BranchName}}
+ProjectVersionStage=${ProjectVersionStage//\//}
+ProjectVersionStage=${ProjectVersionStage//-/}
 
 # Combine project, version, and branch into values usable in the project
 ProjectCommitHash=${COMMIT_HASH}
 ProjectDescription="${ProjectDescription:=${ProjectName}}"
-ProjectVersion="${ProjectVersion:=0.0.1}"
 ProjectMajorVersion=$(echo ${ProjectVersion} | head -n 1 | cut -d . -f 1)
-DeploymentId="${ProjectName}-v${ProjectMajorVersion}${ProjectVersionStage}"
 
-if [[ ${BranchName} == 'master' ]]; then
+if [[ ${ProjectVersionStage} == 'master' ]]; then
+  DeploymentId="${ProjectName}-v${ProjectMajorVersion}"
   ProjectVersionLabel="v${ProjectVersion}"
 else
+  DeploymentId="${ProjectName}-v${ProjectMajorVersion}${ProjectVersionStage}"
   ProjectVersionLabel="v${ProjectVersion}-${ProjectVersionStage}"
 fi
 
