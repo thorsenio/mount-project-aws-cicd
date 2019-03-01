@@ -41,6 +41,12 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --template-body file://${TEMPLATE_BASENAME}--expanded.yml \
   --parameters \
     ParameterKey=AcmCertificateArn,ParameterValue=${CERTIFICATE_ARN} \
+    ParameterKey=DeploymentId,ParameterValue=${DeploymentId} \
+    ParameterKey=PlatformCommitHash,ParameterValue=${PlatformCommitHash} \
+    ParameterKey=PlatformId,ParameterValue=${PlatformId} \
+    ParameterKey=PlatformVersionLabel,ParameterValue=${PlatformVersionLabel} \
+    ParameterKey=ProjectCommitHash,ParameterValue=${ProjectCommitHash} \
+    ParameterKey=ProjectVersionLabel,ParameterValue=${ProjectVersionLabel} \
     ParameterKey=SiteBucketName,ParameterValue=${ProjectBucketName} \
     ParameterKey=SiteDomain,ParameterValue=${SiteDomain} \
     ParameterKey=SiteErrorDocument,ParameterValue=${SiteErrorDocument} \
