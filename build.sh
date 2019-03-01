@@ -6,7 +6,7 @@
 if [[ ! $1 == '--force' ]]; then
   test -z "$(git status --porcelain)"
   if [[ $? -ne 0 ]]; then
-    echo -e "Please commit or stash your changes before building.\nAborting" 1>&2
+    echo -e "Please commit or stash your changes before building or use --force.\nAborting build" 1>&2
     exit 1
   fi
 fi
@@ -30,12 +30,11 @@ fi
 
 IMAGE_NAME="${ACCOUNT_NAME}/${PACKAGE_NAME}"
 
-echo "Version stage: ${VERSION_STAGE}"
-
-# If version stage is undefined, use the current Git branch
+# By default use the current branch name as the version stage (remove / and -)
 if [[ -z ${VERSION_STAGE} ]]; then
   BRANCH=$(git symbolic-ref --short HEAD)
-  VERSION_STAGE=${BRANCH//\//-}
+  VERSION_STAGE=${BRANCH//\//}
+  VERSION_STAGE=${VERSION_STAGE//-/}
 fi
 COMMIT_HASH=$(git rev-parse)
 
