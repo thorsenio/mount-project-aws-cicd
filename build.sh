@@ -36,24 +36,25 @@ if [[ -z ${VERSION_STAGE} ]]; then
   VERSION_STAGE=${BRANCH//\//}
   VERSION_STAGE=${VERSION_STAGE//-/}
 fi
-COMMIT_HASH=$(git rev-parse)
+COMMIT_HASH=$(git rev-parse HEAD)
 
-# Build the tag: version number + version stage
+# Build the version label: version number + version stage
 # Omit the version stage if this is the master version
 if [[ ${VERSION_STAGE} == 'master' ]]; then
   LABEL='latest'
-  VERSION_LABEL=${VERSION}
+  VERSION_LABEL="v${VERSION}"
 else
   LABEL=${VERSION_STAGE}
-  VERSION_LABEL=${VERSION}-${VERSION_STAGE}
+  VERSION_LABEL="v${VERSION}-${VERSION_STAGE}"
 fi
 
 # Tag the build
 docker build -t ${IMAGE_NAME}:${LABEL} . \
+  --build-arg COMMIT_HASH=${COMMIT_HASH} \
   --build-arg PACKAGE_NAME=${PACKAGE_NAME} \
   --build-arg VERSION=${VERSION} \
-  --build-arg VERSION_STAGE=${VERSION_STAGE} \
-  --build-arg COMMIT_HASH=${COMMIT_HASH}
+  --build-arg VERSION_LABEL=${VERSION_LABEL} \
+  --build-arg VERSION_STAGE=${VERSION_STAGE}
 
 if [[ $? -ne 0 ]]
 then

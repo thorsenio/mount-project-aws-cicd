@@ -12,8 +12,10 @@ ARG PLATFORM_DIR='/var/lib'
 # The project consuming this container should be mounted into this directory
 ARG PROJECT_DIR='/var/project'
 
+ARG COMMIT_HASH
 ARG PACKAGE_NAME
 ARG VERSION
+ARG VERSION_LABEL
 ARG VERSION_STAGE
 ENV \
   PLATFORM_NAME=${PACKAGE_NAME} \
