@@ -23,7 +23,7 @@ ENV \
   PLATFORM_VERSION=${VERSION} \
   PLATFORM_VERSION_LABEL=${VERSION_LABEL} \
   PLATFORM_VERSION_STAGE=${VERSION_STAGE} \
-  PATH="${PLATFORM_DIR}/aws/cloudformation:${PLATFORM_DIR}/aws/ec2:${PLATFORM_DIR}/aws/ecr:${PLATFORM_DIR}/aws/codecommit:${PLATFORM_DIR}/scripts:${PATH}" \
+  PATH="${PLATFORM_DIR}/aws/acm:${PLATFORM_DIR}/aws/cloudformation:${PLATFORM_DIR}/aws/ec2:${PLATFORM_DIR}/aws/ecr:${PLATFORM_DIR}/aws/codecommit:${PLATFORM_DIR}/scripts:${PATH}" \
   PROJECT_DIR="${PROJECT_DIR}"
 
 RUN mkdir -p \
