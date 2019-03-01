@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-VERSION='0.12.21'
+VERSION='0.13.0'
 VERSION_STAGE='dev'
 ACCOUNT_NAME='skypilot'
 PACKAGE_NAME='aws-cicd'

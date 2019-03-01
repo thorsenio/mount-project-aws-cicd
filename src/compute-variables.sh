@@ -68,19 +68,15 @@ unset VersionStage
 # ----- Domain names
 NonproductionBaseDomain=${NonproductionBaseDomain:=${ProjectDomain}}
 if [[ ${BranchName} == 'master' ]]; then
-  SiteDomainName=${SiteDomainName:="www.${ProjectDomain}"}
-  CertifiedDomain=${SiteDomainName}
+  SiteDomain=${SiteDomain:="www.${ProjectDomain}"}
+  CertifiedDomain=${SiteDomain}
 else
-#  if [[ -z ${NonproductionSiteDomain} ]]; then
-#    # TODO: This hasn't been tested yet
-#    echo "NonproductionSiteDomain: ${NonproductionSiteDomain}"
-#    CertifiedDomain=${NonproductionSiteDomain}
-#    SiteDomainName=${NonproductionSiteDomain}
-#  else
+    # Use a wildcard certificate
     CertifiedDomain="*.${NonproductionBaseDomain}"
-    SiteDomainName="${DeploymentId,,}.${NonproductionBaseDomain}"
-#  fi
+    # All nonproduction deployments are expected to use this naming scheme
+    SiteDomain="${DeploymentId,,}.${NonproductionBaseDomain}"
 fi
+# TODO: FEATURE: Possibly allow custom nonproduction domains
 # TODO: FEATURE: Possibly add SiteUrl to allow for microservices hosted at the same domain
 # TODO: FEATURE: Support multiple domain names
 # TODO: FEATURE: Support URLs instead of domain names
