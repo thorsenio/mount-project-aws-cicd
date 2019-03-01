@@ -23,7 +23,7 @@ NonproductionBaseDomain='example.com'
 # Example of generated name
 #   ProjectDomain: myproject.com
 #   ProjectName: myproj
-#   Version: 1.5
-#   DeploymentName: dev
+#   ProjectVersion: 1.5.0
+#   ProjectVersionStage: dev
 # //=>
 #   generated SiteDomain: myproj-v1dev.example.com

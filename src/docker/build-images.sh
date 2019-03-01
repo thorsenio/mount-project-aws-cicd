@@ -15,18 +15,20 @@ cd "${PROJECT_DIR}"
 
 echo "PROJECT_DIR: ${PROJECT_DIR}"
 
-# TODO: REFACTOR: Reduce duplication of code with `aws/ecr/push-images.sh`
-# Build the tag: label + version number
-if [[ ${BranchName} == 'master' ]]
-then
-  TAG=${ProjectVersion}
+# TODO: REFACTOR: Reduce duplication of code with `docker/build-images.sh`
+# Build the version label: version number + version stage
+# Omit the version stage if this is the master version
+if [[ ${ProjectVersionStage} == 'master' ]]; then
+  LABEL='latest'
+  VERSION_LABEL="v${ProjectVersion}"
 else
-  TAG="${DeploymentName}-${ProjectVersion}"
+  LABEL=${ProjectVersionStage}
+  VERSION_LABEL="v${ProjectVersion}-${ProjectVersionStage}"
 fi
 
 for IMAGE_NAME in ${EcrRepoNames}; do
 
-  SHORT_TAG=${DeploymentId}/${IMAGE_NAME}:${TAG}
+  SHORT_TAG=${DeploymentId}/${IMAGE_NAME}:${VERSION_LABEL}
   LONG_TAG=${AccountNumber}.dkr.ecr.${Region}.amazonaws.com/${SHORT_TAG}
 
   DOCKERFILE=${IMAGE_NAME}.Dockerfile

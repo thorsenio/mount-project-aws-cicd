@@ -22,12 +22,14 @@ then
 fi
 
 # TODO: REFACTOR: Reduce duplication of code with `docker/build-images.sh`
-# Build the tag: label + version number
-if [[ ${BranchName} == 'master' ]]
-then
-  TAG=${ProjectVersion}
+# Build the version label: version number + version stage
+# Omit the version stage if this is the master version
+if [[ ${ProjectVersionStage} == 'master' ]]; then
+  LABEL='latest'
+  VERSION_LABEL="v${ProjectVersion}"
 else
-  TAG="${DeploymentName}-${ProjectVersion}"
+  LABEL=${ProjectVersionStage}
+  VERSION_LABEL="v${ProjectVersion}-${ProjectVersionStage}"
 fi
 
 for IMAGE_NAME in ${EcrRepoNames}; do
@@ -35,7 +37,8 @@ for IMAGE_NAME in ${EcrRepoNames}; do
 
   ./put-ecr-repository.sh ${IMAGE_NAME}
 
-  SHORT_TAG=${DeploymentId}/${IMAGE_NAME}:${TAG}
+  # Note that `LABEL` isn't used
+  SHORT_TAG=${DeploymentId}/${IMAGE_NAME}:${VERSION_LABEL}
   LONG_TAG=${AccountNumber}.dkr.ecr.${Region}.amazonaws.com/${SHORT_TAG}
 
   docker push ${LONG_TAG}
