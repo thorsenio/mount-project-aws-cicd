@@ -3,11 +3,14 @@
 # This script builds the Docker image and tags it with the version information
 # contained in `platform-variables.sh` and derived from the current Git branch name
 
-test -z "$(git status --porcelain)"
-if [[ $? -ne 0 ]]; then
-  echo -e "Please commit or stash your changes before building.\nAborting" 1>&2
-  exit 1
+if [[ ! $1 == '--force' ]]; then
+  test -z "$(git status --porcelain)"
+  if [[ $? -ne 0 ]]; then
+    echo -e "Please commit or stash your changes before building.\nAborting" 1>&2
+    exit 1
+  fi
 fi
+
 
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
