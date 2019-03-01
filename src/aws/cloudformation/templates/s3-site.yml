@@ -7,6 +7,30 @@ Parameters:
     Description: 'ARN ofthe ACM Certificate for the domain'
     Type: String
 
+  DeploymentId:
+    Description: 'Identifier of the project, major version & version stage'
+    Type: String
+
+  PlatformCommitHash:
+    Description: 'Commit hash of the CI/CD platform'
+    Type: String
+
+  PlatformId:
+    Description: 'Identifier of the CI/CD platform name, major version & version stage'
+    Type: String
+
+  PlatformVersionLabel:
+    Description: 'AWS CI/CD platform version'
+    Type: String
+
+  ProjectCommitHash:
+    Description: 'Commit hash of the deployed project'
+    Type: String
+
+  ProjectVersionLabel:
+    Description: 'Project version label (version + stage)'
+    Type: String
+
   SiteBucketName:
     Description: 'S3 bucket for the project'
     Type: String
@@ -35,6 +59,7 @@ Resources:
         SiteIndexDocument: !Ref SiteIndexDocument
       TemplateURL: './cloudfront-distribution.yml'
       TimeoutInMinutes: 60
+
   SiteBucketStack:
     Type: AWS::CloudFormation::Stack
     Properties:

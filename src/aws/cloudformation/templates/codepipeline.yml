@@ -37,19 +37,31 @@ Parameters:
     Type: String
 
   DeploymentId:
-    Description: 'Identifier of the project, major version, and version stage'
+    Description: 'Identifier of the project, major version & version stage'
     Type: String
 
   EventsRuleRandomId:
     Description: 'A unique, user-definied identifier for the target of an Events rule'
     Type: String
 
+  PlatformCommitHash:
+    Description: 'Commit hash of the CI/CD platform'
+    Type: String
+
   PlatformId:
-    Description: 'Identifier of the CI/CD platform'
+    Description: 'Identifier of the CI/CD platform name, major version & version stage'
+    Type: String
+
+  PlatformVersionLabel:
+    Description: 'AWS CI/CD platform version label (version + stage)'
     Type: String
 
   ProjectBucketName:
     Description: 'S3 bucket for the project'
+    Type: String
+
+  ProjectCommitHash:
+    Description: 'Commit hash of the deployed project'
     Type: String
 
   ProjectDescription:
@@ -58,6 +70,10 @@ Parameters:
 
   ProjectName:
     Description: 'Name of the project (typically same as repo name)'
+    Type: String
+
+  ProjectVersionLabel:
+    Description: 'Project version label (version + stage)'
     Type: String
 
   RepoName:

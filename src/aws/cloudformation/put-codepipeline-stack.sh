@@ -62,10 +62,14 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     ParameterKey=CodePipelineServiceRoleName,ParameterValue=${CodePipelineServiceRoleName} \
     ParameterKey=DeploymentId,ParameterValue=${DeploymentId} \
     ParameterKey=EventsRuleRandomId,ParameterValue=${EventsRuleRandomId} \
-    ParameterKey=ProjectBucketName,ParameterValue=${ProjectBucketName} \
-    ParameterKey=ProjectDescription,ParameterValue="${ProjectDescription}" \
+    ParameterKey=PlatformCommitHash,ParameterValue=${PlatformCommitHash} \
     ParameterKey=PlatformId,ParameterValue=${PlatformId} \
+    ParameterKey=PlatformVersionLabel,ParameterValue=${PlatformVersionLabel} \
+    ParameterKey=ProjectBucketName,ParameterValue=${ProjectBucketName} \
+    ParameterKey=ProjectCommitHash,ParameterValue=${ProjectCommitHash} \
+    ParameterKey=ProjectDescription,ParameterValue="${ProjectDescription}" \
     ParameterKey=ProjectName,ParameterValue=${ProjectName} \
+    ParameterKey=ProjectVersionLabel,ParameterValue=${ProjectVersionLabel} \
     ParameterKey=RepoName,ParameterValue=${RepoName} \
   --capabilities \
     CAPABILITY_AUTO_EXPAND \
