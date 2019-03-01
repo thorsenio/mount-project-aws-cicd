@@ -48,6 +48,7 @@ docker container run \
   --rm \
   --tty \
   --env BRANCH=$(git symbolic-ref --short HEAD) \
+  --env COMMIT_HASH=$(git rev-parse HEAD) \
   --mount type=bind,source=${PWD},target=${PROJECT_DIR} \
   --mount type=bind,source=${PWD}/config,target=/var/lib/config \
   --mount type=bind,source="${HOME}/.aws",target=/root/.aws \
