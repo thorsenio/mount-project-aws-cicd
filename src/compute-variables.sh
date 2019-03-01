@@ -34,40 +34,40 @@ done
 AWS_GLOBAL_REGION='us-east-1'
 
 # Platform deployment ID
-# The Dockerfile sets `PLATFORM_NAME`, `PLATFORM_VERSION` & `PLATFORM_VERSION_STAGE` as env vars
-PlatformName=${PLATFORM_NAME:='aws-cicd'}
-PlatformVersion=${PLATFORM_VERSION:='1.0.0'}
-PlatformVersionStage=${PLATFORM_VERSION_STAGE:=''}
+# The Dockerfile stores the `PLATFORM_*` values in environment variables
+PlatformCommitHash=${PLATFORM_COMMIT_HASH}
+PlatformName=${PLATFORM_NAME}
+PlatformVersion=${PLATFORM_VERSION}
 PlatformMajorVersion=$(echo ${PlatformVersion} | head -n 1 | cut -d . -f 1)
+PlatformVersionLabel=${PLATFORM_VERSION_LABEL}
+PlatformVersionStage=${PLATFORM_STAGE}
 PlatformId="${PlatformName}-v${PlatformMajorVersion}${PlatformVersionStage}"
 RegionalPlatformStackName="${PlatformId}-regional"
 GlobalPlatformStackName="${PlatformId}-global"
 
+# The values of `BRANCH` and `COMMIT_HASH` are set in the activation script
 BranchName=${BranchName:=${BRANCH}}
-if [[ ${BranchName} == 'master' ]]
-then
-  DeploymentName=''
+if [[ ${BranchName} == 'master' ]]; then
+  ProjectVersionStage=''
 else
-  # Use a deployment name if provided; otherwise, use the branch name
-  # (removing `/` and `-`)
-  DeploymentName=${DeploymentName:=${BranchName//\//-}}
-  DeploymentName=${DeploymentName//\//}
-  DeploymentName=${DeploymentName//-/}
+  # By default use the current branch name as the version stage (remove / and -)
+  ProjectVersionStage=${ProjectVersionStage:=${BranchName}}
+  ProjectVersionStage=${ProjectVersionStage//\//}
+  ProjectVersionStage=${ProjectVersionStage//-/}
 fi
 
-# TODO: Possibly allow a version stage that differs from the deployment name.
-#  Alternatively, eliminate it and use only `DeploymentName`
-VersionStage=${DeploymentName}
-
-# Project, version, and branch are combined into a value usable by the project
+# Combine project, version, and branch into values usable in the project
+ProjectCommitHash=${COMMIT_HASH}
 ProjectDescription="${ProjectDescription:=${ProjectName}}"
 ProjectVersion="${ProjectVersion:=0.0.1}"
 ProjectMajorVersion=$(echo ${ProjectVersion} | head -n 1 | cut -d . -f 1)
-ProjectVersionBranch="${ProjectName}-v${ProjectMajorVersion}-${BranchName}"
-DeploymentId="${ProjectName}-v${ProjectMajorVersion}${VersionStage}"
+DeploymentId="${ProjectName}-v${ProjectMajorVersion}${ProjectVersionStage}"
 
-# For now, VersionStage is used only in this file, and its use may be deprecated
-unset VersionStage
+if [[ ${BranchName} == 'master' ]]; then
+  ProjectVersionLabel="v${ProjectVersion}"
+else
+  ProjectVersionLabel="v${ProjectVersion}-${ProjectVersionStage}"
+fi
 
 # ----- Domain names
 NonproductionBaseDomain=${NonproductionBaseDomain:=${ProjectDomain}}
