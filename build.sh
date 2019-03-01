@@ -3,6 +3,15 @@
 # This script builds the Docker image and tags it with the version information
 # contained in `platform-variables.sh` and derived from the current Git branch name
 
+if [[ ! $1 == '--force' ]]; then
+  test -z "$(git status --porcelain)"
+  if [[ $? -ne 0 ]]; then
+    echo -e "Please commit or stash your changes before building.\nAborting" 1>&2
+    exit 1
+  fi
+fi
+
+
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 source platform-variables.sh
@@ -28,6 +37,7 @@ if [[ -z ${VERSION_STAGE} ]]; then
   BRANCH=$(git symbolic-ref --short HEAD)
   VERSION_STAGE=${BRANCH//\//-}
 fi
+COMMIT_HASH=$(git rev-parse)
 
 # Build the tag: version number + version stage
 # Omit the version stage if this is the master version
@@ -43,7 +53,8 @@ fi
 docker build -t ${IMAGE_NAME}:${LABEL} . \
   --build-arg PACKAGE_NAME=${PACKAGE_NAME} \
   --build-arg VERSION=${VERSION} \
-  --build-arg VERSION_STAGE=${VERSION_STAGE}
+  --build-arg VERSION_STAGE=${VERSION_STAGE} \
+  --build-arg COMMIT_HASH=${COMMIT_HASH}
 
 if [[ $? -ne 0 ]]
 then
