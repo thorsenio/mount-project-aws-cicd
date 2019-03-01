@@ -62,5 +62,5 @@ if [[ ${EXIT_STATUS} -eq 0 ]]
 then
   echo 'The stack will not be created unless you create (or have already created)'
   echo 'a CNAME record to allow AWS to validate the domain.'
-  echo 'To display the CNAME hostname and value, run `describe-cname-record.sh`'
+  echo "To display the CNAME hostname and value, run \`describe-cname-record.sh '${CertifiedDomain}'\`"
 fi
