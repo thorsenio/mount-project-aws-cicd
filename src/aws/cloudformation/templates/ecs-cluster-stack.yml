@@ -18,6 +18,10 @@ Parameters:
     Description: 'Name of the ECS cluster.'
     Type: String
 
+  FileSystemName:
+    Description: 'FileSystem name'
+    Type: String
+
   PlatformCommitHash:
     Description: 'Commit hash of the CI/CD platform'
     Type: String
@@ -214,6 +218,44 @@ Resources:
       Port: 80
       Protocol: 'HTTP'
   # ----- End of Application Load Balancer resources
+
+  # ----- FileSystem resources
+  FileSystem:
+    Type: AWS::EFS::FileSystem
+    Properties:
+      FileSystemTags:
+        - Key: EcsClusterName
+          Value: !Ref EcsClusterName
+        - Key: Name
+          Value: !Ref FileSystemName
+
+  MountTargetA:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref FileSystem
+      SecurityGroups:
+        - !GetAtt VpcStack.Outputs.SecurityGroupId
+      SubnetId:
+        - !GetAtt VpcStack.Outputs.PrivateSubnetA
+
+  MountTargetB:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref FileSystem
+      SecurityGroups:
+        - !GetAtt VpcStack.Outputs.SecurityGroupId
+      SubnetId:
+        - !GetAtt VpcStack.Outputs.PrivateSubnetB
+
+  MountTargetC:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref FileSystem
+      SecurityGroups:
+        - !GetAtt VpcStack.Outputs.SecurityGroupId
+      SubnetId:
+        - !GetAtt VpcStack.Outputs.PrivateSubnetC
+  # ----- End of FileSystem resources
 
   VpcStack:
     Type: AWS::CloudFormation::Stack
