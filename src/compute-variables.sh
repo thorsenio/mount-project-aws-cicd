@@ -134,6 +134,9 @@ VpcName="${VpcName:=${DeploymentId}-vpc}"
 VpcStackName="${VpcStackName:=${VpcName}}"
 VpcDefaultSecurityGroupName="${VpcDefaultSecurityGroupName:=${VpcName}-sg}"
 
+FileSystemName="${FileSystemName:=${EcsClusterName}-fs}"
+FileSystemStackName="${FileSystemStackName:=${FileSystemName}}"
+
 # ----- Project-wide variables
 
 # --- CodeBuild project
