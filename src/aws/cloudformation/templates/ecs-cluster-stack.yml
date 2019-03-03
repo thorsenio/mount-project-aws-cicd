@@ -57,6 +57,9 @@ Parameters:
     Description: 'Name of the VPC'
     Type: String
 
+Conditions:
+  Create3Subnets: !Equals [!Ref DesiredAzCount, 3]
+
 Resources:
   # ----- ECS resources
   EcsCluster:
@@ -249,6 +252,7 @@ Resources:
 
   MountTargetC:
     Type: AWS::EFS::MountTarget
+    Condition: Create3Subnets
     Properties:
       FileSystemId: !Ref FileSystem
       SecurityGroups:
@@ -282,6 +286,7 @@ Outputs:
 
   PrivateSubnetC:
     Description: 'ID of private subnet in AZ c'
+    Condition: Create3Subnets
     Value: !GetAtt VpcStack.Outputs.PrivateSubnetC
 
   VpcId:
