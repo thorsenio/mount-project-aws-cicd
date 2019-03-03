@@ -36,7 +36,7 @@ AWS_GLOBAL_REGION='us-east-1'
 
 # -- Platform descriptors
 # The Dockerfile stores the `PLATFORM_*` values in environment variables
-PlatformCommitHash=${PLATFORM_COMMIT_HASH}
+PlatformCommitHash=${PLATFORM_COMMIT_HASH:0:7}
 PlatformName=${PLATFORM_NAME}
 PlatformVersion=${PLATFORM_VERSION}
 PlatformVersionLabel=${PLATFORM_VERSION_LABEL}
@@ -60,7 +60,7 @@ ProjectVersionStage=${ProjectVersionStage//\//}
 ProjectVersionStage=${ProjectVersionStage//-/}
 
 # Combine project, version, and branch into values usable in the project
-ProjectCommitHash=${COMMIT_HASH}
+ProjectCommitHash=${COMMIT_HASH:0:7}
 ProjectDescription="${ProjectDescription:=${ProjectName}}"
 ProjectMajorVersion=$(echo ${ProjectVersion} | head -n 1 | cut -d . -f 1)
 
