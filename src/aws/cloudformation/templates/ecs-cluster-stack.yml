@@ -186,10 +186,10 @@ Resources:
           fi
 
           # Install Python 2.7, pip, and the AWS CLI
-          if ! rpm -qa | grep -qw python27; then
-            yum -y install python27
+          if ! rpm -qa | grep -qw python-2.7; then
+            yum -y install python2
           fi
-          yum -y install python27-pip
+          yum -y install python2-pip
           pip install awscli
 
           # Add EFS support to the CLI configuration
@@ -206,10 +206,11 @@ Resources:
           # (Note: The instance must have an EC2 role that gives the instance at
           # least read access to EFS)
           EFS_FILE_SYSTEM_ID=$(
-            /usr/local/bin/aws efs describe-file-systems \
+            aws efs describe-file-systems \
               --region $EC2_REGION \
               | jq '.FileSystems[]' \
-              | jq 'select(.Name=="efs-docker")' | jq -r '.FileSystemId' \
+              | jq "select(.Name==\"${FileSystemName}\")" \
+              | jq -r '.FileSystemId' \
           )
           # Check to see if the variable is set. If not, then exit.
           if [-z "$EFS_FILE_SYSTEM_ID"]; then
@@ -220,7 +221,7 @@ Resources:
           # Instance needs to belong to a security group that allows 2049 inbound/outbound
           # The security group that the instance belongs to has to be added to EFS file system configuration
           # Create variables for source and target
-          DIR_SRC=$EC2_AVAIL_ZONE.$EFS_FILE_SYSTEM_ID.efs.$EC2_REGION.amazonaws.com
+          DIR_SRC="${EFS_FILE_SYSTEM_ID}.efs.${EC2_REGION}.amazonaws.com"
           DIR_TGT=/mnt/efs
 
           # Mount EFS file system
