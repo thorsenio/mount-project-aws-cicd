@@ -130,9 +130,9 @@ Resources:
   AutoscalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     DependsOn:
-      - VpcStack
       - EcsCluster
       - TargetGroup
+      - VpcStack
     Properties:
       VPCZoneIdentifier:
         - !GetAtt VpcStack.Outputs.PrivateSubnetA
@@ -238,8 +238,7 @@ Resources:
       FileSystemId: !Ref FileSystem
       SecurityGroups:
         - !GetAtt VpcStack.Outputs.SecurityGroupId
-      SubnetId:
-        - !GetAtt VpcStack.Outputs.PrivateSubnetA
+      SubnetId: !GetAtt VpcStack.Outputs.PrivateSubnetA
 
   MountTargetB:
     Type: AWS::EFS::MountTarget
@@ -247,8 +246,7 @@ Resources:
       FileSystemId: !Ref FileSystem
       SecurityGroups:
         - !GetAtt VpcStack.Outputs.SecurityGroupId
-      SubnetId:
-        - !GetAtt VpcStack.Outputs.PrivateSubnetB
+      SubnetId: !GetAtt VpcStack.Outputs.PrivateSubnetB
 
   MountTargetC:
     Type: AWS::EFS::MountTarget
@@ -257,8 +255,7 @@ Resources:
       FileSystemId: !Ref FileSystem
       SecurityGroups:
         - !GetAtt VpcStack.Outputs.SecurityGroupId
-      SubnetId:
-        - !GetAtt VpcStack.Outputs.PrivateSubnetC
+      SubnetId: !GetAtt VpcStack.Outputs.PrivateSubnetC
   # ----- End of FileSystem resources
 
   VpcStack:
