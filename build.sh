@@ -38,6 +38,7 @@ if [[ -z ${VERSION_STAGE} ]]; then
 fi
 COMMIT_HASH=$(git rev-parse HEAD)
 
+# TODO: REFACTOR: Reduce duplication of code with `docker/build-images.sh`
 # Build the version label: version number + version stage
 # Omit the version stage if this is the master version
 if [[ ${VERSION_STAGE} == 'master' ]]; then

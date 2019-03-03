@@ -2,6 +2,14 @@
 
 # This script builds and tags the project's Docker images
 
+if [[ ! $1 == '--force' ]]; then
+  test -z "$(git status --porcelain)"
+  if [[ $? -ne 0 ]]; then
+    echo -e "Please commit or stash your changes before building or use --force.\nAborting build" 1>&2
+    exit 1
+  fi
+fi
+
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
@@ -15,7 +23,7 @@ cd "${PROJECT_DIR}"
 
 echo "PROJECT_DIR: ${PROJECT_DIR}"
 
-# TODO: REFACTOR: Reduce duplication of code with `docker/build-images.sh`
+# TODO: REFACTOR: Reduce duplication of code with `build.sh`
 # Build the version label: version number + version stage
 # Omit the version stage if this is the master version
 if [[ ${ProjectVersionStage} == 'master' ]]; then
@@ -50,5 +58,4 @@ for IMAGE_NAME in ${EcrRepoNames}; do
     echo "Docker failed to build ${SHORT_TAG}" 1>&2
     exit 1
   fi
-
 done
