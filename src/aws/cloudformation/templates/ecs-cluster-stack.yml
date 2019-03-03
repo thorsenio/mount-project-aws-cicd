@@ -18,6 +18,18 @@ Parameters:
     Description: 'Name of the ECS cluster.'
     Type: String
 
+  PlatformCommitHash:
+    Description: 'Commit hash of the CI/CD platform'
+    Type: String
+
+  PlatformId:
+    Description: 'Platform ID'
+    Type: String
+
+  PlatformVersionLabel:
+    Description: 'AWS CI/CD platform version label (version + stage)'
+    Type: String
+
   ImageId:
     # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html
     Description: ID of ECS-optimized AMI optimized for the region.

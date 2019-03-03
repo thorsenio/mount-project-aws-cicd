@@ -45,6 +45,9 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     ParameterKey=DesiredAzCount,ParameterValue=${DESIRED_AZ_COUNT} \
     ParameterKey=EcsClusterName,ParameterValue=${EcsClusterName} \
     ParameterKey=KeyPairKeyName,ParameterValue=${KeyPairKeyName} \
+    ParameterKey=PlatformCommitHash,ParameterValue=${PlatformCommitHash} \
+    ParameterKey=PlatformId,ParameterValue=${PlatformId} \
+    ParameterKey=PlatformVersionLabel,ParameterValue=${PlatformVersionLabel} \
     ParameterKey=VpcName,ParameterValue=${EcsClusterVpcName} \
   --capabilities \
     CAPABILITY_AUTO_EXPAND \
