@@ -114,6 +114,7 @@ Resources:
     Properties:
       Path: '/'
       ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess
         - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
         - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
       AssumeRolePolicyDocument:
@@ -131,6 +132,10 @@ Resources:
     Type: AWS::AutoScaling::AutoScalingGroup
     DependsOn:
       - EcsCluster
+      - FileSystem
+      - MountTargetA
+      - MountTargetB
+      - MountTargetC
       - TargetGroup
       - VpcStack
     Properties:
@@ -169,11 +174,31 @@ Resources:
         - !GetAtt VpcStack.Outputs.SecurityGroupId
       IamInstanceProfile: !Ref InstanceProfile
       UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          yum update -y
-          # Specify which cluster to join
-          echo ECS_CLUSTER=${EcsClusterName} >> /etc/ecs/ecs.config
+        Fn::Base64:
+          Fn::Sub:
+            - |
+              #!/bin/bash
+              yum update -y
+              yum install -y amazon-efs-utils
+
+              # Specify which cluster to join
+              echo ECS_CLUSTER=${EcsClusterName} >> /etc/ecs/ecs.config
+
+              # Create a mount point for the EFS file system
+              mkdir /mnt/efs
+
+              DIR_SRC=${FileSystemId}.efs.${AWS::Region}.amazonaws.com
+              DIR_TGT=/mnt/efs
+
+              # Mount EFS file system
+              mount -t efs $DIR_SRC:/ $DIR_TGT
+
+              # Backup fstab
+              cp -p /etc/fstab /etc/fstab.back-$(date +%F)
+
+              # Add the file system to `fstab` so that it is remounted whenever the instance reboots
+              echo "${FileSystemId}:/ $DIR_TGT efs tls,_netdev" >> /etc/fstab
+            - FileSystemId: !Ref FileSystem
 
   TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
