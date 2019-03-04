@@ -175,27 +175,10 @@ Resources:
             - |
               #!/bin/bash
               yum update -y
+              yum install -y amazon-efs-utils
 
               # Specify which cluster to join
               echo ECS_CLUSTER=${EcsClusterName} >> /etc/ecs/ecs.config
-
-              # Install jq, a JSON parser
-              yum -y install jq
-
-              # Install NFS client
-              if ! rpm -qa | grep -qw nfs-utils; then
-                yum -y install nfs-utils
-              fi
-
-              # Install Python 2.7, pip, and the AWS CLI
-              if ! rpm -qa | grep -qw python-2.7; then
-                yum -y install python2
-              fi
-              yum -y install python2-pip
-              pip install awscli
-
-              # Add EFS support to the CLI configuration
-              aws configure set preview.efs true
 
               # Create a mount point for the EFS file system
               mkdir /mnt/efs
@@ -204,13 +187,13 @@ Resources:
               DIR_TGT=/mnt/efs
 
               # Mount EFS file system
-              mount -t nfs4 $DIR_SRC:/ $DIR_TGT
+              mount -t efs $DIR_SRC:/ $DIR_TGT
 
               # Backup fstab
               cp -p /etc/fstab /etc/fstab.back-$(date +%F)
 
-              # Append line to fstab
-              echo -e "$DIR_SRC:/ \t\t $DIR_TGT \t\t nfs \t\t defaults \t\t 0 \t\t 0" | tee -a /etc/fstab
+              # Add the file system to `fstab` so that it is remounted whenever the instance reboots
+              echo "${FileSystemId}:/ $DIR_TGT efs tls,_netdev" >> /etc/fstab
             - FileSystemId: !Ref FileSystem
 
   TargetGroup:
