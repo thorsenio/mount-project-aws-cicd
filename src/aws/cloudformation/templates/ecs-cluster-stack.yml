@@ -132,6 +132,10 @@ Resources:
     Type: AWS::AutoScaling::AutoScalingGroup
     DependsOn:
       - EcsCluster
+      - FileSystem
+      - MountTargetA
+      - MountTargetB
+      - MountTargetC
       - TargetGroup
       - VpcStack
     Properties:
