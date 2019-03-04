@@ -18,6 +18,10 @@ Parameters:
     Description: 'Name of the ECS cluster.'
     Type: String
 
+  FileSystemName:
+    Description: 'FileSystem name'
+    Type: String
+
   PlatformCommitHash:
     Description: 'Commit hash of the CI/CD platform'
     Type: String
@@ -52,6 +56,9 @@ Parameters:
   VpcName:
     Description: 'Name of the VPC'
     Type: String
+
+Conditions:
+  Create3Subnets: !Equals [!Ref DesiredAzCount, 3]
 
 Resources:
   # ----- ECS resources
@@ -107,6 +114,7 @@ Resources:
     Properties:
       Path: '/'
       ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess
         - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
         - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
       AssumeRolePolicyDocument:
@@ -123,9 +131,13 @@ Resources:
   AutoscalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     DependsOn:
-      - VpcStack
       - EcsCluster
+      - FileSystem
+      - MountTargetA
+      - MountTargetB
+      - MountTargetC
       - TargetGroup
+      - VpcStack
     Properties:
       VPCZoneIdentifier:
         - !GetAtt VpcStack.Outputs.PrivateSubnetA
@@ -162,11 +174,31 @@ Resources:
         - !GetAtt VpcStack.Outputs.SecurityGroupId
       IamInstanceProfile: !Ref InstanceProfile
       UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          yum update -y
-          # Specify which cluster to join
-          echo ECS_CLUSTER=${EcsClusterName} >> /etc/ecs/ecs.config
+        Fn::Base64:
+          Fn::Sub:
+            - |
+              #!/bin/bash
+              yum update -y
+              yum install -y amazon-efs-utils
+
+              # Specify which cluster to join
+              echo ECS_CLUSTER=${EcsClusterName} >> /etc/ecs/ecs.config
+
+              # Create a mount point for the EFS file system
+              mkdir /mnt/efs
+
+              DIR_SRC=${FileSystemId}.efs.${AWS::Region}.amazonaws.com
+              DIR_TGT=/mnt/efs
+
+              # Mount EFS file system
+              mount -t efs $DIR_SRC:/ $DIR_TGT
+
+              # Backup fstab
+              cp -p /etc/fstab /etc/fstab.back-$(date +%F)
+
+              # Add the file system to `fstab` so that it is remounted whenever the instance reboots
+              echo "${FileSystemId}:/ $DIR_TGT efs tls,_netdev" >> /etc/fstab
+            - FileSystemId: !Ref FileSystem
 
   TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -215,6 +247,42 @@ Resources:
       Protocol: 'HTTP'
   # ----- End of Application Load Balancer resources
 
+  # ----- FileSystem resources
+  FileSystem:
+    Type: AWS::EFS::FileSystem
+    Properties:
+      FileSystemTags:
+        - Key: EcsClusterName
+          Value: !Ref EcsClusterName
+        - Key: Name
+          Value: !Ref FileSystemName
+
+  MountTargetA:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref FileSystem
+      SecurityGroups:
+        - !GetAtt VpcStack.Outputs.SecurityGroupId
+      SubnetId: !GetAtt VpcStack.Outputs.PrivateSubnetA
+
+  MountTargetB:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref FileSystem
+      SecurityGroups:
+        - !GetAtt VpcStack.Outputs.SecurityGroupId
+      SubnetId: !GetAtt VpcStack.Outputs.PrivateSubnetB
+
+  MountTargetC:
+    Type: AWS::EFS::MountTarget
+    Condition: Create3Subnets
+    Properties:
+      FileSystemId: !Ref FileSystem
+      SecurityGroups:
+        - !GetAtt VpcStack.Outputs.SecurityGroupId
+      SubnetId: !GetAtt VpcStack.Outputs.PrivateSubnetC
+  # ----- End of FileSystem resources
+
   VpcStack:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -240,6 +308,7 @@ Outputs:
 
   PrivateSubnetC:
     Description: 'ID of private subnet in AZ c'
+    Condition: Create3Subnets
     Value: !GetAtt VpcStack.Outputs.PrivateSubnetC
 
   VpcId:

@@ -87,8 +87,9 @@ getInstanceIdByName () {
   echo $(aws ec2 describe-instances \
     --profile=${PROFILE} \
     --region=${Region} \
-    --filters Name=tag:Name,Values=${INSTANCE_NAME} \
-  ) | jq '.Reservations[0].Instances[0].InstanceId' | cut -d\" -f 2
+    --filters Name=instance-state-name,Values=running Name=tag:Name,Values=${INSTANCE_NAME} \
+    --query 'Reservations[0].Instances[0].InstanceId'
+  ) | cut -d \" -f 2
 }
 
 getPrivateIpbyInstanceId () {
