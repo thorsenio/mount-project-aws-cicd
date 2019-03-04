@@ -221,7 +221,7 @@ Resources:
           # Instance needs to belong to a security group that allows 2049 inbound/outbound
           # The security group that the instance belongs to has to be added to EFS file system configuration
           # Create variables for source and target
-          DIR_SRC="${EFS_FILE_SYSTEM_ID}.efs.${EC2_REGION}.amazonaws.com"
+          DIR_SRC=$EFS_FILE_SYSTEM_ID.efs.$EC2_REGION.amazonaws.com
           DIR_TGT=/mnt/efs
 
           # Mount EFS file system
