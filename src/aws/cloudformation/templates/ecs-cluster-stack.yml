@@ -170,68 +170,48 @@ Resources:
         - !GetAtt VpcStack.Outputs.SecurityGroupId
       IamInstanceProfile: !Ref InstanceProfile
       UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          yum update -y
+        Fn::Base64:
+          Fn::Sub:
+            - |
+              #!/bin/bash
+              yum update -y
 
-          # Specify which cluster to join
-          echo ECS_CLUSTER=${EcsClusterName} >> /etc/ecs/ecs.config
+              # Specify which cluster to join
+              echo ECS_CLUSTER=${EcsClusterName} >> /etc/ecs/ecs.config
 
-          # Install jq, a JSON parser
-          yum -y install jq
+              # Install jq, a JSON parser
+              yum -y install jq
 
-          # Install NFS client
-          if ! rpm -qa | grep -qw nfs-utils; then
-            yum -y install nfs-utils
-          fi
+              # Install NFS client
+              if ! rpm -qa | grep -qw nfs-utils; then
+                yum -y install nfs-utils
+              fi
 
-          # Install Python 2.7, pip, and the AWS CLI
-          if ! rpm -qa | grep -qw python-2.7; then
-            yum -y install python2
-          fi
-          yum -y install python2-pip
-          pip install awscli
+              # Install Python 2.7, pip, and the AWS CLI
+              if ! rpm -qa | grep -qw python-2.7; then
+                yum -y install python2
+              fi
+              yum -y install python2-pip
+              pip install awscli
 
-          # Add EFS support to the CLI configuration
-          aws configure set preview.efs true
+              # Add EFS support to the CLI configuration
+              aws configure set preview.efs true
 
-          # Get the instance's region from instance metadata
-          EC2_AVAIL_ZONE=`curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone`
-          EC2_REGION="`echo \"$EC2_AVAIL_ZONE\" | sed -e 's:\([0-9][0-9]*\)[a-z]*\$:\\1:'`"
+              # Create a mount point for the EFS file system
+              mkdir /mnt/efs
 
-          # Create a mount point for the EFS file system
-          mkdir /mnt/efs
+              DIR_SRC=${FileSystemId}.efs.${AWS::Region}.amazonaws.com
+              DIR_TGT=/mnt/efs
 
-          # Get the EFS FileSystemID attribute
-          # (Note: The instance must have an EC2 role that gives the instance at
-          # least read access to EFS)
-          EFS_FILE_SYSTEM_ID=$(
-            aws efs describe-file-systems \
-              --region $EC2_REGION \
-              | jq '.FileSystems[]' \
-              | jq "select(.Name==\"${FileSystemName}\")" \
-              | jq -r '.FileSystemId' \
-          )
-          # Check to see if the variable is set. If not, then exit.
-          if [-z "$EFS_FILE_SYSTEM_ID"]; then
-            echo "ERROR: variable not set" 1> /etc/efssetup.log
-            exit
-          fi
+              # Mount EFS file system
+              mount -t nfs4 $DIR_SRC:/ $DIR_TGT
 
-          # Instance needs to belong to a security group that allows 2049 inbound/outbound
-          # The security group that the instance belongs to has to be added to EFS file system configuration
-          # Create variables for source and target
-          DIR_SRC=$EFS_FILE_SYSTEM_ID.efs.$EC2_REGION.amazonaws.com
-          DIR_TGT=/mnt/efs
+              # Backup fstab
+              cp -p /etc/fstab /etc/fstab.back-$(date +%F)
 
-          # Mount EFS file system
-          mount -t nfs4 $DIR_SRC:/ $DIR_TGT
-
-          # Backup fstab
-          cp -p /etc/fstab /etc/fstab.back-$(date +%F)
-
-          # Append line to fstab
-          echo -e "$DIR_SRC:/ \t\t $DIR_TGT \t\t nfs \t\t defaults \t\t 0 \t\t 0" | tee -a /etc/fstab
+              # Append line to fstab
+              echo -e "$DIR_SRC:/ \t\t $DIR_TGT \t\t nfs \t\t defaults \t\t 0 \t\t 0" | tee -a /etc/fstab
+            - FileSystemId: !Ref FileSystem
 
   TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
