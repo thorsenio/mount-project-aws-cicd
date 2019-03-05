@@ -1,0 +1,23 @@
+---
+version: 0.2
+env:
+  variables:
+    NODE_ENV: production
+
+phases:
+  pre_build:
+    commands:
+      - npm ci
+  build:
+    commands:
+      - npm run build
+  post_build:
+    commands:
+      - |
+        if [ -z ${CODEBUILD_RESOLVED_SOURCE_VERSION} ]; then
+          aws s3 sync static s3://${PROJECT_BUCKET_NAME}/static --acl public-read --only-show-errors
+        fi
+      - |
+        if [ -n ${CODEBUILD_RESOLVED_SOURCE_VERSION} ]; then
+          aws s3 sync static s3://${PROJECT_BUCKET_NAME}/${CODEBUILD_RESOLVED_SOURCE_VERSION}/static --acl public-read --only-show-errors
+        fi
