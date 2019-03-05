@@ -22,7 +22,9 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --parameters \
     ParameterKey=CfTemplatesBucketName,ParameterValue=${CfTemplatesBucketName} \
     ParameterKey=CicdArtifactsBucketName,ParameterValue=${CicdArtifactsBucketName} \
+    ParameterKey=PlatformCommitHash,ParameterValue=${PlatformCommitHash} \
     ParameterKey=PlatformId,ParameterValue=${PlatformId} \
+    ParameterKey=PlatformVersionLabel,ParameterValue=${PlatformVersionLabel} \
   --capabilities \
     CAPABILITY_IAM \
     CAPABILITY_NAMED_IAM \

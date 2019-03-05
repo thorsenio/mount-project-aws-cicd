@@ -7,8 +7,16 @@ Parameters:
     Description: 'Name of the service role used by CodePipeline to call AWS services'
     Type: String
 
+  PlatformCommitHash:
+    Description: 'Commit hash of the CI/CD platform'
+    Type: String
+
   PlatformId:
     Description: "Platform version ID and label"
+    Type: String
+
+  PlatformVersionLabel:
+    Description: 'AWS CI/CD platform version label (version + stage)'
     Type: String
 
 Resources:

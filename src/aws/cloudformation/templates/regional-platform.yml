@@ -11,8 +11,16 @@ Parameters:
     Description: "Name of the S3 bucket for CI/CD artifacts"
     Type: String
 
+  PlatformCommitHash:
+    Description: 'Commit hash of the CI/CD platform'
+    Type: String
+
   PlatformId:
     Description: "Platform version ID and label"
+    Type: String
+
+  PlatformVersionLabel:
+    Description: 'AWS CI/CD platform version label (version + stage)'
     Type: String
 
 Resources:
@@ -21,13 +29,21 @@ Resources:
     Properties:
       BucketName: !Ref CfTemplatesBucketName
       Tags:
+        - Key: 'PlatformCommitHash'
+          Value: !Ref PlatformCommitHash
         - Key: 'PlatformId'
           Value: !Ref PlatformId
+        - Key: 'PlatformVersionLabel'
+          Value: !Ref PlatformVersionLabel
 
   CicdArtifactsBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Ref CicdArtifactsBucketName
       Tags:
+        - Key: 'PlatformCommitHash'
+          Value: !Ref PlatformCommitHash
         - Key: 'PlatformId'
           Value: !Ref PlatformId
+        - Key: 'PlatformVersionLabel'
+          Value: !Ref PlatformVersionLabel
