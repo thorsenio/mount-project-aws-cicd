@@ -16,3 +16,11 @@ RepoName=${ProjectName}
 RepoDescription="${ProjectDescription}"
 
 ProjectVersion='0.1.0'
+CodeBuildEnvironmentImage='aws/codebuild/nodejs:10.14.1'
+# Other common images:
+#aws/codebuild/docker:18.09.0
+#aws/codebuild/docker:17.09.0
+#aws/codebuild/nodejs:8.11.0
+#aws/codebuild/python:3.7.1
+#
+# Full list: https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-available.html
