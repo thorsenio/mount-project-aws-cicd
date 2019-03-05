@@ -6,4 +6,4 @@
 cd $(dirname "$0")
 
 # Copy config files so they can be used as templates
-cp /var/lib/config-templates/* /var/project/config/
+cp -v -i /var/lib/config-templates/*.sh /var/project/config/
