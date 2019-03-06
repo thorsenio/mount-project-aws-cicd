@@ -27,9 +27,7 @@ fi
 TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }' | cut -d. -f1)
 
 # -- Check prerequisites
-iamRoleExists ${PROFILE} ${Region} ${CodePipelineServiceRoleName}
-if [[ $? -ne 0 ]]
-then
+if ! iamRoleExists ${PROFILE} ${Region} ${CodePipelineServiceRoleName}; then
   echo 'The code pipeline service role was not found' 1>&2
   echo "Fix this by creating the global platform stack ('${GlobalPlatformStackName}'):" 1>&2
   echo "  put-global-platform-stack.sh" 1>&2
@@ -37,9 +35,7 @@ then
   exit 1
 fi
 
-bucketExists ${PROFILE} ${CicdArtifactsBucketName}
-if [[ $? -ne 0 ]]
-then
+f ! bucketExists ${PROFILE} ${CicdArtifactsBucketName}; then
   echo 'The CI/CD artifacts bucket was not found' 1>&2
   echo "Fix this by creating the regional platform stack ('${RegionalPlatformStackName}'):" 1>&2
   echo "  put-regional-platform-stack.sh" 1>&2

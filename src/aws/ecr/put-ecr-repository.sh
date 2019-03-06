@@ -18,8 +18,7 @@ source ../../compute-variables.sh
 
 REPO_NAME=${DeploymentId}/${IMAGE_NAME}
 
-ecrRepoExists ${PROFILE} ${Region} ${REPO_NAME}
-if [[ $? -eq 0 ]]; then
+if ecrRepoExists ${PROFILE} ${Region} ${REPO_NAME}; then
   echo "The '${REPO_NAME}' ECR repository exists and will be re-used."
   exit 0
 fi

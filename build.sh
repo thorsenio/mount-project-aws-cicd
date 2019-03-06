@@ -4,8 +4,7 @@
 # contained in `platform-variables.sh` and derived from the current Git branch name
 
 if [[ ! $1 == '--force' ]]; then
-  test -z "$(git status --porcelain)"
-  if [[ $? -ne 0 ]]; then
+  if [[ -n "$(git status --porcelain)" ]]; then
     echo -e "Please commit or stash your changes before building or use --force.\nAborting build" 1>&2
     exit 1
   fi

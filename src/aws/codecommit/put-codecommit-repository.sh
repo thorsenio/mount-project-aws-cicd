@@ -17,9 +17,7 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
-codecommitRepoExists ${PROFILE} ${Region} ${REPO_NAME}
-if [[ $? -eq 0 ]]
-then
+if codecommitRepoExists ${PROFILE} ${Region} ${REPO_NAME}; then
   echo "The '${REPO_NAME}' CodeCommit repository exists and will be re-used."
   exit 0
 fi

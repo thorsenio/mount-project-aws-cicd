@@ -170,9 +170,7 @@ echoPutStackMode () {
   local REGION=$2
   local STACK_NAME=$3
 
-  stackExists ${PROFILE} ${REGION} ${STACK_NAME}
-  if [[ $? -eq 0 ]]
-  then
+  if stackExists ${PROFILE} ${REGION} ${STACK_NAME}; then
     echo 'update'
   else
     echo 'create'
