@@ -11,7 +11,7 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
-../s3/empty-bucket.sh ${PROFILE} ${ProjectBucketName} 'static files'
+../s3/empty-bucket.sh ${ProjectBucketName} 'static files'
 if [[ $? -ne 0 ]]
 then
   echo 'Deletion of the stack has been aborted.'
