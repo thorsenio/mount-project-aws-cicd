@@ -14,9 +14,9 @@ assertNotEmpty () {
   if [[ $# -eq 0 || -z "$1" ]]
   then
     echo "Assertion failed" 1>&2
-    return 1
+    false
   fi
-  return 0
+  true
 }
 
 echoRandomId () {

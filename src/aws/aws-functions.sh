@@ -18,11 +18,9 @@ bucketExists () {
 
   if [[ $? -eq 0 ]]
   then
-    # Bucket exists
-    return 0
+    true
   else
-    # Bucket does not exist
-    return 1
+    false
   fi
 }
 
@@ -42,11 +40,9 @@ codecommitRepoExists () {
 
   if [[ $? -eq 0 ]]
   then
-    # Repository exists
-    return 0
+    true
   else
-    # Repository does not exist
-    return 1
+    false
   fi
 }
 
@@ -65,11 +61,9 @@ ecrRepoExists () {
 
   if [[ $? -eq 0 ]]
   then
-    # Repository exists
-    return 0
+    true
   else
-    # Repository does not exist
-    return 1
+    false
   fi
 }
 
@@ -87,11 +81,9 @@ iamRoleExists () {
 
   if [[ $? -eq 0 ]]
   then
-    # Role exists
-    return 0
+    true
   else
-    # Role does not exist
-    return 1
+    false
   fi
 }
 
@@ -109,11 +101,9 @@ keyPairExists () {
 
   if [[ $? -eq 0 ]]
   then
-    # Key pair exists
-    return 0
+    true
   else
-    # Key pair does not exist
-    return 1
+    false
   fi
 }
 
@@ -132,11 +122,9 @@ stackExists () {
 
   if [[ $? -eq 0 ]]
   then
-    # Stack exists
-    return 0
+    true
   else
-    # Stack does not exist
-    return 1
+    false
   fi
 }
 
