@@ -148,15 +148,6 @@ echoAcmCertificateArn () {
   echo ${ACM_CERTIFICATE_ARN}
 }
 
-# Given a domain name, echo the first two levels of the domain name
-# Example: Given `any.subdomain.example.com`, echo `example.com`
-echo2ndLevelDomain () {
-  local DOMAIN_NAME=$1
-  local DOMAIN_LEVEL_2=$(echo ${DOMAIN_NAME} | awk -F '.' '{ print $(NF-1) }')
-  local DOMAIN_LEVEL_1=$(echo ${DOMAIN_NAME} | awk -F '.' '{ print $NF }')
-  echo "${DOMAIN_LEVEL_2}.${DOMAIN_LEVEL_1}"
-}
-
 echoCountAzsInRegion () {
 
   local PROFILE=$1

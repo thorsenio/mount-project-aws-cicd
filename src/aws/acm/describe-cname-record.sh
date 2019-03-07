@@ -15,6 +15,7 @@ DOMAIN_NAME=$1
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
+source ../../functions.sh
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
@@ -36,6 +37,6 @@ DNS_VALIDATION=$(echo ${DESCRIPTION} | jq '.Certificate.DomainValidationOptions[
 RECORD_NAME=$(echo ${DNS_VALIDATION} | jq '.ResourceRecord.Name' | cut -d\" -f 2)
 RECORD_VALUE=$(echo ${DNS_VALIDATION} | jq '.ResourceRecord.Value' | cut -d\" -f 2)
 
-echo "Create the following CNAME record in the zone records for $(echo2ndLevelDomain ${DOMAIN_NAME}):"
+echo "Create the following CNAME record in the zone records for $(echoApexDomain ${DOMAIN_NAME}):"
 echo "hostname: ${RECORD_NAME}"
 echo "value (redirect to): ${RECORD_VALUE}"
