@@ -116,7 +116,27 @@ echoCountAzsInRegion () {
     --query 'AvailabilityZones[*] | length(@)'
 }
 
-# Echo the Hosted Zone ID for the specified Apex domain name
+# Echo the CloudFront Distribution ID for the specified CNAME
+echoDistributionIdByCname () {
+
+  local PROFILE=$1
+  local CNAME=$2
+
+  local DISTRIBUTION_ID=$(aws cloudfront list-distributions \
+    --profile ${PROFILE} \
+    --query "DistributionList.Items[?Aliases.Items[0]=='${CNAME}'].Id | [0]" \
+  )
+
+  if [[ -z ${DISTRIBUTION_ID} ||  ${DISTRIBUTION_ID} == 'null' ]]; then
+    echo ''
+    return 1
+  fi
+
+  echo ${DISTRIBUTION_ID:1:-1}
+  return 0
+}
+
+# Echo the Route 53 Hosted Zone ID for the specified Apex domain name
 echoHostedZoneIdByApex () {
 
   local PROFILE=$1
