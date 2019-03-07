@@ -155,9 +155,11 @@ echo2ndLevelDomain () {
   echo "${DOMAIN_LEVEL_2}.${DOMAIN_LEVEL_1}"
 }
 
-echoCountAzsInRegion() {
-  PROFILE=$1
-  REGION=$2
+echoCountAzsInRegion () {
+
+  local PROFILE=$1
+  local REGION=$2
+
   aws ec2 describe-availability-zones \
     --profile ${PROFILE} \
     --region ${REGION} \
