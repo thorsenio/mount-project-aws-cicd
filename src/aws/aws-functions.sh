@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
-# Uncomment this block when any of the functions in `functions.sh` (non-AWS functions) are used
-#THIS_SCRIPT_DIR=$(dirname $(realpath ${PWD}/${BASH_SOURCE[0]}))
-#cd ${THIS_SCRIPT_DIR} > /dev/null
+echo ${BASH_SOURCE[0]}
+
+THIS_SCRIPT_DIR=$(dirname $(realpath ${PWD}/${BASH_SOURCE[0]}))
+cd ${THIS_SCRIPT_DIR} > /dev/null
+source ./aws-constants.sh
 #source ../functions.sh
-#cd - > /dev/null
+cd - > /dev/null
 
 bucketExists () {
 
@@ -184,6 +186,22 @@ echoHostedZoneIdByApex () {
   fi
 
   local HOSTED_ZONE_ID=$(echo ${HOSTED_ZONE_ID_VALUE:1:-1} | cut -d / -f 3)
+  echo ${HOSTED_ZONE_ID}
+  true
+}
+
+# Echo the Hosted Zone ID for the specified Apex domain name
+echoS3HostedZoneIdByRegion () {
+
+  local REGION=$1
+
+  HOSTED_ZONE_ID=${S3_HOSTED_ZONE_ID_REGION_MAP[${REGION}]}
+
+  if [[ -z "${HOSTED_ZONE_ID}" ]]; then
+    echo ''
+    false
+  fi
+
   echo ${HOSTED_ZONE_ID}
   true
 }
