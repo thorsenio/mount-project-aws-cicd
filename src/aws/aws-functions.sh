@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
-# Uncomment this block when any of the functions in `functions.sh` (non-AWS functions) are used
-#THIS_SCRIPT_DIR=$(dirname $(realpath ${PWD}/${BASH_SOURCE[0]}))
-#cd ${THIS_SCRIPT_DIR} > /dev/null
+# The next statement will fail unless this script is sourced relative to the
+# sourcing script (don't use an absolute path)
+THIS_SCRIPT_DIR=$(dirname $(realpath ${PWD}/${BASH_SOURCE[0]}))
+cd ${THIS_SCRIPT_DIR} > /dev/null
+source ./aws-constants.sh
 #source ../functions.sh
-#cd - > /dev/null
+cd - > /dev/null
 
 bucketExists () {
 
@@ -15,17 +17,7 @@ bucketExists () {
     --profile ${PROFILE} \
     --bucket ${BUCKET_NAME} \
     &> /dev/null
-
-  if [[ $? -eq 0 ]]
-  then
-    # Bucket exists
-    return 0
-  else
-    # Bucket does not exist
-    return 1
-  fi
 }
-
 
 codecommitRepoExists () {
 
@@ -39,15 +31,6 @@ codecommitRepoExists () {
     --region ${REGION} \
     --repository-name ${REPOSITORY_NAME} \
     &> /dev/null
-
-  if [[ $? -eq 0 ]]
-  then
-    # Repository exists
-    return 0
-  else
-    # Repository does not exist
-    return 1
-  fi
 }
 
 ecrRepoExists () {
@@ -62,15 +45,6 @@ ecrRepoExists () {
     --region ${REGION} \
     --repository-names "${REPOSITORY_NAME}" \
     &> /dev/null
-
-  if [[ $? -eq 0 ]]
-  then
-    # Repository exists
-    return 0
-  else
-    # Repository does not exist
-    return 1
-  fi
 }
 
 iamRoleExists () {
@@ -84,15 +58,6 @@ iamRoleExists () {
     --region ${REGION} \
     --role-name ${ROLE_NAME} \
     &> /dev/null
-
-  if [[ $? -eq 0 ]]
-  then
-    # Role exists
-    return 0
-  else
-    # Role does not exist
-    return 1
-  fi
 }
 
 keyPairExists () {
@@ -106,15 +71,6 @@ keyPairExists () {
     --region ${REGION} \
     --key-names ${KEY_PAIR_NAME} \
     &> /dev/null
-
-  if [[ $? -eq 0 ]]
-  then
-    # Key pair exists
-    return 0
-  else
-    # Key pair does not exist
-    return 1
-  fi
 }
 
 # TODO: REFACTOR: Add parameter checking and usage note
@@ -129,15 +85,6 @@ stackExists () {
     --region ${REGION} \
     --stack-name ${STACK_NAME} \
     &> /dev/null
-
-  if [[ $? -eq 0 ]]
-  then
-    # Stack exists
-    return 0
-  else
-    # Stack does not exist
-    return 1
-  fi
 }
 
 # Echo the ARN of the ACM certificate for the specified domain
@@ -158,22 +105,95 @@ echoAcmCertificateArn () {
   echo ${ACM_CERTIFICATE_ARN}
 }
 
-# Given a domain name, echo the first two levels of the domain name
-# Example: Given `any.subdomain.example.com`, echo `example.com`
-echo2ndLevelDomain () {
-  local DOMAIN_NAME=$1
-  local DOMAIN_LEVEL_2=$(echo ${DOMAIN_NAME} | awk -F '.' '{ print $(NF-1) }')
-  local DOMAIN_LEVEL_1=$(echo ${DOMAIN_NAME} | awk -F '.' '{ print $NF }')
-  echo "${DOMAIN_LEVEL_2}.${DOMAIN_LEVEL_1}"
-}
+echoCountAzsInRegion () {
 
-echoCountAzsInRegion() {
-  PROFILE=$1
-  REGION=$2
+  local PROFILE=$1
+  local REGION=$2
+
   aws ec2 describe-availability-zones \
     --profile ${PROFILE} \
     --region ${REGION} \
     --query 'AvailabilityZones[*] | length(@)'
+}
+
+# Echo the CloudFront Distribution ID for the specified CNAME
+echoDistributionIdByCname () {
+
+  local PROFILE=$1
+  local CNAME=$2
+
+  local DISTRIBUTION_ID=$(aws cloudfront list-distributions \
+    --profile ${PROFILE} \
+    --query "DistributionList.Items[?Aliases.Items[0]=='${CNAME}'].Id | [0]" \
+  )
+
+  if [[ -z ${DISTRIBUTION_ID} ||  ${DISTRIBUTION_ID} == 'null' ]]; then
+    echo ''
+    return 1
+  fi
+
+  echo ${DISTRIBUTION_ID:1:-1}
+  return 0
+}
+
+# Echo the domain name for the specified CloudFront distribution ID
+echoDomainNameByDistributionId () {
+
+  local PROFILE=$1
+  local DISTRIBUTION_ID=$2
+
+  local DOMAIN_NAME=$(aws cloudfront get-distribution \
+    --profile ${PROFILE} \
+    --id ${DISTRIBUTION_ID} \
+    --query 'Distribution.DomainName' \
+    2> /dev/null
+  )
+  if [[ $? -ne 0 ]]; then
+    echo ''
+    return 1
+  fi
+
+  echo ${DOMAIN_NAME:1:-1}
+  return 0
+}
+
+# Echo the Route 53 Hosted Zone ID for the specified Apex domain name
+echoHostedZoneIdByApex () {
+
+  local PROFILE=$1
+  local APEX_DOMAIN_NAME=$2
+
+  local HOSTED_ZONE_ID_VALUE=$(aws route53 list-hosted-zones-by-name \
+    --profile ${PROFILE} \
+    --dns-name ${APEX_DOMAIN_NAME} \
+    --max-items 1 \
+    --query "HostedZones[?Name=='${APEX_DOMAIN_NAME}.']| [0].Id" \
+    2> /dev/null
+  )
+  if [[ $? -ne 0 ]]; then
+    echo ''
+    return 1
+  fi
+
+  local HOSTED_ZONE_ID=$(echo ${HOSTED_ZONE_ID_VALUE:1:-1} | cut -d / -f 3)
+  echo ${HOSTED_ZONE_ID}
+  return 0
+}
+
+# Echo the Route 53 Hosted Zone ID for the specified Apex domain name
+echoS3HostedZoneIdByRegion () {
+
+  local REGION=$1
+
+  HOSTED_ZONE_ID=${S3_HOSTED_ZONE_ID_REGION_MAP[${REGION}]}
+
+  if [[ -z "${HOSTED_ZONE_ID}" ]]; then
+    echo ''
+    return 1
+  fi
+
+  echo ${HOSTED_ZONE_ID}
+  return 0
 }
 
 echoPutStackMode () {
@@ -182,9 +202,7 @@ echoPutStackMode () {
   local REGION=$2
   local STACK_NAME=$3
 
-  stackExists ${PROFILE} ${REGION} ${STACK_NAME}
-  if [[ $? -eq 0 ]]
-  then
+  if stackExists ${PROFILE} ${REGION} ${STACK_NAME}; then
     echo 'update'
   else
     echo 'create'
@@ -201,15 +219,14 @@ echoPutStackOutput () {
   shift 3
   local OUTPUT=$*
 
-  if [[ ${EXIT_STATUS} -eq 0 ]]
-  then
-    echo "The request to ${PUT_MODE} the stack was accepted by AWS."
-    echo "View the stack's status at https://${REGION}.console.aws.amazon.com/cloudformation/home?region=${REGION}#/stacks?filter=active"
-  else
+  if [[ ${EXIT_STATUS} -ne 0 ]]; then
     echo "The request to ${PUT_MODE} the stack was not accepted by AWS." 1>&2
     echo ${OUTPUT} 1>&2
-    exit 1
+    return 1
   fi
 
+  echo "The request to ${PUT_MODE} the stack was accepted by AWS."
+  echo "View the stack's status at https://${REGION}.console.aws.amazon.com/cloudformation/home?region=${REGION}#/stacks?filter=active"
   echo ${OUTPUT} | jq '.'
+  return 0
 }

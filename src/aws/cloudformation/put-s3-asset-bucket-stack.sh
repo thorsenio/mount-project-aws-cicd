@@ -15,10 +15,7 @@ source ../aws-functions.sh
 source ../../compute-variables.sh
 
 # Skip creation of the bucket if it already exists
-bucketExists ${PROFILE} ${ProjectBucketName}
-ERROR_STATUS=$?
-if [[ ${ERROR_STATUS} -eq 0 ]]
-then
+if bucketExists ${PROFILE} ${ProjectBucketName}; then
   exit 0
 fi
 

@@ -13,9 +13,7 @@ source ../../compute-variables.sh
 # Capture the mode that should be used put the stack: `create` or `update`
 PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${CodeBuildProjectStackName})
 
-bucketExists ${PROFILE} ${CicdArtifactsBucketName}
-if [[ $? -ne 0 ]]
-then
+if ! bucketExists ${PROFILE} ${CicdArtifactsBucketName}; then
   echo 'The CI/CD artifacts bucket was not found' 1>&2
   echo "Verify that the regional platform stack ('${RegionalPlatformStackName}') is running" 1>&2
   exit 1

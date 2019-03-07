@@ -26,8 +26,7 @@ cd $(dirname "$0")
 
 source ../aws-functions.sh
 
-ecrRepoExists ${PROFILE} ${REGION} ${REPOSITORY_NAME}
-if [[ $? -eq 0 ]]; then
+if ecrRepoExists ${PROFILE} ${REGION} ${REPOSITORY_NAME}; then
   # The repo exists, so empty it
   echo "Emptying the '${DESCRIPTION}' ECR repository ..."
 

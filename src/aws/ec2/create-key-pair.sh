@@ -6,9 +6,7 @@ cd $(dirname "${0}")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
-keyPairExists ${PROFILE} ${Region} ${KeyPairKeyName}
-if [[ ${?} -eq 0 ]]
-then
+if keyPairExists ${PROFILE} ${Region} ${KeyPairKeyName}; then
   # Key pair already exists
   # TODO: Maybe verify that the .pem file exists locally?
   echo "The key pair '${KeyPairKeyName}' already exists and will be re-used."

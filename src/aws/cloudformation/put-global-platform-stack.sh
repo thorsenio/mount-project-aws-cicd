@@ -17,9 +17,7 @@ then
   exit 1
 fi
 
-stackExists ${PROFILE} ${Region} ${RegionalPlatformStackName}
-if [[ $? -ne 0 ]]
-then
+if ! stackExists ${PROFILE} ${Region} ${RegionalPlatformStackName}; then
   ./put-regional-platform-stack.sh
   EXIT_CODE=$?
   if [[ $? -ne 0 ]]

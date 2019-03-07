@@ -14,9 +14,18 @@ assertNotEmpty () {
   if [[ $# -eq 0 || -z "$1" ]]
   then
     echo "Assertion failed" 1>&2
-    return 1
+    false
   fi
-  return 0
+  true
+}
+
+# Given a domain name, echo the first two levels of the domain name
+# Example: Given `any.subdomain.example.com`, echo `example.com`
+echoApexDomain () {
+  local DOMAIN_NAME=$1
+  local DOMAIN_LEVEL_2=$(echo ${DOMAIN_NAME} | awk -F '.' '{ print $(NF-1) }')
+  local DOMAIN_LEVEL_1=$(echo ${DOMAIN_NAME} | awk -F '.' '{ print $NF }')
+  echo "${DOMAIN_LEVEL_2}.${DOMAIN_LEVEL_1}"
 }
 
 echoRandomId () {
@@ -39,6 +48,18 @@ echoMax () {
 # Given 2 values, echo the lesser of them
 echoMin () {
   echo $(( $1 < $2 ? $1 : $2 ))
+}
+
+echoFqdn () {
+
+  local DOMAIN_NAME=$1
+
+  # If the terminating period is missing, add it to get a fully qualified domain name
+  if [[ "${DOMAIN_NAME: -1}" == '.' ]]; then
+    echo ${DOMAIN_NAME}
+  else
+    echo "${DOMAIN_NAME}."
+  fi
 }
 
 embold () {
