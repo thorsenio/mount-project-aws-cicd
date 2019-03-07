@@ -11,12 +11,12 @@ fi
 
 ALIAS_DNS_NAME=$1
 TARGET_DNS_NAME=$2
-CLOUDFRONT_HOSTED_ZONE_ID='Z2FDTNDATAQYW2'
 
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
 source ../../functions.sh
+source ../aws-constants.sh
 source ../aws-functions.sh
 source ../../compute-variables.sh
 

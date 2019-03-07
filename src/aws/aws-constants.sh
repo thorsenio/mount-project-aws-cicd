@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# Route 53 hosted zone ID for Cloudfront, all regions
+# https://docs.aws.amazon.com/general/latest/gr/rande.html#cf_region
+CLOUDFRONT_HOSTED_ZONE_ID='Z2FDTNDATAQYW2'
+
+# Route 53 hosted zone IDs for S3, by region
+# https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
 declare -A S3_HOSTED_ZONE_ID_REGION_MAP
 S3_HOSTED_ZONE_ID_REGION_MAP=(
   ['ap-south-1']='Z11RGJOFQNVJUP'
