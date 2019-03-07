@@ -5,7 +5,7 @@ env:
     NODE_ENV: production
 
 phases:
-  pre_build:
+  install:
     commands:
       - npm ci
   build:
@@ -13,11 +13,16 @@ phases:
       - npm run build
   post_build:
     commands:
-      - |
-        if [ -z ${CODEBUILD_RESOLVED_SOURCE_VERSION} ]; then
-          aws s3 sync static s3://${PROJECT_BUCKET_NAME}/static --acl public-read --only-show-errors
-        fi
+      - export SHORT_HASH=$(echo ${CODEBUILD_RESOLVED_SOURCE_VERSION} | cut -c 1-7 )
+      - printenv
       - |
         if [ -n ${CODEBUILD_RESOLVED_SOURCE_VERSION} ]; then
-          aws s3 sync static s3://${PROJECT_BUCKET_NAME}/${CODEBUILD_RESOLVED_SOURCE_VERSION}/static --acl public-read --only-show-errors
+          # Copy this version into its own folder in the project bucket
+          aws s3 sync dist s3://${PROJECT_BUCKET_NAME}/${SHORT_HASH} --acl public-read --only-show-errors
+          # Copy into the project bucket's root folder (skip this step when versioning works)
+          aws s3 sync s3://${PROJECT_BUCKET_NAME}/${SHORT_HASH} s3://${PROJECT_BUCKET_NAME} --acl public-read --only-show-errors
+        fi
+      - |
+        if [ -z ${CODEBUILD_RESOLVED_SOURCE_VERSION} ]; then
+          aws s3 sync dist s3://${PROJECT_BUCKET_NAME} --acl public-read --only-show-errors
         fi
