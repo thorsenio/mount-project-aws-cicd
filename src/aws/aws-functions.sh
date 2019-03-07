@@ -136,6 +136,27 @@ echoDistributionIdByCname () {
   return 0
 }
 
+# Echo the domain name for the specified CloudFront distribution ID
+echoDomainNameByDistributionId () {
+
+  local PROFILE=$1
+  local DISTRIBUTION_ID=$2
+
+  local DOMAIN_NAME=$(aws cloudfront get-distribution \
+    --profile ${PROFILE} \
+    --id ${DISTRIBUTION_ID} \
+    --query 'Distribution.DomainName' \
+    2> /dev/null
+  )
+  if [[ $? -ne 0 ]]; then
+    echo ''
+    return 1
+  fi
+
+  echo ${DOMAIN_NAME:1:-1}
+  return 0
+}
+
 # Echo the Route 53 Hosted Zone ID for the specified Apex domain name
 echoHostedZoneIdByApex () {
 
@@ -147,8 +168,9 @@ echoHostedZoneIdByApex () {
     --dns-name ${APEX_DOMAIN_NAME} \
     --max-items 1 \
     --query "HostedZones[?Name=='${APEX_DOMAIN_NAME}.']| [0].Id" \
+    2> /dev/null
   )
-  if [[ -z "${HOSTED_ZONE_ID_VALUE}" ]]; then
+  if [[ $? -ne 0 ]]; then
     echo ''
     return 1
   fi
