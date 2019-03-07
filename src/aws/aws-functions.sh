@@ -166,6 +166,28 @@ echoCountAzsInRegion () {
     --query 'AvailabilityZones[*] | length(@)'
 }
 
+# Echo the Hosted Zone ID for the specified Apex domain name
+echoHostedZoneIdByApex () {
+
+  local PROFILE=$1
+  local APEX_DOMAIN_NAME=$2
+
+  local HOSTED_ZONE_ID_VALUE=$(aws route53 list-hosted-zones-by-name \
+    --profile ${PROFILE} \
+    --dns-name ${APEX_DOMAIN_NAME} \
+    --max-items 1 \
+    --query "HostedZones[?Name=='${APEX_DOMAIN_NAME}.']| [0].Id" \
+  )
+  if [[ -z "${HOSTED_ZONE_ID_VALUE}" ]]; then
+    echo ''
+    false
+  fi
+
+  local HOSTED_ZONE_ID=$(echo ${HOSTED_ZONE_ID_VALUE:1:-1} | cut -d / -f 3)
+  echo ${HOSTED_ZONE_ID}
+  true
+}
+
 echoPutStackMode () {
 
   local PROFILE=$1
