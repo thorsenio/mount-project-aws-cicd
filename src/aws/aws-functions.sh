@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-echo ${BASH_SOURCE[0]}
-
+# The next statement will fail unless this script is sourced relative to the
+# sourcing script (don't use an absolute path)
 THIS_SCRIPT_DIR=$(dirname $(realpath ${PWD}/${BASH_SOURCE[0]}))
 cd ${THIS_SCRIPT_DIR} > /dev/null
 source ./aws-constants.sh
@@ -17,15 +17,7 @@ bucketExists () {
     --profile ${PROFILE} \
     --bucket ${BUCKET_NAME} \
     &> /dev/null
-
-  if [[ $? -eq 0 ]]
-  then
-    true
-  else
-    false
-  fi
 }
-
 
 codecommitRepoExists () {
 
@@ -39,13 +31,6 @@ codecommitRepoExists () {
     --region ${REGION} \
     --repository-name ${REPOSITORY_NAME} \
     &> /dev/null
-
-  if [[ $? -eq 0 ]]
-  then
-    true
-  else
-    false
-  fi
 }
 
 ecrRepoExists () {
@@ -60,13 +45,6 @@ ecrRepoExists () {
     --region ${REGION} \
     --repository-names "${REPOSITORY_NAME}" \
     &> /dev/null
-
-  if [[ $? -eq 0 ]]
-  then
-    true
-  else
-    false
-  fi
 }
 
 iamRoleExists () {
@@ -80,13 +58,6 @@ iamRoleExists () {
     --region ${REGION} \
     --role-name ${ROLE_NAME} \
     &> /dev/null
-
-  if [[ $? -eq 0 ]]
-  then
-    true
-  else
-    false
-  fi
 }
 
 keyPairExists () {
@@ -100,13 +71,6 @@ keyPairExists () {
     --region ${REGION} \
     --key-names ${KEY_PAIR_NAME} \
     &> /dev/null
-
-  if [[ $? -eq 0 ]]
-  then
-    true
-  else
-    false
-  fi
 }
 
 # TODO: REFACTOR: Add parameter checking and usage note
@@ -121,13 +85,6 @@ stackExists () {
     --region ${REGION} \
     --stack-name ${STACK_NAME} \
     &> /dev/null
-
-  if [[ $? -eq 0 ]]
-  then
-    true
-  else
-    false
-  fi
 }
 
 # Echo the ARN of the ACM certificate for the specified domain
@@ -173,15 +130,15 @@ echoHostedZoneIdByApex () {
   )
   if [[ -z "${HOSTED_ZONE_ID_VALUE}" ]]; then
     echo ''
-    false
+    return 1
   fi
 
   local HOSTED_ZONE_ID=$(echo ${HOSTED_ZONE_ID_VALUE:1:-1} | cut -d / -f 3)
   echo ${HOSTED_ZONE_ID}
-  true
+  return 0
 }
 
-# Echo the Hosted Zone ID for the specified Apex domain name
+# Echo the Route 53 Hosted Zone ID for the specified Apex domain name
 echoS3HostedZoneIdByRegion () {
 
   local REGION=$1
@@ -190,11 +147,11 @@ echoS3HostedZoneIdByRegion () {
 
   if [[ -z "${HOSTED_ZONE_ID}" ]]; then
     echo ''
-    false
+    return 1
   fi
 
   echo ${HOSTED_ZONE_ID}
-  true
+  return 0
 }
 
 echoPutStackMode () {
@@ -220,15 +177,14 @@ echoPutStackOutput () {
   shift 3
   local OUTPUT=$*
 
-  if [[ ${EXIT_STATUS} -eq 0 ]]
-  then
-    echo "The request to ${PUT_MODE} the stack was accepted by AWS."
-    echo "View the stack's status at https://${REGION}.console.aws.amazon.com/cloudformation/home?region=${REGION}#/stacks?filter=active"
-  else
+  if [[ ${EXIT_STATUS} -ne 0 ]]; then
     echo "The request to ${PUT_MODE} the stack was not accepted by AWS." 1>&2
     echo ${OUTPUT} 1>&2
-    exit 1
+    return 1
   fi
 
+  echo "The request to ${PUT_MODE} the stack was accepted by AWS."
+  echo "View the stack's status at https://${REGION}.console.aws.amazon.com/cloudformation/home?region=${REGION}#/stacks?filter=active"
   echo ${OUTPUT} | jq '.'
+  return 0
 }
