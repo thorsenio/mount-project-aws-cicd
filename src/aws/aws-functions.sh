@@ -157,6 +157,30 @@ echoDomainNameByDistributionId () {
   return 0
 }
 
+# Echo the endpoint address for the specified database instance
+echoEndpointAddressByDbInstanceIdentifier () {
+
+  local PROFILE=$1
+  local REGION=$2
+  local DB_INSTANCE_IDENTIFIER=$3
+
+  local ENDPOINT_ADDRESS=$(aws rds describe-db-instances \
+    --profile ${PROFILE} \
+    --region ${Region} \
+    --db-instance-identifier ${DB_INSTANCE_IDENTIFIER} \
+    --max-items 1 \
+    --query 'DBInstances[0].Endpoint.Address' \
+    2> /dev/null
+  )
+  if [[ $? -ne 0 ]]; then
+    echo ''
+    return 1
+  fi
+
+  echo ${ENDPOINT_ADDRESS:1:-1}
+  return 0
+}
+
 # Echo the Route 53 Hosted Zone ID for the specified Apex domain name
 echoHostedZoneIdByApex () {
 
