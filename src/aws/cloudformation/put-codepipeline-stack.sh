@@ -35,7 +35,7 @@ if ! iamRoleExists ${PROFILE} ${Region} ${CodePipelineServiceRoleName}; then
   exit 1
 fi
 
-f ! bucketExists ${PROFILE} ${CicdArtifactsBucketName}; then
+if ! bucketExists ${PROFILE} ${CicdArtifactsBucketName}; then
   echo 'The CI/CD artifacts bucket was not found' 1>&2
   echo "Fix this by creating the regional platform stack ('${RegionalPlatformStackName}'):" 1>&2
   echo "  put-regional-platform-stack.sh" 1>&2
