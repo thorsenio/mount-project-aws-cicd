@@ -204,6 +204,30 @@ echoHostedZoneIdByApex () {
   return 0
 }
 
+# Echo the specified output value of the specified stack
+echoStackOutputValue () {
+
+  local PROFILE=$1
+  local REGION=$2
+  local STACK_NAME=$3
+  local OUTPUT_KEY=$4
+
+  local OUTPUT_VALUE=$(aws cloudformation describe-stacks \
+    --profile ${PROFILE} \
+    --region ${REGION} \
+    --stack-name ${STACK_NAME} \
+    --max-items 1 \
+    --query "Stacks[0] | Outputs[?OutputKey=='${OUTPUT_KEY}'] | [0].OutputValue" \
+  )
+  if [[ $? -ne 0 ]]; then
+    echo ''
+    return 1
+  fi
+
+  echo ${OUTPUT_VALUE:1:-1}
+  return 0
+}
+
 # Echo the Route 53 Hosted Zone ID for the specified Apex domain name
 echoS3HostedZoneIdByRegion () {
 
