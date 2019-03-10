@@ -3,7 +3,7 @@
 # This script creates a CloudFormation stack. It automatically expands nested templates.
 # It will fail if the stack already exists.
 
-CLOUDFORMATION_TEMPLATE='templates/ecs-cluster-stack.yml'
+CLOUDFORMATION_TEMPLATE='templates/ecs-cluster.yml'
 
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
@@ -43,6 +43,7 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --parameters \
     ParameterKey=DefaultSecurityGroupName,ParameterValue=${VpcDefaultSecurityGroupName} \
     ParameterKey=DesiredAzCount,ParameterValue=${DESIRED_AZ_COUNT} \
+    ParameterKey=Ec2InstanceName,ParameterValue=${Ec2InstanceName} \
     ParameterKey=EcsClusterName,ParameterValue=${EcsClusterName} \
     ParameterKey=FileSystemName,ParameterValue=${FileSystemName} \
     ParameterKey=KeyPairKeyName,ParameterValue=${KeyPairKeyName} \
