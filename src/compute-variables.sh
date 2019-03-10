@@ -123,9 +123,10 @@ CfTemplatesBucketName="${CfTemplatesBucketName:=cf-templates-${AccountName}-${Pl
 EcsClusterName="${EcsClusterName:=${DeploymentId}-cluster}"
 
 # These resources are shared by the cluster, so there should be only one of each
-BastionInstanceName="${BastionInstanceName:=${EcsClusterName}-bastion}"
+BastionInstanceName="${BastionInstanceName:=${EcsClusterName}-bastion-instance}"
 BastionStackName="${BastionStackName:=${BastionInstanceName}}"
 EcsClusterStackName="${EcsClusterStackName:=${EcsClusterName}}"
+Ec2InstanceName="${Ec2InstanceName:=${EcsClusterName}-instance}"
 KeyPairKeyName="${KeyPairKeyName:=${AccountName}-${Region//-/}-${EcsClusterName}}"
 EcsClusterVpcName="${EcsClusterVpcName:=${EcsClusterName}-vpc}"
 

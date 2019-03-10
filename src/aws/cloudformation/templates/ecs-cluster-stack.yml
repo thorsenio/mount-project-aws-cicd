@@ -14,6 +14,10 @@ Parameters:
     MinValue: 2
     MaxValue: 3
 
+  Ec2InstanceName:
+    Description: "Name assigned to the cluster's EC2 instances."
+    Type: String
+
   EcsClusterName:
     Description: 'Name of the ECS cluster.'
     Type: String
@@ -158,7 +162,7 @@ Resources:
           Value: 'true'
           PropagateAtLaunch: true
         - Key: 'Name'
-          Value: !Ref AWS::StackName
+          Value: !Ref Ec2InstanceName
           PropagateAtLaunch: true
         - Key: 'role'
           Value: !Ref AWS::StackName
