@@ -10,6 +10,7 @@ PROFILE=$1
 REGION=$2
 KEY_PAIR_NAME=$3
 DELETE_IDENTITY_FILE=${4:-'--no-delete'}
+IDENTITY_FILE=~/.ssh/${KEY_PAIR_NAME}.pem
 
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
@@ -27,24 +28,27 @@ else
   echo ${OUTPUT}
 fi
 
-if [[ -f ~/.ssh/${KEY_PAIR_NAME} ]]; then
+if [[ -f ${IDENTITY_FILE} ]]; then
   if [[ ${DELETE_IDENTITY_FILE} == '--delete' ]]; then
-    rm -f ~/.ssh/${KEY_PAIR_NAME}.pem
+    rm -f ${IDENTITY_FILE}
     if [[ $? -eq 0 ]]; then
-      echo "The identity file ~/.ssh/${KEY_PAIR_NAME}.pem has been deleted."
+      echo "The identity file ${IDENTITY_FILE} has been deleted."
       exit 0
     else
-      echo "The identity file ~/.ssh/${KEY_PAIR_NAME}.pem could not be deleted." 1>&2
+      echo "The identity file ${IDENTITY_FILE} could not be deleted." 1>&2
       exit 1
     fi
   else
     # Deletion was not requested, so place a notification alongside the identity file
-    NOTIFICATION_FILE=~/.ssh/${KEY_PAIR_NAME}-deletion.md
+    NOTIFICATION_FILE=~/.ssh/${KEY_PAIR_NAME}.pem-can-be-deleted.md
     touch ${NOTIFICATION_FILE}
     echo "The key pair '${KEY_PAIR_NAME}' has been deleted in AWS IAM" > ${NOTIFICATION_FILE}
     echo "View key pairs in ${REGION} at" >> ${NOTIFICATION_FILE}
     echo "https://${REGION}.console.aws.amazon.com/ec2/v2/home?region=${REGION}#KeyPairs:sort=keyName" >> ${NOTIFICATION_FILE}
+
+    echo "The key pair '${KEY_PAIR_NAME}' is no longer needed."
+    echo "The identity file ${IDENTITY_FILE} can be deleted."
   fi
 else
-  echo "The identity file file was not found at ~/.ssh/${KEY_PAIR_NAME}.pem."
+  echo "The identity file was not found at ${IDENTITY_FILE}."
 fi

@@ -42,3 +42,7 @@ fi
 chmod 400 ${IDENTITY_FILE}
 
 echo "A key pair named '${KeyPairKeyName}' has been generated and saved to ~/.ssh/${KeyPairKeyName}.pem."
+
+# Remove the 'safe to delete' notification file, if left over from a previous deployment
+NOTIFICATION_FILE=~/.ssh/${KeyPairKeyName}.pem-can-be-deleted.md
+rm -f ${NOTIFICATION_FILE}
