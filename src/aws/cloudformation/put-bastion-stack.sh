@@ -60,17 +60,23 @@ getPrivateSubnetId () {
   ) | jq '.Subnets[0].SubnetId' | cut -d\" -f 2
 }
 
-INSTANCE_ARN=$(getContainerInstanceArn)
-
-if [[ ${INSTANCE_ARN} == 'null' ]]
-then
-  echo 'No container instances were found.' 1>&2
-  exit 1
+if [[ -n ${INSTANCE_ID} ]]; then
+  # `INSTANCE_ID` is defined as an environment variable, so use it to generate an instance ARN
+  INSTANCE_ARN="arn:aws:ec2:${Region}:${AccountNumber}:instance/${INSTANCE_ID}"
 else
-  echo "Container instance ARN: ${INSTANCE_ARN}"
-fi
+  # No instance has been specified, so find one in the project's cluster
+  INSTANCE_ARN=$(getContainerInstanceArn)
 
-INSTANCE_ID=$(echo ${INSTANCE_ARN} | cut -d\" -f 2 | awk -F'/' '{ print $NF }')
+  if [[ ${INSTANCE_ARN} == 'null' ]]
+  then
+    echo 'No container instances were found.' 1>&2
+    exit 1
+  else
+    echo "Container instance ARN: ${INSTANCE_ARN}"
+  fi
+
+  INSTANCE_ID=$(echo ${INSTANCE_ARN} | cut -d\" -f 2 | awk -F'/' '{ print $NF }')
+fi
 
 # TODO: Get the security group ID
 SECURITY_GROUP_ID=$(getSecurityGroupId)
