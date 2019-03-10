@@ -415,7 +415,7 @@ Resources:
         DefaultSecurityGroupName: !Ref DefaultSecurityGroupName
         DesiredAzCount: !Ref DesiredAzCount
         VpcName: !Ref VpcName
-      TemplateURL: './vpc-stack.yml'
+      TemplateURL: './vpc.yml'
       TimeoutInMinutes: 5
 
 Outputs:

@@ -2,7 +2,7 @@
 
 # This script uses CloudFormation to create a VPC for the project's ECS stack.
 
-CLOUDFORMATION_TEMPLATE='templates/vpc-stack.yml'
+CLOUDFORMATION_TEMPLATE='templates/vpc.yml'
 
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
