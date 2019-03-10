@@ -12,7 +12,10 @@
   source ./config/project-variables.sh
   cd - > /dev/null
 
-# TODO: Verify that all required values exist
+# Backward-compatibility for projects that use `PROFILE` instead of `Profile`
+Profile=${Profile:=${PROFILE}}
+PROFILE=${Profile}
+
 for SETTING_NAME in \
     BRANCH \
     COMMIT_HASH \
@@ -21,11 +24,11 @@ for SETTING_NAME in \
     PLATFORM_VERSION \
     PLATFORM_VERSION_LABEL \
     PLATFORM_VERSION_STAGE \
+    Profile \
     Region \
     ProjectDomain \
     ProjectVersion; do
-  if [[ -z ${!SETTING_NAME} ]]
-  then
+  if [[ -z ${!SETTING_NAME} ]]; then
     echo -e "No value is set for ${SETTING_NAME}\nAborting." 1>&2
     exit 1
   fi
