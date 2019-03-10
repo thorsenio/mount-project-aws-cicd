@@ -317,6 +317,9 @@ Resources:
               }
               EOF
 
+              # Restart the Docker daemon to enable the changes
+              systemctl restart docker
+
             - FileSystemId: !Ref FileSystem
 
   TargetGroup:
