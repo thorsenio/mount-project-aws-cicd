@@ -45,7 +45,9 @@ getSecurityGroupId () {
     --profile ${PROFILE} \
     --region ${Region} \
     --filters Name=group-name,Values=${VpcDefaultSecurityGroupName} \
-  ) | jq '.SecurityGroups[0].GroupId' | cut -d\" -f 2
+    --query 'SecurityGroups[0].GroupId' \
+    --output text
+  )
 }
 
 # Given a VPC ID, return the ID of its first public subnet
