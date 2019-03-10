@@ -1,6 +1,7 @@
 # CloudFormation template for the networking resources of an ECS stack
 
 AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Multi-AZ VPC with public & private subnets'
 
 Parameters:
   DefaultSecurityGroupName:
