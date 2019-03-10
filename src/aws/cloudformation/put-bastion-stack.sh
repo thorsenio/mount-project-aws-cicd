@@ -14,6 +14,17 @@ source ../../compute-variables.sh
 # Capture the mode that should be used put the stack: `create` or `update`
 PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${BastionStackName})
 
+# Echo the ID of the VPC specified by name
+echoEcsClusterVpcId () {
+  echo $(aws ec2 describe-vpcs \
+    --profile ${PROFILE} \
+    --region ${Region} \
+    --filters Name=tag:Name,Values=${EcsClusterVpcName} \
+    --query 'Vpcs[0].VpcId' \
+    --output text \
+  )
+}
+
 # Return the ARN of the first container instance found in the cluster
 getContainerInstanceArn () {
   echo $(
@@ -45,12 +56,14 @@ getSecurityGroupId () {
     --profile ${PROFILE} \
     --region ${Region} \
     --filters Name=group-name,Values=${VpcDefaultSecurityGroupName} \
-  ) | jq '.SecurityGroups[0].GroupId' | cut -d\" -f 2
+    --query 'SecurityGroups[0].GroupId' \
+    --output text
+  )
 }
 
 # Given a VPC ID, return the ID of its first public subnet
 getPrivateSubnetId () {
-  local VPC_ID=${1}
+  local VPC_ID=$1
   echo $(aws ec2 describe-subnets \
     --profile ${PROFILE} \
     --region ${Region} \
@@ -60,19 +73,24 @@ getPrivateSubnetId () {
   ) | jq '.Subnets[0].SubnetId' | cut -d\" -f 2
 }
 
-CONTAINER_INSTANCE_ARN=$(getContainerInstanceArn)
-
-if [[ ${CONTAINER_INSTANCE_ARN} == 'null' ]]
-then
-  echo 'No container instances were found.' 1>&2
-  exit 1
+if [[ -n ${INSTANCE_ID} ]]; then
+  # `INSTANCE_ID` is defined as an environment variable, so use it to generate an instance ARN
+  INSTANCE_ARN="arn:aws:ec2:${Region}:${AccountNumber}:instance/${INSTANCE_ID}"
 else
-  echo "Container instance ARN: ${CONTAINER_INSTANCE_ARN}"
+  # No instance has been specified, so find one in the project's cluster
+  INSTANCE_ARN=$(getContainerInstanceArn)
+
+  if [[ ${INSTANCE_ARN} == 'null' ]]
+  then
+    echo 'No container instances were found.' 1>&2
+    exit 1
+  else
+    echo "Container instance ARN: ${INSTANCE_ARN}"
+  fi
+
+  INSTANCE_ID=$(echo ${INSTANCE_ARN} | cut -d\" -f 2 | awk -F'/' '{ print $NF }')
 fi
 
-CONTAINER_INSTANCE_ID=$(echo ${CONTAINER_INSTANCE_ARN} | cut -d\" -f 2 | awk -F'/' '{ print $NF }')
-
-# TODO: Get the security group ID
 SECURITY_GROUP_ID=$(getSecurityGroupId)
 
 if [[ '' == ${SECURITY_GROUP_ID} ]]
@@ -83,9 +101,10 @@ else
   echo "Security group ID: ${SECURITY_GROUP_ID}"
 fi
 
-VPC_ID=$(getInstanceAttribute ${CONTAINER_INSTANCE_ID} 'ecs.vpc-id')
+echo "VpcName: ${EcsClusterVpcName}"
+VPC_ID=$(echoEcsClusterVpcId)
 
-if [[ '' == ${VPC_ID} ]]
+if [[ ${VPC_ID} == '' || ${VPC_ID} == 'None' ]]
 then
   echo 'The VPC ID could not be determined.' 1>&2
   exit 1
