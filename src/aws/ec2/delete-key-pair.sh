@@ -17,7 +17,7 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 
 if ! keyPairExists ${PROFILE} ${REGION} ${KEY_PAIR_NAME}; then
-  echo "The key pair '${KEY_PAIR_NAME}' does not exist."
+  echo "The key pair '${KEY_PAIR_NAME}' does not exist in AWS IAM."
 else
   OUTPUT=$(aws ec2 delete-key-pair \
     --profile ${PROFILE} \
@@ -27,28 +27,24 @@ else
   echo ${OUTPUT}
 fi
 
-if [[ ${DELETE_IDENTITY_FILE} == '--delete' ]]; then
-  if [[ -f ~/.ssh/${KEY_PAIR_NAME} ]]; then
+if [[ -f ~/.ssh/${KEY_PAIR_NAME} ]]; then
+  if [[ ${DELETE_IDENTITY_FILE} == '--delete' ]]; then
     rm -f ~/.ssh/${KEY_PAIR_NAME}.pem
     if [[ $? -eq 0 ]]; then
-      echo "The identify file ~/.ssh/${KEY_PAIR_NAME}.pem has been deleted."
+      echo "The identity file ~/.ssh/${KEY_PAIR_NAME}.pem has been deleted."
       exit 0
     else
-      echo "The identify file ~/.ssh/${KEY_PAIR_NAME}.pem could not be deleted." 1>&2
+      echo "The identity file ~/.ssh/${KEY_PAIR_NAME}.pem could not be deleted." 1>&2
       exit 1
     fi
   else
-    echo "The identify file ~/.ssh/${KEY_PAIR_NAME}.pem does not exist."
-  fi
-else
-  # If the identify file exists, place a notification file alongside it
-  if [[ -f ~/.ssh/${KEY_PAIR_NAME} ]]; then
+    # Deletion was not requested, so place a notification alongside the identity file
     NOTIFICATION_FILE=~/.ssh/${KEY_PAIR_NAME}-deletion.md
     touch ${NOTIFICATION_FILE}
-    echo "The key pair '${KEY_PAIR_NAME}' has been deleted in AWS" > ${NOTIFICATION_FILE}
+    echo "The key pair '${KEY_PAIR_NAME}' has been deleted in AWS IAM" > ${NOTIFICATION_FILE}
     echo "View key pairs in ${REGION} at" >> ${NOTIFICATION_FILE}
     echo "https://${REGION}.console.aws.amazon.com/ec2/v2/home?region=${REGION}#KeyPairs:sort=keyName" >> ${NOTIFICATION_FILE}
-  else
-    echo "The identify file does not exist."
   fi
+else
+  echo "The identity file file was not found at ~/.ssh/${KEY_PAIR_NAME}.pem."
 fi
