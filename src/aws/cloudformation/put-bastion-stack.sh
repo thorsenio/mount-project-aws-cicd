@@ -60,17 +60,17 @@ getPrivateSubnetId () {
   ) | jq '.Subnets[0].SubnetId' | cut -d\" -f 2
 }
 
-CONTAINER_INSTANCE_ARN=$(getContainerInstanceArn)
+INSTANCE_ARN=$(getContainerInstanceArn)
 
-if [[ ${CONTAINER_INSTANCE_ARN} == 'null' ]]
+if [[ ${INSTANCE_ARN} == 'null' ]]
 then
   echo 'No container instances were found.' 1>&2
   exit 1
 else
-  echo "Container instance ARN: ${CONTAINER_INSTANCE_ARN}"
+  echo "Container instance ARN: ${INSTANCE_ARN}"
 fi
 
-CONTAINER_INSTANCE_ID=$(echo ${CONTAINER_INSTANCE_ARN} | cut -d\" -f 2 | awk -F'/' '{ print $NF }')
+INSTANCE_ID=$(echo ${INSTANCE_ARN} | cut -d\" -f 2 | awk -F'/' '{ print $NF }')
 
 # TODO: Get the security group ID
 SECURITY_GROUP_ID=$(getSecurityGroupId)
@@ -83,7 +83,7 @@ else
   echo "Security group ID: ${SECURITY_GROUP_ID}"
 fi
 
-VPC_ID=$(getInstanceAttribute ${CONTAINER_INSTANCE_ID} 'ecs.vpc-id')
+VPC_ID=$(getInstanceAttribute ${INSTANCE_ID} 'ecs.vpc-id')
 
 if [[ '' == ${VPC_ID} ]]
 then
