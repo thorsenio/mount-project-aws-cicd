@@ -196,11 +196,6 @@ Resources:
         Fn::Base64:
           Fn::Sub:
             - |
-              Content-Type: multipart/mixed; boundary="--==--BOUNDARY--==--"
-              MIME-Version: 1.0
-
-              ==BOUNDARY==
-              Content-Type: text/x-shellscript; charset="us-ascii"
               #!/bin/bash
               yum update -y
               yum install -y amazon-efs-utils
@@ -223,9 +218,6 @@ Resources:
               # Add the file system to `fstab` so that it is remounted whenever the instance reboots
               echo "${FileSystemId}:/ $DIR_TGT efs tls,_netdev" >> /etc/fstab
 
-              --==--BOUNDARY--==--
-              Content-Type: text/x-shellscript; charset="us-ascii"
-              #!/bin/bash
               # Install awslogs & the jq JSON parser
               yum install -y awslogs jq
 
@@ -264,9 +256,6 @@ Resources:
               datetime_format = %Y-%m-%dT%H:%M:%SZ
               EOF
 
-              ---==BOUNDARY==--
-              Content-Type: text/x-shellscript; charset="us-ascii"
-              #!/usr/bin/env bash
               # Write the awslogs bootstrap script to /usr/local/bin/bootstrap-awslogs.sh
               cat > /usr/local/bin/bootstrap-awslogs.sh <<- 'EOF'
               #!/usr/bin/env bash
@@ -293,9 +282,6 @@ Resources:
               sed -i -e "s/{container_instance_id}/$container_instance_id/g" /etc/awslogs/awslogs.conf
               EOF
 
-              --==--BOUNDARY--==--
-              Content-Type: text/x-shellscript; charset="us-ascii"
-              #!/usr/bin/env bash
               # Write the bootstrap-awslogs systemd unit file to /etc/systemd/system/bootstrap-awslogs.service
               cat > /etc/systemd/system/bootstrap-awslogs.service <<- EOF
               [Unit]
@@ -313,16 +299,11 @@ Resources:
               WantedBy=awslogsd.service
               EOF
 
-              --==--BOUNDARY--==--
-              Content-Type: text/x-shellscript; charset="us-ascii"
-              #!/bin/sh
               chmod +x /usr/local/bin/bootstrap-awslogs.sh
               systemctl daemon-reload
               systemctl enable bootstrap-awslogs.service
               systemctl enable awslogsd.service
               systemctl start awslogsd.service --no-block
-
-              --==--BOUNDARY--==--
             - FileSystemId: !Ref FileSystem
 
   TargetGroup:
