@@ -304,6 +304,17 @@ Resources:
               systemctl enable bootstrap-awslogs.service
               systemctl enable awslogsd.service
               systemctl start awslogsd.service --no-block
+
+              # Set the Docker logging driver to awslogs
+              cat > /etc/docker/daemon.json <<- EOF
+              {
+                "log-driver": "awslogs",
+                "log-opts": {
+                  "awslogs-region": "${AWS::Region}"
+                }
+              }
+              EOF
+
             - FileSystemId: !Ref FileSystem
 
   TargetGroup:
