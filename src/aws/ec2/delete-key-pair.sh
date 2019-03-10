@@ -16,7 +16,7 @@ cd $(dirname "$0")
 
 source ../aws-functions.sh
 
-if keyPairExists ${PROFILE} ${REGION} ${KEY_PAIR_NAME}; then
+if ! keyPairExists ${PROFILE} ${REGION} ${KEY_PAIR_NAME}; then
   echo "The key pair '${KEY_PAIR_NAME}' does not exist."
   exit 0
 fi
@@ -31,7 +31,7 @@ echo ${OUTPUT}
 
 if [[ ${DELETE_IDENTITY_FILE} == '--delete' ]]; then
   rm -f ~/.ssh/${KEY_PAIR_NAME}.pem
-else
+  else
   # Place a notification file in the `~/.ssh` directory
   NOTIFICATION_FILE=~/.ssh/${KEY_PAIR_NAME}-deletion.md
   touch ${NOTIFICATION_FILE}
