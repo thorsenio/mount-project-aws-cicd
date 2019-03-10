@@ -3,7 +3,7 @@
 # This script creates a CloudFormation stack. It automatically expands nested templates.
 # It will fail if the stack already exists.
 
-CLOUDFORMATION_TEMPLATE='templates/ecs-cluster-stack.yml'
+CLOUDFORMATION_TEMPLATE='templates/ecs-cluster.yml'
 
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
