@@ -1,6 +1,7 @@
 # CloudFormation template for an ECS stack
 
 AWSTemplateFormatVersion: '2010-09-09'
+Description: 'ECS cluster'
 Transform: 'AWS::Serverless-2016-10-31'
 
 Parameters:
@@ -310,6 +311,7 @@ Resources:
               {
                 "log-driver": "awslogs",
                 "log-opts": {
+                  "awslogs-group": "${EcsClusterName}",
                   "awslogs-region": "${AWS::Region}"
                 }
               }
