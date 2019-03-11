@@ -50,6 +50,8 @@ for IMAGE_NAME in ${EcrRepoNames}; do
   echo "Building ${SHORT_TAG}"
 
   docker build \
+    --build-arg IMAGE_NAME=${IMAGE_NAME} \
+    --build-arg IMAGE_VERSION_LABEL=${VERSION_LABEL} \
     --file ${DOCKERFILE_PATH} \
     --tag ${LONG_TAG} \
     ${PROJECT_DIR}
