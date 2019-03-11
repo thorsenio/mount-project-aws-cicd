@@ -2,14 +2,14 @@
 
 if [[ $# -lt 3 ]]
 then
-  echo "Usage: ${0} PROFILE REGION KEY_PAIR_NAME [--delete]" >&2
+  echo "Usage: ${0} PROFILE REGION KEY_PAIR_NAME [--delete-identity-file]" >&2
   exit 1
 fi
 
 PROFILE=$1
 REGION=$2
 KEY_PAIR_NAME=$3
-DELETE_IDENTITY_FILE=${4:-'--no-delete'}
+DELETE_IDENTITY_FILE=${4:-'--no-delete-identity-file'}
 IDENTITY_FILE=~/.ssh/${KEY_PAIR_NAME}.pem
 
 # Change to the directory of this script so that relative paths resolve correctly
@@ -29,7 +29,7 @@ else
 fi
 
 if [[ -f ${IDENTITY_FILE} ]]; then
-  if [[ ${DELETE_IDENTITY_FILE} == '--delete' ]]; then
+  if [[ ${DELETE_IDENTITY_FILE} == '--delete-identity-file' ]]; then
     rm -f ${IDENTITY_FILE}
     if [[ $? -eq 0 ]]; then
       echo "The identity file ${IDENTITY_FILE} has been deleted."

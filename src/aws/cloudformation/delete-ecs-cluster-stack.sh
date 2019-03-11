@@ -2,9 +2,9 @@
 
 DELETE_IDENTITIFY_FILE=${1:-''}
 if [[ $1 == '--delete' ]]; then
-  DELETE_KEY_PAIR_PARAM='--delete'
+  DELETE_KEY_PAIR_PARAM='--delete-identify-file'
 else
-  DELETE_KEY_PAIR_PARAM='--no-delete'
+  DELETE_KEY_PAIR_PARAM='--no-delete-identity-file'
 fi
 
 # Change to the directory of this script so that relative paths resolve correctly
