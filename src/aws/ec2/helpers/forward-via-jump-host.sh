@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
 # This script is meant for port forwarding to a host with a private IP address (the private host)
-# via a host with a public IP address (the bastion host).
+# via a host with a public IP address (the jump host).
 #
 # Typical use case:
 # - the private host is in a private subnet of a VPC
-# - the bastion host is in a public subnet of the same VPC
+# - the jump host is in a public subnet of the same VPC
 # - the local host is not in the VPC
 #
 # Assumptions:
-# - the identity (.pem) file is assumed to be the same for the private host and the bastion host
+# - the identity (.pem) file is assumed to be the same for the private host and the jump host
 # - the port on the private host is mapped to the same port on the local host
 
 # Usage:

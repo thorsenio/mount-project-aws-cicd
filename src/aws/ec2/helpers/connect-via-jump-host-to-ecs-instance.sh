@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This script connects to the nth-index cluster instance of the ECS stack via a bastion host,
+# This script connects to the nth-index cluster instance of the ECS stack via a jump host,
 # either for an SSH login or for port forwarding.
 #
 # Example 1: To log in to the 1st container instance:
@@ -114,7 +114,7 @@ JUMP_HOST_INSTANCE_ID=$(getInstanceIdByName ${JumpHostName})
 
 if [[ ${JUMP_HOST_INSTANCE_ID} == 'null' ]]
 then
-  echo "The connection could not be made. Bastion host '${JumpHostName}' was not found." 1>&2
+  echo "The connection could not be made. Jump host '${JumpHostName}' was not found." 1>&2
   exit 1
 fi
 
@@ -128,12 +128,12 @@ JUMP_HOST_IP=$(getPublicIpbyInstanceId ${JUMP_HOST_INSTANCE_ID})
 
 if [[ ${JUMP_HOST_IP} == 'null' ]]
 then
-  echo "The connection could not be made. The bastion host was not found." 1>&2
+  echo "The connection could not be made. The jump host was not found." 1>&2
   exit 1
 fi
 
 echo "Container instance IP: ${CONTAINER_INSTANCE_IP}"
-echo "Bastion host IP: ${JUMP_HOST_IP}"
+echo "Jump host IP: ${JUMP_HOST_IP}"
 
 if [[ ${ACTION} == 'login' ]]
 then

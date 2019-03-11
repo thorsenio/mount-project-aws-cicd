@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This script creates a bastion host in a public subnet of the VPC that hosts container instances
+# This script creates a jump host in a public subnet of the VPC that hosts container instances
 # of the ECS cluster.
 
 CLOUDFORMATION_TEMPLATE='templates/jump-host.yml'

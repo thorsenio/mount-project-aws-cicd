@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This script forwards a port from the local host via a bastion host to the same port of the
+# This script forwards a port from the local host via a jump host to the same port of the
 # nth-index cluster instance of the ECS stack.
 #
 # Example: To forward port 80 of the local host to port 80 of the 2nd container instance:
