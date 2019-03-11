@@ -152,7 +152,6 @@ CodeBuildEnvironmentImage="${CodeBuildEnvironmentImage:='aws/codebuild/docker:18
 
 # Name of the service role & policy used by CodeBuild to call AWS services for this project
 CodeBuildServiceRoleName=${CodeBuildServiceRoleName:="${DeploymentId}-${Region//-/}-cb-service-role"}
-CodeBuildServiceRolePolicyName=${CodeBuildServiceRolePolicyName:="${CodeBuildServiceRoleName}-policy"}
 
 # --- CodePipeline pipeline
 CodePipelineName="${CodePipelineName:=${DeploymentId}-cp}"
