@@ -13,10 +13,23 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
+# Check whether services are running in the cluster
+SERVICE_COUNT=$(aws ecs list-services \
+  --profile ${Profile} \
+  --region ${Region} \
+  --cluster ${EcsClusterName} \
+  --query 'serviceArns[*] | length(@)' \
+  > /dev/null \
+)
+if [[ $? -eq 0 && ${SERVICE_COUNT} -ne 0 ]]; then
+  echo "The stack cannot be deleted, because ${SERVICE_COUNT} services are running in the cluster.\nAborting." 1>&2
+  exit 1
+fi
+
 OUTPUT=$(aws cloudformation delete-stack \
-  --profile=${PROFILE} \
-  --region=${Region} \
-  --stack-name=${EcsClusterStackName} \
+  --profile ${Profile} \
+  --region ${Region} \
+  --stack-name ${EcsClusterStackName} \
 )
 
 EXIT_STATUS=$?
