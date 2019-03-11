@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This script connects via bastion host to the nth-index cluster instance of the ECS stack.
+# This script connects via a jump host to the nth-index cluster instance of the ECS stack.
 # Example: To connect to the first container instance:
 #
 #   ```
@@ -18,4 +18,4 @@ INSTANCE_INDEX=${1:-0}
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
-helpers/connect-via-bastion-to-ecs-instance.sh login ${INSTANCE_INDEX}
+helpers/connect-via-jump-host-to-ecs-instance.sh login ${INSTANCE_INDEX}

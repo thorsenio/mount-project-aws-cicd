@@ -9,7 +9,7 @@ source ../../compute-variables.sh
 OUTPUT=$(aws cloudformation delete-stack \
   --profile=${PROFILE} \
   --region=${Region} \
-  --stack-name=${BastionStackName} \
+  --stack-name=${JumpHostStackName} \
 )
 
 EXIT_STATUS=$?
