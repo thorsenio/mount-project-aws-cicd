@@ -1,0 +1,39 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Service role allowing ECS Tasks to call AWS services'
+
+Parameters:
+  EcsTasksServiceRoleName:
+    Description: 'Name of the service role used by ECS Tasks to call AWS services'
+    Type: String
+
+Resources:
+  EcsTasksServiceRole:
+    Type: AWS::IAM::Role
+    Description: 'Allows ECS Tasks to call AWS services'
+    Properties:
+      RoleName: !Ref EcsTasksServiceRoleName
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action: 'sts:AssumeRole'
+            Effect: 'Allow'
+            Principal:
+              Service: 'ecs-tasks.amazonaws.com'
+      Policies:
+        - PolicyName: !Sub "${EcsTasksServiceRoleName}-policy"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                  - 'ecr:GetAuthorizationToken'
+                  - 'ecr:BatchCheckLayerAvailability'
+                  - 'ecr:GetDownloadUrlForLayer'
+                  - 'ecr:BatchGetImage'
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:DescribeLogStreams'
+                  - 'logs:PutLogEvents'
+                Effect: 'Allow'
+                Resource:
+                  - '*'

@@ -104,7 +104,7 @@ ProtectAgainstTermination='false'
 # Name and ARN of the service role used by CodePipeline to call AWS services
 CodePipelineServiceRoleName=${CodePipelineServiceRoleName:="cp-service-role-${PlatformId}"}
 CodePipelineServiceRoleArn="arn:aws:iam::${AccountNumber}:role/${CodePipelineServiceRoleName}"
-
+EcsTasksServiceRoleName=${EcsTasksServiceRoleName:="ecs-tasks-service-role-${PlatformId}"}
 
 # ----- Region-wide variables
 

@@ -46,6 +46,7 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --template-body file://${TEMPLATE_BASENAME}--expanded.yml \
   --parameters \
     ParameterKey=CodePipelineServiceRoleName,ParameterValue=${CodePipelineServiceRoleName} \
+    ParameterKey=EcsTasksServiceRoleName,ParameterValue=${EcsTasksServiceRoleName} \
     ParameterKey=PlatformCommitHash,ParameterValue=${PlatformCommitHash} \
     ParameterKey=PlatformId,ParameterValue=${PlatformId} \
     ParameterKey=PlatformVersionLabel,ParameterValue=${PlatformVersionLabel} \

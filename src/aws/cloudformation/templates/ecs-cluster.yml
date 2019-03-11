@@ -73,37 +73,6 @@ Resources:
     Properties:
       ClusterName: !Ref EcsClusterName
 
-  TaskExecutionPolicy:
-    Properties:
-      PolicyDocument:
-        Statement:
-          - Action:
-              - 'ecr:GetAuthorizationToken'
-              - 'ecr:BatchCheckLayerAvailability'
-              - 'ecr:GetDownloadUrlForLayer'
-              - 'ecr:BatchGetImage'
-              - 'logs:CreateLogStream'
-              - 'logs:PutLogEvents'
-            Effect: 'Allow'
-            Resource:
-              - '*'
-        Version: '2012-10-17'
-      PolicyName: 'fargate-execution'
-      Roles:
-        - Ref: TaskExecutionRole
-    Type: AWS::IAM::Policy
-
-  TaskExecutionRole:
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Action:
-              - 'sts:AssumeRole'
-            Effect: 'Allow'
-            Principal:
-              Service:
-                - 'ecs-tasks.amazonaws.com'
-    Type: AWS::IAM::Role
   # ----- End of ECS resources
 
   # ----- Instance resources

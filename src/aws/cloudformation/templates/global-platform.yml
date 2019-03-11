@@ -7,6 +7,10 @@ Parameters:
     Description: 'Name of the service role used by CodePipeline to call AWS services'
     Type: String
 
+  EcsTasksServiceRoleName:
+    Description: 'Name of the service role used by ECS Tasks to call AWS services'
+    Type: String
+
   PlatformCommitHash:
     Description: 'Commit hash of the CI/CD platform'
     Type: String
@@ -27,4 +31,13 @@ Resources:
       Parameters:
         CodePipelineServiceRoleName: !Ref CodePipelineServiceRoleName
       TemplateURL: './codepipeline-service-role.yml'
+      TimeoutInMinutes: 2
+
+  EcsTasksServiceRoleStack:
+    Type: AWS::CloudFormation::Stack
+    Description: 'Allows ECS Tasks to call AWS services.'
+    Properties:
+      Parameters:
+        EcsTasksServiceRoleName: !Ref EcsTasksServiceRoleName
+      TemplateURL: './ecstasks-service-role.yml'
       TimeoutInMinutes: 2
