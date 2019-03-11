@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 
-# This script connects to the nth-index cluster instance of the ECS stack via a bastion host,
+# This script connects to the nth-index cluster instance of the ECS stack via a jump host,
 # either for an SSH login or for port forwarding.
 #
 # Example 1: To log in to the 1st container instance:
 #
 #   ```
-#   connect-via-bastionto-ecs-instance.sh login 0
+#   connect-via-jump-host-to-ecs-instance.sh login 0
 #   ```
 #
 # Example 2: To forward port 80 of the local host to port 80 of the 2nd container instance:
 #
 #   ```
-#   connect-via-bastion-to-ecs-instance.sh forward 0 80
+#   connect-via-jump-host-to-ecs-instance.sh forward 0 80
 #   ```
 
 if [[ ${#} -lt 1 ]]
@@ -110,11 +110,11 @@ getPublicIpbyInstanceId () {
   ) | jq '.Reservations[0].Instances[0].PublicIpAddress' | cut -d\" -f 2
 }
 
-BASTION_INSTANCE_ID=$(getInstanceIdByName ${BastionInstanceName})
+JUMP_HOST_INSTANCE_ID=$(getInstanceIdByName ${JumpHostName})
 
-if [[ ${BASTION_INSTANCE_ID} == 'null' ]]
+if [[ ${JUMP_HOST_INSTANCE_ID} == 'null' ]]
 then
-  echo "The connection could not be made. Bastion host '${BastionInstanceName}' was not found." 1>&2
+  echo "The connection could not be made. Jump host '${JumpHostName}' was not found." 1>&2
   exit 1
 fi
 
@@ -124,22 +124,22 @@ CONTAINER_INSTANCE_ID=$(getContainerInstanceIdByArn ${ARN})
 
 CONTAINER_INSTANCE_IP=$(getPrivateIpbyInstanceId ${CONTAINER_INSTANCE_ID})
 
-BASTION_IP=$(getPublicIpbyInstanceId ${BASTION_INSTANCE_ID})
+JUMP_HOST_IP=$(getPublicIpbyInstanceId ${JUMP_HOST_INSTANCE_ID})
 
-if [[ ${BASTION_IP} == 'null' ]]
+if [[ ${JUMP_HOST_IP} == 'null' ]]
 then
-  echo "The connection could not be made. The bastion host was not found." 1>&2
+  echo "The connection could not be made. The jump host was not found." 1>&2
   exit 1
 fi
 
 echo "Container instance IP: ${CONTAINER_INSTANCE_IP}"
-echo "Bastion host IP: ${BASTION_IP}"
+echo "Jump host IP: ${JUMP_HOST_IP}"
 
 if [[ ${ACTION} == 'login' ]]
 then
-  ./ssh-via-bastion.sh ${CONTAINER_INSTANCE_IP} ${BASTION_IP} ${IDENTITY_FILE}
+  ./ssh-via-jump-host.sh ${CONTAINER_INSTANCE_IP} ${JUMP_HOST_IP} ${IDENTITY_FILE}
 else # 'forward'
-  ./forward-via-bastion.sh ${PORT} ${CONTAINER_INSTANCE_IP} ${BASTION_IP} ${IDENTITY_FILE}
+  ./forward-via-jump-host.sh ${PORT} ${CONTAINER_INSTANCE_IP} ${JUMP_HOST_IP} ${IDENTITY_FILE}
 fi
 
 if [[ ${?} -eq 0 ]]

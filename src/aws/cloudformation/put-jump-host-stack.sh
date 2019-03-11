@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-# This script creates a bastion host in a public subnet of the VPC that hosts container instances
+# This script creates a jump host in a public subnet of the VPC that hosts container instances
 # of the ECS cluster.
 
-CLOUDFORMATION_TEMPLATE='templates/bastion.yml'
+CLOUDFORMATION_TEMPLATE='templates/jump-host.yml'
 
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
@@ -12,7 +12,7 @@ source ../aws-functions.sh
 source ../../compute-variables.sh
 
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${BastionStackName})
+PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${JumpHostStackName})
 
 # Echo the ID of the VPC specified by name
 echoEcsClusterVpcId () {
@@ -125,10 +125,10 @@ fi
 OUTPUT=$(aws cloudformation create-stack \
   --profile ${PROFILE} \
   --region ${Region} \
-  --stack-name ${BastionStackName} \
+  --stack-name ${JumpHostStackName} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
-    ParameterKey=BastionInstanceName,ParameterValue=${BastionInstanceName} \
+    ParameterKey=JumpHostName,ParameterValue=${JumpHostName} \
     ParameterKey=KeyPairKeyName,ParameterValue=${KeyPairKeyName} \
     ParameterKey=ProjectName,ParameterValue=${ProjectName} \
     ParameterKey=SecurityGroupId,ParameterValue=${SECURITY_GROUP_ID} \

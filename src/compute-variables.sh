@@ -125,11 +125,11 @@ CfTemplatesBucketName="${CfTemplatesBucketName:=cf-templates-${AccountName}-${Pl
 Ec2InstanceType="${Ec2InstanceType:=${AWS_FREE_TIER_INSTANCE_TYPE}}"
 
 # If the project specifies a cluster, it will be used; otherwise, the project gets its own cluster
-EcsClusterName="${EcsClusterName:=${DeploymentId}-cluster}"
+EcsClusterName="${EcsClusterName:=${DeploymentId}-ecs-cluster}"
 
 # These resources are shared by the cluster, so there should be only one of each
-BastionInstanceName="${BastionInstanceName:=${EcsClusterName}-bastion-instance}"
-BastionStackName="${BastionStackName:=${BastionInstanceName}}"
+JumpHostName="${JumpHostName:=${EcsClusterName}-jump-host}"
+JumpHostStackName="${JumpHostStackName:=${JumpHostName}}"
 EcsClusterStackName="${EcsClusterStackName:=${EcsClusterName}}"
 Ec2InstanceName="${Ec2InstanceName:=${EcsClusterName}-instance}"
 KeyPairKeyName="${KeyPairKeyName:=${AccountName}-${Region//-/}-${EcsClusterName}}"
@@ -152,7 +152,6 @@ CodeBuildEnvironmentImage="${CodeBuildEnvironmentImage:='aws/codebuild/docker:18
 
 # Name of the service role & policy used by CodeBuild to call AWS services for this project
 CodeBuildServiceRoleName=${CodeBuildServiceRoleName:="${DeploymentId}-${Region//-/}-cb-service-role"}
-CodeBuildServiceRolePolicyName=${CodeBuildServiceRolePolicyName:="${CodeBuildServiceRoleName}-policy"}
 
 # --- CodePipeline pipeline
 CodePipelineName="${CodePipelineName:=${DeploymentId}-cp}"
