@@ -44,6 +44,7 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     ParameterKey=DefaultSecurityGroupName,ParameterValue=${VpcDefaultSecurityGroupName} \
     ParameterKey=DesiredAzCount,ParameterValue=${DESIRED_AZ_COUNT} \
     ParameterKey=Ec2InstanceName,ParameterValue=${Ec2InstanceName} \
+    ParameterKey=Ec2InstanceType,ParameterValue=${Ec2InstanceType} \
     ParameterKey=EcsClusterName,ParameterValue=${EcsClusterName} \
     ParameterKey=FileSystemName,ParameterValue=${FileSystemName} \
     ParameterKey=KeyPairKeyName,ParameterValue=${KeyPairKeyName} \

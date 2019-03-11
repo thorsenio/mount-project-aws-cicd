@@ -35,6 +35,7 @@ for SETTING_NAME in \
 done
 
 # AWS constants
+AWS_FREE_TIER_INSTANCE_TYPE='t2.micro'
 AWS_GLOBAL_REGION='us-east-1'
 
 # -- Platform descriptors
@@ -121,6 +122,7 @@ CfTemplatesBucketName="${CfTemplatesBucketName:=cf-templates-${AccountName}-${Pl
 
 
 # ----- Cluster-wide variables
+Ec2InstanceType="${Ec2InstanceType:=${AWS_FREE_TIER_INSTANCE_TYPE}}"
 
 # If the project specifies a cluster, it will be used; otherwise, the project gets its own cluster
 EcsClusterName="${EcsClusterName:=${DeploymentId}-cluster}"
