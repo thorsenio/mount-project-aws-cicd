@@ -3,7 +3,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: Bastion host
 
 Parameters:
-  BastionInstanceName:
+  JumpHostName:
     Description: Name of the bastion instance
     Type: String
   KeyPairKeyName:
@@ -42,4 +42,4 @@ Resources:
           SubnetId: !Ref SubnetId
       Tags:
         - Key: Name
-          Value: !Ref BastionInstanceName
+          Value: !Ref JumpHostName

@@ -110,11 +110,11 @@ getPublicIpbyInstanceId () {
   ) | jq '.Reservations[0].Instances[0].PublicIpAddress' | cut -d\" -f 2
 }
 
-BASTION_INSTANCE_ID=$(getInstanceIdByName ${BastionInstanceName})
+BASTION_INSTANCE_ID=$(getInstanceIdByName ${JumpHostName})
 
 if [[ ${BASTION_INSTANCE_ID} == 'null' ]]
 then
-  echo "The connection could not be made. Bastion host '${BastionInstanceName}' was not found." 1>&2
+  echo "The connection could not be made. Bastion host '${JumpHostName}' was not found." 1>&2
   exit 1
 fi
 
