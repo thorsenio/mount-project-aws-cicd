@@ -13,21 +13,21 @@
 # - the port on the private host is mapped to the same port on the local host
 
 # Usage:
-#   forward-via-jump-host.sh PORT PRIVATE_HOST BASTION_HOST IDENTITY_FILE
+#   forward-via-jump-host.sh PORT PRIVATE_HOST JUMP_HOST IDENTITY_FILE
 
 # Check parameters
-if [[ ${#} -lt 4 ]]
+if [[ $# -lt 4 ]]
 then
-  echo 'Usage: forward-via-jump-host.sh PORT PRIVATE_HOST BASTION_HOST IDENTITY_FILE'
+  echo 'Usage: forward-via-jump-host.sh PORT PRIVATE_HOST JUMP_HOST IDENTITY_FILE'
   exit 1
 fi
 
-PORT=${1}
-PRIVATE_HOST=${2}
-BASTION_HOST=${3}
-IDENTITY_FILE=${4}
+PORT=$1
+PRIVATE_HOST=$2
+JUMP_HOST=$3
+IDENTITY_FILE=$4
 
 ssh -i ${IDENTITY_FILE} \
-  -o "proxycommand ssh -W %h:%p -i ${IDENTITY_FILE} ec2-user@${BASTION_HOST}" \
+  -o "proxycommand ssh -W %h:%p -i ${IDENTITY_FILE} ec2-user@${JUMP_HOST}" \
   -NT -L ${PORT}:localhost:${PORT} \
   ec2-user@${PRIVATE_HOST}

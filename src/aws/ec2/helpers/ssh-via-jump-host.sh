@@ -11,19 +11,19 @@
 # The identity (.pem) file is assumed to be the same for the private host and the bastion host.
 
 # Usage:
-#   ssh-via-jump-host.sh PRIVATE_HOST BASTION_HOST IDENTITY_FILE
+#   ssh-via-jump-host.sh PRIVATE_HOST JUMP_HOST IDENTITY_FILE
 
 # Check parameters
-if [[ ${#} -lt 3 ]]
+if [[ $# -lt 3 ]]
 then
-  echo 'Usage: ssh-via-jump-host.sh PRIVATE_HOST BASTION_HOST IDENTITY_FILE'
+  echo 'Usage: ssh-via-jump-host.sh PRIVATE_HOST JUMP_HOST IDENTITY_FILE'
   exit 1
 fi
 
-PRIVATE_HOST=${1}
-BASTION_HOST=${2}
-IDENTITY_FILE=${3}
+PRIVATE_HOST=$1
+JUMP_HOST=$2
+IDENTITY_FILE=$3
 
 ssh -i ${IDENTITY_FILE} \
-  -o "proxycommand ssh -W %h:%p -i ${IDENTITY_FILE} ec2-user@${BASTION_HOST}" \
+  -o "proxycommand ssh -W %h:%p -i ${IDENTITY_FILE} ec2-user@${JUMP_HOST}" \
   ec2-user@${PRIVATE_HOST}
