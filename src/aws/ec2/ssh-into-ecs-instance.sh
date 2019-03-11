@@ -18,4 +18,4 @@ INSTANCE_INDEX=${1:-0}
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
-helpers/connect-via-bastion-to-ecs-instance.sh login ${INSTANCE_INDEX}
+helpers/connect-via-jump-host-to-ecs-instance.sh login ${INSTANCE_INDEX}

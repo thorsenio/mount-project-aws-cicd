@@ -13,12 +13,12 @@
 # - the port on the private host is mapped to the same port on the local host
 
 # Usage:
-#   forward-via-bastion.sh PORT PRIVATE_HOST BASTION_HOST IDENTITY_FILE
+#   forward-via-jump-host.sh PORT PRIVATE_HOST BASTION_HOST IDENTITY_FILE
 
 # Check parameters
 if [[ ${#} -lt 4 ]]
 then
-  echo 'Usage: forward-via-bastion.sh PORT PRIVATE_HOST BASTION_HOST IDENTITY_FILE'
+  echo 'Usage: forward-via-jump-host.sh PORT PRIVATE_HOST BASTION_HOST IDENTITY_FILE'
   exit 1
 fi
 

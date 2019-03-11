@@ -11,12 +11,12 @@
 # The identity (.pem) file is assumed to be the same for the private host and the bastion host.
 
 # Usage:
-#   ssh-via-bastion.sh PRIVATE_HOST BASTION_HOST IDENTITY_FILE
+#   ssh-via-jump-host.sh PRIVATE_HOST BASTION_HOST IDENTITY_FILE
 
 # Check parameters
 if [[ ${#} -lt 3 ]]
 then
-  echo 'Usage: ssh-via-bastion.sh PRIVATE_HOST BASTION_HOST IDENTITY_FILE'
+  echo 'Usage: ssh-via-jump-host.sh PRIVATE_HOST BASTION_HOST IDENTITY_FILE'
   exit 1
 fi
 

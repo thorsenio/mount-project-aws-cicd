@@ -4,7 +4,7 @@
 cd $(dirname "$0")
 
 for TEMPLATE in \
-  'bastion.yml' \
+  'jump-host.yml' \
   'cloudfront-distribution.yml' \
   'codebuild-project.yml' \
   'codepipeline.yml' \
