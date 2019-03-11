@@ -125,7 +125,7 @@ CfTemplatesBucketName="${CfTemplatesBucketName:=cf-templates-${AccountName}-${Pl
 Ec2InstanceType="${Ec2InstanceType:=${AWS_FREE_TIER_INSTANCE_TYPE}}"
 
 # If the project specifies a cluster, it will be used; otherwise, the project gets its own cluster
-EcsClusterName="${EcsClusterName:=${DeploymentId}-cluster}"
+EcsClusterName="${EcsClusterName:=${DeploymentId}-ecs-cluster}"
 
 # These resources are shared by the cluster, so there should be only one of each
 BastionInstanceName="${BastionInstanceName:=${EcsClusterName}-bastion-instance}"
