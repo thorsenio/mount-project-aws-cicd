@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CLOUDFORMATION_TEMPLATE='templates/cloudfront-distribution.yml'
+CLOUDFORMATION_TEMPLATE='templates/s3-cloudfront-distribution.yml'
 
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
