@@ -57,7 +57,7 @@ Resources:
         SiteDomain: !Ref SiteDomain
         SiteErrorDocument: !Ref SiteErrorDocument
         SiteIndexDocument: !Ref SiteIndexDocument
-      TemplateURL: './cloudfront-distribution.yml'
+      TemplateURL: './s3-cloudfront-distribution.yml'
       TimeoutInMinutes: 60
 
   SiteBucketStack:
