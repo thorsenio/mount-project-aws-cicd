@@ -53,8 +53,8 @@ else
   PlatformId="${PlatformName}-v${PlatformMajorVersion}${PlatformVersionStage}"
 fi
 
-RegionalPlatformStackName="${PlatformId}-regional"
 GlobalPlatformStackName="${PlatformId}-global"
+RegionalPlatformStackName="${PlatformId}-regional"
 
 # -- Project descriptors
 # The values of `BRANCH` and `COMMIT_HASH` are set in the activation script
@@ -106,19 +106,20 @@ CodePipelineServiceRoleName=${CodePipelineServiceRoleName:="cp-service-role-${Pl
 CodePipelineServiceRoleArn="arn:aws:iam::${AccountNumber}:role/${CodePipelineServiceRoleName}"
 EcsTasksServiceRoleName=${EcsTasksServiceRoleName:="ecs-tasks-service-role-${PlatformId}"}
 
+
 # ----- Region-wide variables
 
 # The S3 buckets below are referenced by the pipeline stack, but must be created independently if
 # they do not already exist. Use `create-cicd-artifacts-bucket.sh`.
 # AccountName is included in all bucket names to avoid name collisions
 
-# Name of the S3 bucket that hosts CodeBuild & CodePipeline artifacts for all projects in the region
-# Here CodeBuild & CodePipeline share the same bucket
-CicdArtifactsBucketName="${CicdArtifactsBucketName:=cicd-artifacts-${AccountName}-${PlatformId}-${Region//-/}}"
-
 # Name of the S3 bucket that holds CloudFormation templates for the region. It is part of the
 # regional platform stack
 CfTemplatesBucketName="${CfTemplatesBucketName:=cf-templates-${AccountName}-${PlatformId}-${Region//-/}}"
+
+# Name of the S3 bucket that hosts CodeBuild & CodePipeline artifacts for all projects in the region
+# Here CodeBuild & CodePipeline share the same bucket
+CicdArtifactsBucketName="${CicdArtifactsBucketName:=cicd-artifacts-${AccountName}-${PlatformId}-${Region//-/}}"
 
 
 # ----- Cluster-wide variables
@@ -128,27 +129,29 @@ Ec2InstanceType="${Ec2InstanceType:=${AWS_FREE_TIER_INSTANCE_TYPE}}"
 EcsClusterName="${EcsClusterName:=${DeploymentId}-ecs-cluster}"
 
 # These resources are shared by the cluster, so there should be only one of each
+Ec2InstanceName="${Ec2InstanceName:=${EcsClusterName}-instance}"
+EcsClusterStackName="${EcsClusterStackName:=${EcsClusterName}}"
+EcsClusterVpcName="${EcsClusterVpcName:=${EcsClusterName}-vpc}"
+EcsHealthCheckPath="${EcsHealthCheckPath:='/health'}"
 JumpHostName="${JumpHostName:=${EcsClusterName}-jump-host}"
 JumpHostStackName="${JumpHostStackName:=${JumpHostName}}"
-EcsClusterStackName="${EcsClusterStackName:=${EcsClusterName}}"
-Ec2InstanceName="${Ec2InstanceName:=${EcsClusterName}-instance}"
 KeyPairKeyName="${KeyPairKeyName:=${AccountName}-${Region//-/}-${EcsClusterName}}"
-EcsClusterVpcName="${EcsClusterVpcName:=${EcsClusterName}-vpc}"
 
 # TODO: Build in support for per-project subnets
 VpcName="${VpcName:=${DeploymentId}-vpc}"
-VpcStackName="${VpcStackName:=${VpcName}}"
 VpcDefaultSecurityGroupName="${VpcDefaultSecurityGroupName:=${VpcName}-sg}"
+VpcStackName="${VpcStackName:=${VpcName}}"
 
 FileSystemName="${FileSystemName:=${EcsClusterName}-fs}"
 FileSystemStackName="${FileSystemStackName:=${FileSystemName}}"
 
+
 # ----- Project-wide variables
 
 # --- CodeBuild project
+CodeBuildEnvironmentImage="${CodeBuildEnvironmentImage:='aws/codebuild/docker:18.09.0'}"
 CodeBuildProjectName="${CodeBuildProjectName:=${DeploymentId}-cb-project}"
 CodeBuildProjectStackName="${CodeBuildProjectStackName:=${CodeBuildProjectName}}"
-CodeBuildEnvironmentImage="${CodeBuildEnvironmentImage:='aws/codebuild/docker:18.09.0'}"
 
 # Name of the service role & policy used by CodeBuild to call AWS services for this project
 CodeBuildServiceRoleName=${CodeBuildServiceRoleName:="${DeploymentId}-${Region//-/}-cb-service-role"}
@@ -174,7 +177,8 @@ RepoDescription="${RepoDescription:=${ProjectDescription}}"
 
 # --- Website stacks
 
-SiteStackName="${SiteStackName:=${DeploymentId}-site}"
+# CloudFront distribution
+CloudfrontDistributionStackName="${CloudfrontDistributionStackName:=${DeploymentId}-cdn}"
 
 # The name and stack of the S3 bucket that hosts the project's static files
 ProjectBucketName="${ProjectBucketName:=${DeploymentId,,}-${Region//-/}-site}"
@@ -184,5 +188,4 @@ ProjectBucketStackName="${ProjectBucketStackName:=${ProjectBucketName}}"
 SiteIndexDocument="${SiteIndexDocument:='index.html'}"
 SiteErrorDocument="${SiteErrorDocument:=${SiteIndexDocument}}"
 
-# --- CloudFront distribution
-CloudfrontDistributionStackName="${CloudfrontDistributionStackName:=${DeploymentId}-cdn}"
+SiteStackName="${SiteStackName:=${DeploymentId}-site}"
