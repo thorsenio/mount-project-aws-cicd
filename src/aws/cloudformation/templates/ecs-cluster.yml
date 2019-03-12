@@ -388,9 +388,17 @@ Resources:
       TimeoutInMinutes: 5
 
 Outputs:
+  AlbDomainName:
+    Description: 'Endpoint of the application load balancer'
+    Value: !GetAtt AppLoadBalancer.DNSName
+
   AutoscalingGroupName:
     Description: 'Name of autoscaling group.'
     Value: !Ref AutoscalingGroup
+
+  FileSystemId:
+    Description: 'ID of the EFS file system'
+    Value: !Ref FileSystem
 
   PrivateSubnetA:
     Description: 'ID of private subnet in AZ a'
