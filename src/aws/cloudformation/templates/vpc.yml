@@ -215,10 +215,6 @@ Resources:
       IpProtocol: 'tcp'
 
 Outputs:
-  VpcId:
-    Description: 'ID of VPC'
-    Value: !Ref Vpc
-
   PrivateSubnetA:
     Description: 'ID of private subnet in AZ a'
     Value: !Ref PrivateSubnetAzA
@@ -244,3 +240,8 @@ Outputs:
   SecurityGroupId:
     Description: "ID of the VPC's primary security group"
     Value: !Ref SecurityGroup
+
+  VpcId:
+    Description: 'ID of VPC'
+    Value: !Ref Vpc
+

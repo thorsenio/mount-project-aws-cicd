@@ -405,6 +405,10 @@ Outputs:
     Condition: Create3Subnets
     Value: !GetAtt VpcStack.Outputs.PrivateSubnetC
 
+  SecurityGroupId:
+    Description: "ID of the VPC's primary security group"
+    Value: !GetAtt VpcStack.Outputs.SecurityGroupId
+
   VpcId:
     Description: 'ID of the VPC'
     Value: !GetAtt VpcStack.Outputs.VpcId
