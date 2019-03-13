@@ -1,0 +1,71 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'ECS-hosted website served through CloudFront'
+
+Parameters:
+  AcmCertificateArn:
+    Description: 'ARN ofthe ACM Certificate for the domain'
+    Type: String
+
+  DeploymentId:
+    Description: 'Identifier of the project, major version & version stage'
+    Type: String
+
+  PlatformCommitHash:
+    Description: 'Commit hash of the CI/CD platform'
+    Type: String
+
+  PlatformId:
+    Description: 'Identifier of the CI/CD platform name, major version & version stage'
+    Type: String
+
+  PlatformVersionLabel:
+    Description: 'AWS CI/CD platform version'
+    Type: String
+
+  ProjectCommitHash:
+    Description: 'Commit hash of the deployed project'
+    Type: String
+
+  ProjectVersionLabel:
+    Description: 'Project version label (version + stage)'
+    Type: String
+
+  SiteBucketName:
+    Description: 'S3 bucket for the project'
+    Type: String
+
+  SiteDomain:
+    Description: 'Domain name of the site'
+    Type: String
+
+  SiteErrorDocument:
+    Description: 'Error document'
+    Type: String
+
+  SiteIndexDocument:
+    Description: 'Index document'
+    Type: String
+
+Resources:
+  CdnDistroStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        AcmCertificateArn: !Ref AcmCertificateArn
+        SiteBucketName: !Ref SiteBucketName
+        SiteDomain: !Ref SiteDomain
+        SiteErrorDocument: !Ref SiteErrorDocument
+        SiteIndexDocument: !Ref SiteIndexDocument
+      TemplateURL: './ecs-cloudfront-distribution.yml'
+      TimeoutInMinutes: 60
+
+  SiteBucketStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      Parameters:
+        BucketName: !Ref SiteBucketName
+        ErrorDocument: !Ref SiteErrorDocument
+        IndexDocument: !Ref SiteIndexDocument
+      TemplateURL: './s3-site-bucket.yml'
+      TimeoutInMinutes: 10

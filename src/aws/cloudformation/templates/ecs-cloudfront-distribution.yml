@@ -1,0 +1,54 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFront distribution for ECS-hosted website'
+
+Parameters:
+  AcmCertificateArn:
+    Description: 'ARN ofthe ACM Certificate for the domain'
+    Type: String
+
+  ApplicationServerOrigin:
+    Description: 'Domain name of the server-side application'
+    Type: String
+
+  SiteDomain:
+    Description: 'Domain name of the site'
+    Type: String
+
+  SiteIndexDocument:
+    Description: 'Index document'
+    Type: String
+    Default: 'index.html'
+
+Resources:
+  CdnDistro:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - !Ref SiteDomain
+        DefaultCacheBehavior:
+          Compress: true
+          DefaultTTL: 0
+          ForwardedValues:
+            QueryString: false
+          MaxTTL: 86400 # 1 day
+          MinTTL: 0
+          TargetOriginId: !Sub "application-server"
+          ViewerProtocolPolicy: 'redirect-to-https'
+        DefaultRootObject: !Ref SiteIndexDocument
+        Enabled: true
+        HttpVersion: 'http2'
+        IPV6Enabled: true
+        Origins:
+          - # containerized application via load balancer
+            CustomOriginConfig:
+              OriginProtocolPolicy: 'http-only'
+            DomainName: !Ref ApplicationServerOrigin
+            Id: !Sub "application-server"
+
+        PriceClass: 'PriceClass_100'
+        ViewerCertificate:
+          AcmCertificateArn: !Ref AcmCertificateArn
+          MinimumProtocolVersion: 'TLSv1.1_2016'
+          SslSupportMethod: 'sni-only'
