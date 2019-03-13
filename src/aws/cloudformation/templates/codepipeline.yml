@@ -24,10 +24,6 @@ Parameters:
     Description: 'Name of the service role used by CodeBuild to call AWS services'
     Type: String
 
-  CodeBuildServiceRolePolicyName:
-    Description: 'Name of the policy attached to the CodeBuild service role'
-    Type: String
-
   CodePipelineName:
     Description: 'Name of the CI/CD pipeline'
     Type: String
@@ -104,7 +100,6 @@ Resources:
         CicdArtifactsBucketName: !Ref CicdArtifactsBucketName
         CodeBuildEnvironmentImage: !Ref CodeBuildEnvironmentImage
         CodeBuildServiceRoleName: !Ref CodeBuildServiceRoleName
-        CodeBuildServiceRolePolicyName: !Ref CodeBuildServiceRolePolicyName
         DeploymentId: !Ref DeploymentId
         PlatformId: !Ref PlatformId
         ProjectBucketName: !Ref ProjectBucketName

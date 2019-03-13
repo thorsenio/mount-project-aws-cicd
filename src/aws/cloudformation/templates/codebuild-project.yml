@@ -19,10 +19,6 @@ Parameters:
     Description: 'Name of the service role used by CodeBuild to call AWS services'
     Type: String
 
-  CodeBuildServiceRolePolicyName:
-    Description: 'Name of the policy attached to the CodeBuild service role'
-    Type: String
-
   DeploymentId:
     Description: 'Identifier of the project, major version, and version stage'
     Type: String

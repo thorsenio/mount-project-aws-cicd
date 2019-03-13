@@ -53,7 +53,6 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     ParameterKey=CodeBuildEnvironmentImage,ParameterValue=${CodeBuildEnvironmentImage} \
     ParameterKey=CodeBuildProjectName,ParameterValue=${CodeBuildProjectName} \
     ParameterKey=CodeBuildServiceRoleName,ParameterValue=${CodeBuildServiceRoleName} \
-    ParameterKey=CodeBuildServiceRolePolicyName,ParameterValue=${CodeBuildServiceRolePolicyName} \
     ParameterKey=CodePipelineName,ParameterValue=${CodePipelineName} \
     ParameterKey=CodePipelineServiceRoleName,ParameterValue=${CodePipelineServiceRoleName} \
     ParameterKey=DeploymentId,ParameterValue=${DeploymentId} \
