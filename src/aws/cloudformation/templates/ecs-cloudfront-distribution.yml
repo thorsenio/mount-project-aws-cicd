@@ -61,7 +61,7 @@ Resources:
           Compress: true
           DefaultTTL: 0
           ForwardedValues:
-            QueryString: false
+            QueryString: true
           MaxTTL: 86400 # 1 day
           MinTTL: 0
           TargetOriginId: 'application-server'
