@@ -20,6 +20,24 @@ Parameters:
     Type: String
     Default: 'index.html'
 
+  StaticFilesBucketName:
+    Description: 'Name of the S3 bucket that holds static files'
+    Type: String
+
+  StaticFilesOrigin:
+    Description: 'Domain name of the S3 bucket that serves static files'
+    Type: String
+
+  StaticFilesOriginPath:
+    Description: 'Path used to request content from the static files endpoint'
+    Type: String
+    Default: '/static'
+
+  StaticFilesPathPattern:
+    Description: 'Pattern describing the path of static files'
+    Type: String
+    Default: 'static/*'
+
 Resources:
   CdnDistro:
     Type: AWS::CloudFront::Distribution
@@ -27,6 +45,18 @@ Resources:
       DistributionConfig:
         Aliases:
           - !Ref SiteDomain
+        CacheBehaviors:
+          - # static files
+            Compress: true
+            DefaultTTL: 86400
+            ForwardedValues:
+              QueryString: false
+            MaxTTL: 31536000 # 1 year
+            MinTTL: 0
+            PathPattern: !Ref StaticFilesPathPattern
+            TargetOriginId: 'static-files'
+            ViewerProtocolPolicy: 'redirect-to-https'
+
         DefaultCacheBehavior:
           Compress: true
           DefaultTTL: 0
@@ -34,7 +64,7 @@ Resources:
             QueryString: false
           MaxTTL: 86400 # 1 day
           MinTTL: 0
-          TargetOriginId: !Sub "application-server"
+          TargetOriginId: 'application-server'
           ViewerProtocolPolicy: 'redirect-to-https'
         DefaultRootObject: !Ref SiteIndexDocument
         Enabled: true
@@ -45,10 +75,24 @@ Resources:
             CustomOriginConfig:
               OriginProtocolPolicy: 'http-only'
             DomainName: !Ref ApplicationServerOrigin
-            Id: !Sub "application-server"
+            Id: 'application-server'
+
+          - # static files via S3
+            DomainName: !GetAtt StaticFilesBucket.DomainName
+            Id: 'static-files'
+            S3OriginConfig:
+              # An empty value allows access through both CloudFront & the bucket.
+              # TODO: Allow access through CloudFront only
+              OriginAccessIdentity: ''
 
         PriceClass: 'PriceClass_100'
         ViewerCertificate:
           AcmCertificateArn: !Ref AcmCertificateArn
           MinimumProtocolVersion: 'TLSv1.1_2016'
           SslSupportMethod: 'sni-only'
+
+  StaticFilesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: 'PublicRead'
+      BucketName: !Ref StaticFilesBucketName

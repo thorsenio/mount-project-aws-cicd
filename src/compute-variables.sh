@@ -191,3 +191,6 @@ fi
 SiteErrorDocument="${SiteErrorDocument:=${SiteIndexDocument}}"
 
 SiteStackName="${SiteStackName:=${DeploymentId}-site}"
+
+# ECS-hosted site
+#StaticFilesPathPattern="${StaticFilesPathPattern}:='/static/*'" # not yet implemented

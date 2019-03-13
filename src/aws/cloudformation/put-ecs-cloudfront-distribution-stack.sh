@@ -26,7 +26,10 @@ if [[ -z ${APPLICATION_SERVER_ORIGIN} ]]; then
   exit 1
 fi
 
+STATIC_FILES_ORIGIN="${ProjectBucketName}.s3.amazonaws.com"
+
 echo "Application server origin: ${APPLICATION_SERVER_ORIGIN}"
+echo "Static files origin: ${STATIC_FILES_ORIGIN}"
 
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${Profile} \
@@ -38,6 +41,8 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     ParameterKey=ApplicationServerOrigin,ParameterValue=${APPLICATION_SERVER_ORIGIN} \
     ParameterKey=SiteDomain,ParameterValue=${SiteDomain} \
     ParameterKey=SiteIndexDocument,ParameterValue=${SiteIndexDocument} \
+    ParameterKey=StaticFilesOrigin,ParameterValue=${STATIC_FILES_ORIGIN} \
+    ParameterKey=StaticFilesBucketName,ParameterValue=${ProjectBucketName} \
   --capabilities \
     CAPABILITY_IAM \
 )

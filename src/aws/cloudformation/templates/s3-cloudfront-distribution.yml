@@ -36,12 +36,6 @@ Resources:
             ResponseCode: 200
             ResponsePagePath: !Sub "/${SiteErrorDocument}"
         DefaultCacheBehavior:
-          AllowedMethods:
-            - 'GET'
-            - 'HEAD'
-          CachedMethods:
-            - 'GET'
-            - 'HEAD'
           Compress: true
           DefaultTTL: 86400
           ForwardedValues:
