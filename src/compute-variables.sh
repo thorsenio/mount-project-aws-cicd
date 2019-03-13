@@ -185,7 +185,9 @@ ProjectBucketName="${ProjectBucketName:=${DeploymentId,,}-${Region//-/}-site}"
 ProjectBucketStackName="${ProjectBucketStackName:=${ProjectBucketName}}"
 
 # Name of the index and error documents for the site (for an SPA, these are typically the same)
-SiteIndexDocument="${SiteIndexDocument:='index.html'}"
+if [[ ! -v SiteIndexDocument ]]; then
+  SiteIndexDocument='index.html'
+fi
 SiteErrorDocument="${SiteErrorDocument:=${SiteIndexDocument}}"
 
 SiteStackName="${SiteStackName:=${DeploymentId}-site}"
