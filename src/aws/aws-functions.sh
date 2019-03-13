@@ -218,14 +218,16 @@ echoStackOutputValue () {
     --stack-name ${STACK_NAME} \
     --max-items 1 \
     --query "Stacks[0] | Outputs[?OutputKey=='${OUTPUT_KEY}'] | [0].OutputValue" \
+    --output text
     2> /dev/null
   )
-  if [[ $? -ne 0 ]]; then
+
+  if [[ $? -ne 0 || ${OUTPUT_VALUE} == 'None' ]]; then
     echo ''
     return 1
   fi
 
-  echo ${OUTPUT_VALUE:1:-1}
+  echo ${OUTPUT_VALUE}
   return 0
 }
 
