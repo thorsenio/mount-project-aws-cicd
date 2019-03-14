@@ -58,6 +58,14 @@ Resources:
             ViewerProtocolPolicy: 'redirect-to-https'
 
         DefaultCacheBehavior:
+          AllowedMethods:
+            - 'DELETE'
+            - 'GET'
+            - 'HEAD'
+            - 'OPTIONS'
+            - 'PATCH'
+            - 'POST'
+            - 'PUT'
           Compress: true
           DefaultTTL: 0
           ForwardedValues:
