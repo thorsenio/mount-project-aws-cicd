@@ -69,6 +69,8 @@ Resources:
           Compress: true
           DefaultTTL: 0
           ForwardedValues:
+            Cookies:
+              Forward: 'all'
             Headers:
               - 'Host'
             QueryString: true
