@@ -35,7 +35,7 @@ Parameters:
     Description: 'Project version label (version + stage)'
     Type: String
 
-  SiteDomain:
+  SiteDomainName:
     Description: 'Domain name of the site'
     Type: String
 
@@ -68,7 +68,7 @@ Resources:
       Parameters:
         AcmCertificateArn: !Ref AcmCertificateArn
         ApplicationServerOrigin: !Ref ApplicationServerOrigin
-        SiteDomain: !Ref SiteDomain
+        SiteDomainName: !Ref SiteDomainName
         SiteIndexDocument: !Ref SiteIndexDocument
         StaticFilesOrigin: !Ref StaticFilesOrigin
         StaticFilesOriginPath: !Ref StaticFilesOriginPath

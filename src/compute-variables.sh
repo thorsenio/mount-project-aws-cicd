@@ -26,7 +26,7 @@ for SETTING_NAME in \
     PLATFORM_VERSION_STAGE \
     Profile \
     Region \
-    ProjectDomain \
+    ProjectDomainName \
     ProjectVersion; do
   if [[ -z ${!SETTING_NAME} ]]; then
     echo -e "No value is set for ${SETTING_NAME}\nAborting." 1>&2
@@ -77,15 +77,15 @@ else
 fi
 
 # ----- Domain names
-NonproductionBaseDomain=${NonproductionBaseDomain:=${ProjectDomain}}
+NonproductionBaseDomainName=${NonproductionBaseDomainName:=${ProjectDomainName}}
 if [[ ${BranchName} == 'master' ]]; then
-  SiteDomain=${SiteDomain:="www.${ProjectDomain}"}
-  CertifiedDomain=${SiteDomain}
+  SiteDomainName=${SiteDomainName:="www.${ProjectDomainName}"}
+  CertifiedDomainName=${SiteDomainName}
 else
     # Use a wildcard certificate
-    CertifiedDomain="*.${NonproductionBaseDomain}"
+    CertifiedDomainName="*.${NonproductionBaseDomainName}"
     # All nonproduction deployments are expected to use this naming scheme
-    SiteDomain="${DeploymentId,,}.${NonproductionBaseDomain}"
+    SiteDomainName="${DeploymentId,,}.${NonproductionBaseDomainName}"
 fi
 # TODO: FEATURE: Possibly allow custom nonproduction domains
 # TODO: FEATURE: Possibly add SiteUrl to allow for microservices hosted at the same domain

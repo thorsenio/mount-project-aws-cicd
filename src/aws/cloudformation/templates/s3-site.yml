@@ -35,7 +35,7 @@ Parameters:
     Description: 'S3 bucket for the project'
     Type: String
 
-  SiteDomain:
+  SiteDomainName:
     Description: 'Domain name of the site'
     Type: String
 
@@ -54,7 +54,7 @@ Resources:
       Parameters:
         AcmCertificateArn: !Ref AcmCertificateArn
         SiteBucketName: !Ref SiteBucketName
-        SiteDomain: !Ref SiteDomain
+        SiteDomainName: !Ref SiteDomainName
         SiteErrorDocument: !Ref SiteErrorDocument
         SiteIndexDocument: !Ref SiteIndexDocument
       TemplateURL: './s3-cloudfront-distribution.yml'

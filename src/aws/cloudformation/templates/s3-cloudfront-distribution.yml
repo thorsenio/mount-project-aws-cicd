@@ -11,7 +11,7 @@ Parameters:
     Description: 'S3 bucket for the site'
     Type: String
 
-  SiteDomain:
+  SiteDomainName:
     Description: 'Domain name of the site'
     Type: String
 
@@ -29,7 +29,7 @@ Resources:
     Properties:
       DistributionConfig:
         Aliases:
-          - !Ref SiteDomain
+          - !Ref SiteDomainName
         CustomErrorResponses:
           - ErrorCachingMinTTL: 0
             ErrorCode: 404

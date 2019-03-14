@@ -11,7 +11,7 @@ Parameters:
     Description: 'Domain name of the server-side application'
     Type: String
 
-  SiteDomain:
+  SiteDomainName:
     Description: 'Domain name of the site'
     Type: String
 
@@ -44,7 +44,7 @@ Resources:
     Properties:
       DistributionConfig:
         Aliases:
-          - !Ref SiteDomain
+          - !Ref SiteDomainName
         CacheBehaviors:
           - # static files
             Compress: true

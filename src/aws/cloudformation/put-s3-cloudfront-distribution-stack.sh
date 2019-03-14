@@ -12,10 +12,10 @@ source ../../compute-variables.sh
 PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${CloudfrontDistributionStackName})
 
 # Get the ARN of the ACM certificate for the domain name
-CERTIFICATE_ARN=$(echoAcmCertificateArn ${PROFILE} ${CertifiedDomain})
+CERTIFICATE_ARN=$(echoAcmCertificateArn ${PROFILE} ${CertifiedDomainName})
 if [[ -z ${CERTIFICATE_ARN} ]]
 then
-  echo "No certificate was found for the domain '${CertifiedDomain}'." 1>&2
+  echo "No certificate was found for the domain '${CertifiedDomainName}'." 1>&2
   echo "The creation of the stack has been aborted." 1>&2
   exit 1
 fi
@@ -28,7 +28,7 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --parameters \
     ParameterKey=AcmCertificateArn,ParameterValue=${CERTIFICATE_ARN} \
     ParameterKey=SiteBucketName,ParameterValue=${ProjectBucketName} \
-    ParameterKey=SiteDomain,ParameterValue=${SiteDomain} \
+    ParameterKey=SiteDomainName,ParameterValue=${SiteDomainName} \
     ParameterKey=SiteErrorDocument,ParameterValue=${SiteErrorDocument} \
     ParameterKey=SiteIndexDocument,ParameterValue=${SiteIndexDocument} \
   --capabilities \

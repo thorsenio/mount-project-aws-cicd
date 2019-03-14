@@ -9,8 +9,8 @@
 ProjectName='my-project'
 ProjectDescription='My project'
 
-ProjectDomain='example.com'
-SiteDomain="www.${ProjectDomain}"
+ProjectDomainName='example.com'
+SiteDomainName="www.${ProjectDomainName}"
 
 RepoName=${ProjectName}
 RepoDescription="${ProjectDescription}"

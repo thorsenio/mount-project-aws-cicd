@@ -16,10 +16,10 @@ echo "Project bucket name: ${ProjectBucketName}"
 PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${SiteStackName})
 
 # Get the ARN of the ACM certificate for the domain name
-CERTIFICATE_ARN=$(echoAcmCertificateArn ${PROFILE} ${CertifiedDomain})
+CERTIFICATE_ARN=$(echoAcmCertificateArn ${PROFILE} ${CertifiedDomainName})
 if [[ -z ${CERTIFICATE_ARN} ]]
 then
-  echo "No certificate was found for the domain '${CertifiedDomain}'."
+  echo "No certificate was found for the domain '${CertifiedDomainName}'."
   echo "The creation of the stack has been aborted."
   exit 1
 fi
@@ -48,7 +48,7 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     ParameterKey=ProjectCommitHash,ParameterValue=${ProjectCommitHash} \
     ParameterKey=ProjectVersionLabel,ParameterValue=${ProjectVersionLabel} \
     ParameterKey=SiteBucketName,ParameterValue=${ProjectBucketName} \
-    ParameterKey=SiteDomain,ParameterValue=${SiteDomain} \
+    ParameterKey=SiteDomainName,ParameterValue=${SiteDomainName} \
     ParameterKey=SiteErrorDocument,ParameterValue=${SiteErrorDocument} \
     ParameterKey=SiteIndexDocument,ParameterValue=${SiteIndexDocument} \
   --capabilities \
@@ -62,5 +62,5 @@ if [[ ${EXIT_STATUS} -eq 0 ]]
 then
   echo 'The stack will not be created unless you create (or have already created)'
   echo 'a CNAME record to allow AWS to validate the domain.'
-  echo "To display the CNAME hostname and value, run \`describe-cname-record.sh '${CertifiedDomain}'\`"
+  echo "To display the CNAME hostname and value, run \`describe-cname-record.sh '${CertifiedDomainName}'\`"
 fi
