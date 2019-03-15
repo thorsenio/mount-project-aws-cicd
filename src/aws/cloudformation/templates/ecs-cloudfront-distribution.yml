@@ -72,7 +72,7 @@ Resources:
             Cookies:
               Forward: 'all'
             Headers:
-              - 'Host'
+              - '*'
             QueryString: true
           MaxTTL: 86400 # 1 day
           MinTTL: 0
