@@ -1,0 +1,74 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'HTTP & HTTPS domain name redirection'
+
+Parameters:
+  AcmCertificateArn:
+    Description: 'ARN ofthe ACM Certificate for the domain'
+    Type: String
+
+  CloudFrontHostedZoneId:
+    Description: 'Hosted zone ID for CloudFront'
+    Type: String
+
+  SourceDomainName:
+    Description: 'Domain name to redirect'
+    Type: String
+
+  SourceZoneApex:
+    Description: 'Apex of the hosted zone of the target domain name'
+    Type: String
+
+  TargetDomainName:
+    Description: 'Domain name that is the target of the redirection'
+    Type: String
+
+Resources:
+  CdnDistro:
+    Type: AWS::CloudFront::Distribution
+    DependsOn: S3RedirectionBucket
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - !Ref SourceDomainName
+        DefaultCacheBehavior:
+          ForwardedValues:
+            QueryString: false
+          TargetOriginId: 'redirection-bucket'
+          ViewerProtocolPolicy: 'redirect-to-https'
+        Enabled: true
+        HttpVersion: 'http2'
+        Origins:
+          - CustomOriginConfig:
+              OriginProtocolPolicy: 'http-only'
+            DomainName: !Select
+            - 1
+            - !Split ["//", !GetAtt S3RedirectionBucket.WebsiteURL]
+            # Extract the domain name from the website URL
+            # DomainName: !Select [1, !Split ['//', !GetAtt S3RedirectionBucket.WebsiteURL]]
+            Id: 'redirection-bucket'
+        PriceClass: 'PriceClass_100'
+        ViewerCertificate:
+          AcmCertificateArn: !Ref AcmCertificateArn
+          SslSupportMethod: 'sni-only'
+
+  Route53RecordSet:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      AliasTarget:
+        DNSName: !GetAtt CdnDistro.DomainName
+        EvaluateTargetHealth: false
+        HostedZoneId: !Ref CloudFrontHostedZoneId
+      HostedZoneName: !Ref SourceZoneApex
+      Name: !Ref SourceDomainName
+      Type: 'A'
+
+  S3RedirectionBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: 'PublicRead'
+      BucketName: !Ref SourceDomainName
+      WebsiteConfiguration:
+        RedirectAllRequestsTo:
+          HostName: !Ref TargetDomainName
+          Protocol: 'https'
