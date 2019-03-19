@@ -36,7 +36,6 @@ done
 
 # AWS constants
 AWS_FREE_TIER_INSTANCE_TYPE='t2.micro'
-AWS_GLOBAL_REGION='us-east-1'
 
 # -- Platform descriptors
 # The Dockerfile stores the `PLATFORM_*` values in environment variables

@@ -15,7 +15,6 @@ ALIAS_DNS_NAME=$1
 cd $(dirname "$0")
 
 source ../../functions.sh
-source ../aws-constants.sh
 source ../aws-functions.sh
 source ../../compute-variables.sh
 

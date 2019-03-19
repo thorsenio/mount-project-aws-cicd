@@ -92,7 +92,6 @@ echoAcmCertificateArn () {
 
   local PROFILE=$1
   local DOMAIN_NAME=$2
-  local AWS_GLOBAL_REGION='us-east-1'
 
   local ACM_CERTIFICATE_ARN=$(
     aws acm list-certificates \

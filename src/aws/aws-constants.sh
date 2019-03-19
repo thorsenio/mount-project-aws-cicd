@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+AWS_GLOBAL_REGION='us-east-1'
+
 # Route 53 hosted zone ID for Cloudfront, all regions
 # https://docs.aws.amazon.com/general/latest/gr/rande.html#cf_region
 CLOUDFRONT_HOSTED_ZONE_ID='Z2FDTNDATAQYW2'
