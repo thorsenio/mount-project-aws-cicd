@@ -1,0 +1,23 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'HTTP domain name redirection'
+
+Parameters:
+  SourceDomainName:
+    Description: 'Domain name to redirect'
+    Type: String
+
+  TargetDomainName:
+    Description: 'Domain name that is the target of the redirection'
+    Type: String
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: 'PublicRead'
+      BucketName: !Ref SourceDomainName
+      WebsiteConfiguration:
+        RedirectAllRequestsTo:
+          HostName: !Ref TargetDomainName
+          Protocol: 'https'

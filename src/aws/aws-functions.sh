@@ -231,6 +231,33 @@ echoStackOutputValue () {
   return 0
 }
 
+# Echo the parameter value of the specified parameter key of the specified stack
+echoStackParameterValue () {
+
+  local PROFILE=$1
+  local REGION=$2
+  local STACK_NAME=$3
+  local PARAMETER_KEY=$4
+
+  local PARAMETER_VALUE=$(aws cloudformation describe-stacks \
+    --profile ${PROFILE} \
+    --region ${REGION} \
+    --stack-name ${STACK_NAME} \
+    --max-items 1 \
+    --query "Stacks[0] | Parameters[?ParameterKey=='${PARAMETER_KEY}'] | [0].ParameterValue" \
+    --output text
+    2> /dev/null
+  )
+
+  if [[ $? -ne 0 || ${PARAMETER_VALUE} == 'None' ]]; then
+    echo ''
+    return 1
+  fi
+
+  echo ${PARAMETER_VALUE}
+  return 0
+}
+
 # Echo the Route 53 Hosted Zone ID for the specified Apex domain name
 echoS3HostedZoneIdByRegion () {
 
