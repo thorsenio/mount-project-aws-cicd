@@ -28,6 +28,20 @@ echoApexDomain () {
   echo "${DOMAIN_LEVEL_2}.${DOMAIN_LEVEL_1}"
 }
 
+# Echo a hash of a concatenated data string, today's date, and an attempt number.
+# The hash changes only when the date changes.
+# TODO: MAYBE: Warn about a recent date change to guard against situations where the token
+#  changes because the date has changed between attempts?
+echoDailyIdempotencyToken () {
+  local DATA=$1
+  local ATTEMPT_NUMBER=$2
+
+  local DATE_STRING=$(date -I)
+  local IDEMPOTENCY_TOKEN=$(printf "${DATA} ${DATE_STRING} ${ATTEMPT_NUMBER}" | md5sum | cut -d ' ' -f 1)
+
+  echo ${IDEMPOTENCY_TOKEN}
+}
+
 echoRandomId () {
   local LENGTH=$1
   LENGTH=${LENGTH:='13'}

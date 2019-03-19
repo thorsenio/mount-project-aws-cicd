@@ -15,14 +15,13 @@ ATTEMPT_NUMBER=${2:-1}
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
-# source ../aws-functions.sh
+source ../../functions.sh
 source ../../compute-variables.sh
 
 # Generate an idempotency token that is unique for the requested domain & today's date.
 # If a fresh certificate request is needed for the same domain on the same date, increment the
 # attempt number
-DATE_STRING=$(date -I)
-IDEMPOTENCY_TOKEN=$(printf "${DOMAIN_NAME} ${DATE_STRING} ${ATTEMPT_NUMBER}" | md5sum | cut -d ' ' -f 1)
+IDEMPOTENCY_TOKEN=$(echoDailyIdempotencyToken ${DOMAIN_NAME} ${ATTEMPT_NUMBER})
 
 OUTPUT=$(aws route53 create-hosted-zone \
   --profile ${PROFILE} \
