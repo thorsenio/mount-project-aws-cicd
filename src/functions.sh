@@ -75,6 +75,16 @@ echoMin () {
   echo $(( $1 < $2 ? $1 : $2 ))
 }
 
+# Given a domain name, remove the top 2 domains and return the result
+echoSubdomains () {
+  [[ $1 =~ ^(.+)(\.[^.]+)(\.[^.]+)$ ]]
+  if [[ $? -ne 0 ]]; then
+    echo ''
+    exit 1
+  fi
+  echo ${BASH_REMATCH[1]}
+}
+
 embold () {
   local bold=$(tput bold)
   local normal=$(tput sgr0)
