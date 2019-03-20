@@ -42,6 +42,17 @@ echoDailyIdempotencyToken () {
   echo ${IDEMPOTENCY_TOKEN}
 }
 
+echoFqdn () {
+  local DOMAIN_NAME=$1
+
+  # If the terminating period is missing, add it to get a fully qualified domain name
+  if [[ "${DOMAIN_NAME: -1}" == '.' ]]; then
+    echo ${DOMAIN_NAME}
+  else
+    echo "${DOMAIN_NAME}."
+  fi
+}
+
 echoRandomId () {
   local LENGTH=$1
   LENGTH=${LENGTH:='13'}
@@ -64,16 +75,14 @@ echoMin () {
   echo $(( $1 < $2 ? $1 : $2 ))
 }
 
-echoFqdn () {
-
-  local DOMAIN_NAME=$1
-
-  # If the terminating period is missing, add it to get a fully qualified domain name
-  if [[ "${DOMAIN_NAME: -1}" == '.' ]]; then
-    echo ${DOMAIN_NAME}
-  else
-    echo "${DOMAIN_NAME}."
+# Given a domain name, remove the top 2 domains and return the result
+echoSubdomains () {
+  [[ $1 =~ ^(.+)(\.[^.]+)(\.[^.]+)$ ]]
+  if [[ $? -ne 0 ]]; then
+    echo ''
+    exit 1
   fi
+  echo ${BASH_REMATCH[1]}
 }
 
 embold () {
