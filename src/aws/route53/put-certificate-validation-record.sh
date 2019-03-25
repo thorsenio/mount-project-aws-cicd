@@ -43,9 +43,16 @@ DNS_VALIDATION=$(echo ${DESCRIPTION} | jq '.Certificate.DomainValidationOptions[
 RECORD_NAME=$(echo ${DNS_VALIDATION} | jq '.ResourceRecord.Name' | cut -d\" -f 2)
 RECORD_VALUE=$(echo ${DNS_VALIDATION} | jq '.ResourceRecord.Value' | cut -d\" -f 2)
 
-echo "Create the following CNAME record in the zone records for $(echoApexDomain ${DOMAIN_NAME}):"
-echo "hostname: ${RECORD_NAME}"
-echo "value (redirect to): ${RECORD_VALUE}"
+if ! hostedZoneExistsForDomain ${PROFILE} ${DOMAIN_NAME}; then
+  SOURCE_ZONE_APEX="$(echoApexDomain ${DOMAIN_NAME})"
+
+  echo -e "\nWarning: This script cannot create a certificate validation record, because Route 53 is not"
+  echo -e "managing DNS for '${SOURCE_ZONE_APEX}'.\n"
+
+  # Display instructions for creating a CNAME validation record
+  ../acm/describe-cname-record.sh ${DOMAIN_NAME}
+  exit 1
+fi
 
 # Generate an idempotency token that is unique for the requested domain & today's date.
 # If a fresh certificate request is needed for the same domain on the same date, increment the

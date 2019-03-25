@@ -5,7 +5,7 @@
 
 if [[ $# -lt 1 ]]
 then
-  echo "Usage: ${0} DOMAIN_NAME" >&2
+  echo "Usage: $0 DOMAIN_NAME" >&2
   exit 1
 fi
 
@@ -37,6 +37,7 @@ DNS_VALIDATION=$(echo ${DESCRIPTION} | jq '.Certificate.DomainValidationOptions[
 RECORD_NAME=$(echo ${DNS_VALIDATION} | jq '.ResourceRecord.Name' | cut -d\" -f 2)
 RECORD_VALUE=$(echo ${DNS_VALIDATION} | jq '.ResourceRecord.Value' | cut -d\" -f 2)
 
-echo "To validate ${DOMAIN_NAME}, create the following CNAME record in the zone records for $(echoApexDomain ${DOMAIN_NAME}):"
+echo 'To validate the certificate, create the following CNAME record in the zone records for'
+echo "'$(echoApexDomain ${DOMAIN_NAME})':"
 echo "  host: ${RECORD_NAME}"
-echo "  points to: ${RECORD_VALUE}"
+echo -e "  points to: ${RECORD_VALUE}\n"

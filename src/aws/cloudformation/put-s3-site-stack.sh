@@ -12,23 +12,6 @@ source ../../compute-variables.sh
 
 echo "Project bucket name: ${ProjectBucketName}"
 
-# Get the apex domain name, which can be used to reference the hosted zone for the site domain name.
-SOURCE_ZONE_APEX="$(echoApexDomain ${SiteDomainName})."
-
-echo "Source domain apex: ${SOURCE_ZONE_APEX}"
-
-if hostedZoneExistsForDomain ${Profile} ${SiteDomainName}; then
-  APEX_HOSTED_ZONE_EXISTS=true
-  echo "A Route 53 hosted zone was found for '${SOURCE_ZONE_APEX}'"
-else
-  APEX_HOSTED_ZONE_EXISTS=false
-  echo "Warning: No hosted zone exists for '${SOURCE_ZONE_APEX}', so an alias record cannot be created."
-  echo "To direct '${SiteDomainName}' traffic to the CDN, create a CNAME record with the DNS provider."
-fi
-
-# Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${SiteStackName})
-
 # Get the ARN of the ACM certificate for the domain name
 CERTIFICATE_ARN=$(echoAcmCertificateArn ${Profile} ${CertifiedDomainName})
 if [[ -z ${CERTIFICATE_ARN} ]]
@@ -37,6 +20,55 @@ then
   echo "The creation of the stack has been aborted."
   exit 1
 fi
+
+# Get the apex domain name, which can be used to reference the hosted zone for the site domain name.
+SOURCE_ZONE_APEX="$(echoApexDomain ${SiteDomainName})."
+echo "Source domain apex: ${SOURCE_ZONE_APEX}"
+
+if hostedZoneExistsForDomain ${Profile} ${SiteDomainName}; then
+  APEX_HOSTED_ZONE_EXISTS=true
+  echo -e "A Route 53 hosted zone was found for '${SOURCE_ZONE_APEX}'\n"
+else
+  APEX_HOSTED_ZONE_EXISTS=false
+  echo 'Warning: An alias to CloudFront cannot be created automatically, because Route 53 is not'
+  echo "managing DNS for '${SOURCE_ZONE_APEX}'. Once the stack has been created, create a CNAME record"
+  echo -e "with the DNS provider to forward '${SiteDomainName}' traffic to CloudFront.\n"
+fi
+
+echo "Checking whether the SSL/TLS certificate for '${CertifiedDomainName}' has been validated ..."
+if acmCertificateIsValidated ${Profile} "${CertifiedDomainName}"; then
+  # The certificate has been validated, so nothing else needs to be done
+  echo -e "The certificate has been validated.\n"
+else
+  echo -e "The certificate has not been validated.\n"
+  if [[ ${APEX_HOSTED_ZONE_EXISTS} == true ]]; then
+    # A Route 53 hosted zone exists, so a validation record can be created automatically
+    ../route53/put-certificate-validation-record.sh ${Profile} ${CertifiedDomainName}
+
+    # -- Start of proposed code
+    # TODO: Implement this if it will improve the developer's user experience
+#    echo "Waiting for the certificate to be validated ..."
+#    aws acm wait certificate-validated \
+#      --profile ${Profile} \
+#      --region ${AWS_GLOBAL_REGION} \
+#      --certificate-validated \
+#      --certificate-arn ${CERTIFICATE_ARN}
+#    if [[ $? -eq 0 ]]; then
+#        echo 'The certificate has been validated.\n'
+#    else
+#      echo -e 'Warning: Certificate validation failed.'
+#      echo -e "Stack creation cannot be completed until the certificate has been validated.\n"
+#    fi
+    # -- End of proposed code
+
+  else
+    echo -e "Warning: Stack creation cannot be completed until the certificate has been validated.\n"
+    ../acm/describe-cname-record.sh ${CertifiedDomainName}
+  fi
+fi
+
+# Capture the mode that should be used put the stack: `create` or `update`
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${SiteStackName})
 
 ./package.sh ${CLOUDFORMATION_TEMPLATE}
 
@@ -77,15 +109,4 @@ echoPutStackOutput ${PUT_MODE} ${Region} ${EXIT_STATUS} ${OUTPUT}
 
 if [[ ${EXIT_STATUS} -ne 0 ]]; then
   exit 1
-fi
-
-if [[ ${APEX_HOSTED_ZONE_EXISTS} == false ]]; then
-  echo "Checking whether the SSL/TLS certificate for '${CertifiedDomainName}' has been validated ..."
-  if acmCertificateIsValidated ${Profile} "${CertifiedDomainName}"; then
-    # The certificate has been validated, so nothing else needs to be done
-    echo "The certificate has been validated."
-  else
-    echo "Warning: The SSL/TLS certificate for '${CertifiedDomainName}' has not been validated."
-    echo "The stack will not be created until the certificate has been validated."
-  fi
 fi

@@ -27,7 +27,7 @@ source ../../compute-variables.sh
 
 if bucketExists ${PROFILE} ${BUCKET_NAME}; then
   # The bucket exists, so empty it
-  echo 'Emptying bucket...'
+  echo "Emptying the '${BUCKET_NAME}' bucket..."
 
   aws s3 rm s3://${BUCKET_NAME}/ \
     --profile ${PROFILE} \
