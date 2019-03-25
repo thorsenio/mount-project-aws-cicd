@@ -38,7 +38,7 @@ then
   exit 1
 fi
 
-echo 'Requesting deletion of the stack...'
+echo "Requesting deletion of the '${STACK_NAME}' stack..."
 OUTPUT=$(aws cloudformation delete-stack \
   --profile=${PROFILE} \
   --region=${REGION} \
