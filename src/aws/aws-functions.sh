@@ -5,8 +5,44 @@
 THIS_SCRIPT_DIR=$(dirname $(realpath ${PWD}/${BASH_SOURCE[0]}))
 cd ${THIS_SCRIPT_DIR} > /dev/null
 source ./aws-constants.sh
-#source ../functions.sh
+source ../functions.sh
 cd - > /dev/null
+
+
+# Tests whether an ACM certificate exists for the specified domain
+acmCertificateExists () {
+
+  local PROFILE=$1
+  local DOMAIN_NAME=$2
+
+  COUNT=$(aws acm list-certificates \
+    --profile ${PROFILE} \
+    --region ${AWS_GLOBAL_REGION} \
+    --query "CertificateSummaryList[?DomainName=='${DOMAIN_NAME}'] | length(@)" \
+    --output text \
+  )
+
+  [[ $? -eq 0 && ! ${COUNT} == '0' ]]
+}
+
+
+# Tests whether an ACM certificate exists & has been validated for the specified domain
+acmCertificateIsValidated () {
+
+  local PROFILE=$1
+  local DOMAIN_NAME=$2
+
+  COUNT=$(aws acm list-certificates \
+    --profile ${PROFILE} \
+    --region ${AWS_GLOBAL_REGION} \
+    --certificate-statuses ISSUED \
+    --query "CertificateSummaryList[?DomainName=='${DOMAIN_NAME}'] | length(@)" \
+    --output text \
+  )
+
+  [[ $? -eq 0 && ! ${COUNT} == '0' ]]
+}
+
 
 bucketExists () {
 
@@ -18,6 +54,7 @@ bucketExists () {
     --bucket ${BUCKET_NAME} \
     &> /dev/null
 }
+
 
 codecommitRepoExists () {
 
@@ -47,6 +84,21 @@ ecrRepoExists () {
     &> /dev/null
 }
 
+
+hostedZoneExistsForDomain () {
+
+  local PROFILE=$1
+  local DOMAIN_NAME=$2
+
+  local APEX_DOMAIN_NAME=$(echoApexDomain ${DOMAIN_NAME})
+  if [[ -z ${APEX_DOMAIN_NAME} ]]; then
+    return 1
+  fi
+
+  echoHostedZoneIdByApex ${PROFILE} ${APEX_DOMAIN_NAME} > /dev/null
+}
+
+
 iamRoleExists () {
 
   local PROFILE=$1
@@ -59,6 +111,7 @@ iamRoleExists () {
     --role-name ${ROLE_NAME} \
     &> /dev/null
 }
+
 
 keyPairExists () {
 
@@ -73,6 +126,7 @@ keyPairExists () {
     &> /dev/null
 }
 
+
 # TODO: REFACTOR: Add parameter checking and usage note
 stackExists () {
 
@@ -86,6 +140,7 @@ stackExists () {
     --stack-name ${STACK_NAME} \
     &> /dev/null
 }
+
 
 # Echo the ARN of the ACM certificate for the specified domain
 echoAcmCertificateArn () {
@@ -104,6 +159,7 @@ echoAcmCertificateArn () {
   echo ${ACM_CERTIFICATE_ARN}
 }
 
+
 echoCountAzsInRegion () {
 
   local PROFILE=$1
@@ -114,6 +170,7 @@ echoCountAzsInRegion () {
     --region ${REGION} \
     --query 'AvailabilityZones[*] | length(@)'
 }
+
 
 # Echo the CloudFront Distribution ID for the specified CNAME
 echoDistributionIdByCname () {
@@ -135,6 +192,7 @@ echoDistributionIdByCname () {
   return 0
 }
 
+
 # Echo the domain name for the specified CloudFront distribution ID
 echoDomainNameByDistributionId () {
 
@@ -155,6 +213,7 @@ echoDomainNameByDistributionId () {
   echo ${DOMAIN_NAME:1:-1}
   return 0
 }
+
 
 # Echo the endpoint address for the specified database instance
 echoEndpointAddressByDbInstanceIdentifier () {
@@ -179,6 +238,7 @@ echoEndpointAddressByDbInstanceIdentifier () {
   echo ${ENDPOINT_ADDRESS:1:-1}
   return 0
 }
+
 
 # Echo the Route 53 Hosted Zone ID for the specified Apex domain name
 echoHostedZoneIdByApex () {
@@ -232,6 +292,7 @@ echoStackOutputValue () {
   return 0
 }
 
+
 # Echo the parameter value of the specified parameter key of the specified stack
 echoStackParameterValue () {
 
@@ -259,6 +320,7 @@ echoStackParameterValue () {
   return 0
 }
 
+
 # Echo the Route 53 Hosted Zone ID for the specified Apex domain name
 echoS3HostedZoneIdByRegion () {
 
@@ -275,6 +337,7 @@ echoS3HostedZoneIdByRegion () {
   return 0
 }
 
+
 echoPutStackMode () {
 
   local PROFILE=$1
@@ -288,6 +351,7 @@ echoPutStackMode () {
   fi
   return 0
 }
+
 
 echoPutStackOutput () {
 

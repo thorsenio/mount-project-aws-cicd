@@ -37,6 +37,6 @@ DNS_VALIDATION=$(echo ${DESCRIPTION} | jq '.Certificate.DomainValidationOptions[
 RECORD_NAME=$(echo ${DNS_VALIDATION} | jq '.ResourceRecord.Name' | cut -d\" -f 2)
 RECORD_VALUE=$(echo ${DNS_VALIDATION} | jq '.ResourceRecord.Value' | cut -d\" -f 2)
 
-echo "Create the following CNAME record in the zone records for $(echoApexDomain ${DOMAIN_NAME}):"
-echo "hostname: ${RECORD_NAME}"
-echo "value (redirect to): ${RECORD_VALUE}"
+echo "To validate ${DOMAIN_NAME}, create the following CNAME record in the zone records for $(echoApexDomain ${DOMAIN_NAME}):"
+echo "  host: ${RECORD_NAME}"
+echo "  points to: ${RECORD_VALUE}"

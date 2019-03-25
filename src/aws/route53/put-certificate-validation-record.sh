@@ -85,8 +85,7 @@ OUTPUT=$(aws route53 change-resource-record-sets \
   --change-batch "${CHANGES}" \
 )
 if [[ $? -eq 0 ]]; then
-  echo 'The certificate validation record was created.'
-  echo 'Validation can take up to 30 minutes.'
+  echo 'An SSL/TLS certificate validation record has been created in Route 53.'
   echo "View the certificate's status at https://console.aws.amazon.com/acm/home?region=us-east-1#/"
 else
   echo 'There was an error creating the certificate validation record.' 1>&2

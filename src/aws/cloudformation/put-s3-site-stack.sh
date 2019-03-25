@@ -12,11 +12,25 @@ source ../../compute-variables.sh
 
 echo "Project bucket name: ${ProjectBucketName}"
 
+# Get the apex domain name, which can be used to reference the hosted zone for the site domain name.
+SOURCE_ZONE_APEX="$(echoApexDomain ${SiteDomainName})."
+
+echo "Source domain apex: ${SOURCE_ZONE_APEX}"
+
+if hostedZoneExistsForDomain ${Profile} ${SiteDomainName}; then
+  APEX_HOSTED_ZONE_EXISTS=true
+  echo "A Route 53 hosted zone was found for '${SOURCE_ZONE_APEX}'"
+else
+  APEX_HOSTED_ZONE_EXISTS=false
+  echo "Warning: No hosted zone exists for '${SOURCE_ZONE_APEX}', so an alias record cannot be created."
+  echo "To direct '${SiteDomainName}' traffic to the CDN, create a CNAME record with the DNS provider."
+fi
+
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${SiteStackName})
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${SiteStackName})
 
 # Get the ARN of the ACM certificate for the domain name
-CERTIFICATE_ARN=$(echoAcmCertificateArn ${PROFILE} ${CertifiedDomainName})
+CERTIFICATE_ARN=$(echoAcmCertificateArn ${Profile} ${CertifiedDomainName})
 if [[ -z ${CERTIFICATE_ARN} ]]
 then
   echo "No certificate was found for the domain '${CertifiedDomainName}'."
@@ -31,16 +45,17 @@ then
   exit 1
 fi
 
-TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }' | cut -d. -f1)
+TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }' | cut -d . -f 1)
 
-# TODO: REFACTOR: Use a function to generate ParameterKey,ParameterValue strings
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --region ${Region} \
   --stack-name ${SiteStackName} \
   --template-body file://${TEMPLATE_BASENAME}--expanded.yml \
   --parameters \
     ParameterKey=AcmCertificateArn,ParameterValue=${CERTIFICATE_ARN} \
+    ParameterKey=ApexHostedZoneExists,ParameterValue=${APEX_HOSTED_ZONE_EXISTS} \
+    ParameterKey=CloudFrontHostedZoneId,ParameterValue=${CLOUDFRONT_HOSTED_ZONE_ID} \
     ParameterKey=DeploymentId,ParameterValue=${DeploymentId} \
     ParameterKey=PlatformCommitHash,ParameterValue=${PlatformCommitHash} \
     ParameterKey=PlatformId,ParameterValue=${PlatformId} \
@@ -51,6 +66,8 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     ParameterKey=SiteDomainName,ParameterValue=${SiteDomainName} \
     ParameterKey=SiteErrorDocument,ParameterValue=${SiteErrorDocument} \
     ParameterKey=SiteIndexDocument,ParameterValue=${SiteIndexDocument} \
+    ParameterKey=SourceDomainName,ParameterValue=${SiteDomainName} \
+    ParameterKey=SourceZoneApex,ParameterValue=${SOURCE_ZONE_APEX} \
   --capabilities \
     CAPABILITY_AUTO_EXPAND \
 )
@@ -58,9 +75,17 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
 EXIT_STATUS=$?
 echoPutStackOutput ${PUT_MODE} ${Region} ${EXIT_STATUS} ${OUTPUT}
 
-if [[ ${EXIT_STATUS} -eq 0 ]]
-then
-  echo 'The stack will not be created unless you create (or have already created)'
-  echo 'a CNAME record to allow AWS to validate the domain.'
-  echo "To display the CNAME hostname and value, run \`describe-cname-record.sh '${CertifiedDomainName}'\`"
+if [[ ${EXIT_STATUS} -ne 0 ]]; then
+  exit 1
+fi
+
+if [[ ${APEX_HOSTED_ZONE_EXISTS} == false ]]; then
+  echo "Checking whether the SSL/TLS certificate for '${CertifiedDomainName}' has been validated ..."
+  if acmCertificateIsValidated ${Profile} "${CertifiedDomainName}"; then
+    # The certificate has been validated, so nothing else needs to be done
+    echo "The certificate has been validated."
+  else
+    echo "Warning: The SSL/TLS certificate for '${CertifiedDomainName}' has not been validated."
+    echo "The stack will not be created until the certificate has been validated."
+  fi
 fi

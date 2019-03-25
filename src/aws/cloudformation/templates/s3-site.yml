@@ -7,6 +7,17 @@ Parameters:
     Description: 'ARN ofthe ACM Certificate for the domain'
     Type: String
 
+  ApexHostedZoneExists:
+    Description: "True if a Route 53 hosted zone exists for the site's apex domain"
+    Type: String
+    AllowedValues:
+      - true
+      - false
+
+  CloudFrontHostedZoneId:
+    Description: 'Hosted zone ID for CloudFront'
+    Type: String
+
   DeploymentId:
     Description: 'Identifier of the project, major version & version stage'
     Type: String
@@ -47,6 +58,17 @@ Parameters:
     Description: 'Index document'
     Type: String
 
+  SourceDomainName:
+    Description: 'Domain name to redirect'
+    Type: String
+
+  SourceZoneApex:
+    Description: 'Apex of the hosted zone of the target domain name'
+    Type: String
+
+Conditions:
+  CreateAliasToCdn: !Equals [!Ref ApexHostedZoneExists, true]
+
 Resources:
   CdnDistroStack:
     Type: AWS::CloudFormation::Stack
@@ -59,6 +81,18 @@ Resources:
         SiteIndexDocument: !Ref SiteIndexDocument
       TemplateURL: './s3-cloudfront-distribution.yml'
       TimeoutInMinutes: 60
+
+  Route53RecordSet:
+    Type: AWS::Route53::RecordSet
+    Condition: CreateAliasToCdn
+    Properties:
+      AliasTarget:
+        DNSName: !GetAtt CdnDistroStack.Outputs.CdnDistroDomainName
+        EvaluateTargetHealth: false
+        HostedZoneId: !Ref CloudFrontHostedZoneId
+      HostedZoneName: !Ref SourceZoneApex
+      Name: !Ref SourceDomainName
+      Type: 'A'
 
   SiteBucketStack:
     Type: AWS::CloudFormation::Stack
