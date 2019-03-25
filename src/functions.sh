@@ -23,6 +23,7 @@ assertNotEmpty () {
 # Example: Given `any.subdomain.example.com`, echo `example.com`
 echoApexDomain () {
   local DOMAIN_NAME=$1
+
   local DOMAIN_LEVEL_2=$(echo ${DOMAIN_NAME} | awk -F '.' '{ print $(NF-1) }')
   local DOMAIN_LEVEL_1=$(echo ${DOMAIN_NAME} | awk -F '.' '{ print $NF }')
   echo "${DOMAIN_LEVEL_2}.${DOMAIN_LEVEL_1}"

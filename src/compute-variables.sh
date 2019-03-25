@@ -7,6 +7,7 @@
 # then switch back after the variables files have been sourced
   THIS_SCRIPT_DIR=$(dirname $(realpath ${PWD}/${BASH_SOURCE[0]}))
   cd ${THIS_SCRIPT_DIR} > /dev/null
+  source ./functions.sh
   source ./config/global-variables.sh
   source ./config/regional-variables.sh
   source ./config/project-variables.sh
@@ -81,12 +82,20 @@ if [[ ${BranchName} == 'master' ]]; then
   SiteDomainName=${SiteDomainName:="www.${ProjectDomainName}"}
   CertifiedDomainName=${SiteDomainName}
 else
-    # Use a wildcard certificate
-    CertifiedDomainName="*.${NonproductionBaseDomainName}"
-    # All nonproduction deployments are expected to use this naming scheme
+  NonproductionDomainName=${NonproductionDomainName:=''}
+  if [[ -n ${NonproductionDomainName} ]]; then
+    # TODO: When a custom nonproduction domain name is specified, obtain a certificate for
+    # that domain.
+    SiteDomainName=${NonproductionDomainName}
+    CertifiedDomainName=${NonproductionDomainName}
+  else
+    # Unless a custom NonproductionDomainName is specified, all nonproduction deployments are
+    # expected to use this naming scheme.
     SiteDomainName="${DeploymentId,,}.${NonproductionBaseDomainName}"
+    # Use a wildcard certificate.
+    CertifiedDomainName="*.${NonproductionBaseDomainName}"
+  fi
 fi
-# TODO: FEATURE: Possibly allow custom nonproduction domains
 # TODO: FEATURE: Possibly add SiteUrl to allow for microservices hosted at the same domain
 # TODO: FEATURE: Support multiple domain names
 # TODO: FEATURE: Support URLs instead of domain names
