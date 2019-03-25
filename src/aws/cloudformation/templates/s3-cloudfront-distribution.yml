@@ -61,3 +61,8 @@ Resources:
           AcmCertificateArn: !Ref AcmCertificateArn
           MinimumProtocolVersion: 'TLSv1.1_2016'
           SslSupportMethod: 'sni-only'
+
+Outputs:
+  CdnDistroDomainName:
+    Description: 'Domain name of the CloudFront distribution'
+    Value: !GetAtt CdnDistro.DomainName
