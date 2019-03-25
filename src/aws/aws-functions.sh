@@ -5,7 +5,7 @@
 THIS_SCRIPT_DIR=$(dirname $(realpath ${PWD}/${BASH_SOURCE[0]}))
 cd ${THIS_SCRIPT_DIR} > /dev/null
 source ./aws-constants.sh
-#source ../functions.sh
+source ../functions.sh
 cd - > /dev/null
 
 # Tests whether an ACM certificate exists for the specified domain
@@ -80,6 +80,18 @@ ecrRepoExists () {
     --region ${REGION} \
     --repository-names "${REPOSITORY_NAME}" \
     &> /dev/null
+}
+
+hostedZoneExistsForDomain () {
+  local PROFILE=$1
+  local DOMAIN_NAME=$2
+
+  local APEX_DOMAIN_NAME=$(echoApexDomain ${DOMAIN_NAME})
+  if [[ -z ${APEX_DOMAIN_NAME} ]]; then
+    return 1
+  fi
+
+  echoHostedZoneIdByApex ${PROFILE} ${APEX_DOMAIN_NAME} > /dev/null
 }
 
 iamRoleExists () {
