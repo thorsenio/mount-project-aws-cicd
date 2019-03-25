@@ -191,17 +191,19 @@ echoHostedZoneIdByApex () {
     --dns-name ${APEX_DOMAIN_NAME} \
     --max-items 1 \
     --query "HostedZones[?Name=='${APEX_DOMAIN_NAME}.']| [0].Id" \
+    --output text \
     2> /dev/null
   )
-  if [[ $? -ne 0 ]]; then
+  if [[ $? -ne 0 || ${HOSTED_ZONE_ID_VALUE:0:4} == 'None' ]]; then
     echo ''
     return 1
   fi
 
-  local HOSTED_ZONE_ID=$(echo ${HOSTED_ZONE_ID_VALUE:1:-1} | cut -d / -f 3)
+  local HOSTED_ZONE_ID=$(echo ${HOSTED_ZONE_ID_VALUE} | cut -d / -f 3)
   echo ${HOSTED_ZONE_ID}
   return 0
 }
+
 
 # Echo the specified output value of the specified stack
 echoStackOutputValue () {
