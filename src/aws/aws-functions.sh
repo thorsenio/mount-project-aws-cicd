@@ -8,6 +8,7 @@ source ./aws-constants.sh
 source ../functions.sh
 cd - > /dev/null
 
+
 # Tests whether an ACM certificate exists for the specified domain
 acmCertificateExists () {
 
@@ -54,6 +55,7 @@ bucketExists () {
     &> /dev/null
 }
 
+
 codecommitRepoExists () {
 
   local PROFILE=$1
@@ -82,7 +84,9 @@ ecrRepoExists () {
     &> /dev/null
 }
 
+
 hostedZoneExistsForDomain () {
+
   local PROFILE=$1
   local DOMAIN_NAME=$2
 
@@ -93,6 +97,7 @@ hostedZoneExistsForDomain () {
 
   echoHostedZoneIdByApex ${PROFILE} ${APEX_DOMAIN_NAME} > /dev/null
 }
+
 
 iamRoleExists () {
 
@@ -107,6 +112,7 @@ iamRoleExists () {
     &> /dev/null
 }
 
+
 keyPairExists () {
 
   local PROFILE=$1
@@ -119,6 +125,7 @@ keyPairExists () {
     --key-names ${KEY_PAIR_NAME} \
     &> /dev/null
 }
+
 
 # TODO: REFACTOR: Add parameter checking and usage note
 stackExists () {
@@ -133,6 +140,7 @@ stackExists () {
     --stack-name ${STACK_NAME} \
     &> /dev/null
 }
+
 
 # Echo the ARN of the ACM certificate for the specified domain
 echoAcmCertificateArn () {
@@ -151,6 +159,7 @@ echoAcmCertificateArn () {
   echo ${ACM_CERTIFICATE_ARN}
 }
 
+
 echoCountAzsInRegion () {
 
   local PROFILE=$1
@@ -161,6 +170,7 @@ echoCountAzsInRegion () {
     --region ${REGION} \
     --query 'AvailabilityZones[*] | length(@)'
 }
+
 
 # Echo the CloudFront Distribution ID for the specified CNAME
 echoDistributionIdByCname () {
@@ -182,6 +192,7 @@ echoDistributionIdByCname () {
   return 0
 }
 
+
 # Echo the domain name for the specified CloudFront distribution ID
 echoDomainNameByDistributionId () {
 
@@ -202,6 +213,7 @@ echoDomainNameByDistributionId () {
   echo ${DOMAIN_NAME:1:-1}
   return 0
 }
+
 
 # Echo the endpoint address for the specified database instance
 echoEndpointAddressByDbInstanceIdentifier () {
@@ -226,6 +238,7 @@ echoEndpointAddressByDbInstanceIdentifier () {
   echo ${ENDPOINT_ADDRESS:1:-1}
   return 0
 }
+
 
 # Echo the Route 53 Hosted Zone ID for the specified Apex domain name
 echoHostedZoneIdByApex () {
@@ -279,6 +292,7 @@ echoStackOutputValue () {
   return 0
 }
 
+
 # Echo the parameter value of the specified parameter key of the specified stack
 echoStackParameterValue () {
 
@@ -306,6 +320,7 @@ echoStackParameterValue () {
   return 0
 }
 
+
 # Echo the Route 53 Hosted Zone ID for the specified Apex domain name
 echoS3HostedZoneIdByRegion () {
 
@@ -322,6 +337,7 @@ echoS3HostedZoneIdByRegion () {
   return 0
 }
 
+
 echoPutStackMode () {
 
   local PROFILE=$1
@@ -335,6 +351,7 @@ echoPutStackMode () {
   fi
   return 0
 }
+
 
 echoPutStackOutput () {
 

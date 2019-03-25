@@ -13,10 +13,10 @@ source ../../compute-variables.sh
 echo "Project bucket name: ${ProjectBucketName}"
 
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${SiteStackName})
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${SiteStackName})
 
 # Get the ARN of the ACM certificate for the domain name
-CERTIFICATE_ARN=$(echoAcmCertificateArn ${PROFILE} ${CertifiedDomainName})
+CERTIFICATE_ARN=$(echoAcmCertificateArn ${Profile} ${CertifiedDomainName})
 if [[ -z ${CERTIFICATE_ARN} ]]
 then
   echo "No certificate was found for the domain '${CertifiedDomainName}'."
@@ -35,7 +35,7 @@ TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }'
 
 # TODO: REFACTOR: Use a function to generate ParameterKey,ParameterValue strings
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --region ${Region} \
   --stack-name ${SiteStackName} \
   --template-body file://${TEMPLATE_BASENAME}--expanded.yml \
