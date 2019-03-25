@@ -8,6 +8,23 @@ source ./aws-constants.sh
 #source ../functions.sh
 cd - > /dev/null
 
+# Tests whether an ACM certificate exists for the specified domain
+acmCertificateExists () {
+
+  local PROFILE=$1
+  local DOMAIN_NAME=$2
+
+  COUNT=$(aws acm list-certificates \
+    --profile ${PROFILE} \
+    --region ${AWS_GLOBAL_REGION} \
+    --query "CertificateSummaryList[?DomainName=='${DOMAIN_NAME}'] | length(@)" \
+    --output text \
+  )
+
+  [[ $? -eq 0 && ! ${COUNT} == '0' ]]
+}
+
+
 bucketExists () {
 
   local PROFILE=$1
