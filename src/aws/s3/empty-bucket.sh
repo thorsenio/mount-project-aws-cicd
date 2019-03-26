@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This script empties the specified S3 bucket
+# This script empties the specified S3 bucket in the project's region
 
 if [[ $# -lt 1 || $# -gt 2 ]]
 then
@@ -25,12 +25,12 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
-if bucketExists ${PROFILE} ${BUCKET_NAME}; then
+if bucketExists ${Profile} ${BUCKET_NAME}; then
   # The bucket exists, so empty it
   echo "Emptying the '${BUCKET_NAME}' bucket..."
 
   aws s3 rm s3://${BUCKET_NAME}/ \
-    --profile ${PROFILE} \
+    --profile ${Profile} \
     --only-show-errors \
     --recursive
 
