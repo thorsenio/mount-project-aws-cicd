@@ -94,12 +94,11 @@ Resources:
       Name: !Ref SourceDomainName
       Type: 'A'
 
-  SiteBucketStack:
-    Type: AWS::CloudFormation::Stack
+  S3Bucket:
+    Type: AWS::S3::Bucket
     Properties:
-      Parameters:
-        BucketName: !Ref SiteBucketName
+      AccessControl: 'PublicRead'
+      BucketName: !Ref SiteBucketName
+      WebsiteConfiguration:
         ErrorDocument: !Ref SiteErrorDocument
         IndexDocument: !Ref SiteIndexDocument
-      TemplateURL: './s3-site-bucket.yml'
-      TimeoutInMinutes: 10

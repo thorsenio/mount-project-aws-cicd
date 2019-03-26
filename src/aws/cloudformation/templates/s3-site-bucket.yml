@@ -16,11 +16,3 @@ Parameters:
     Type: String
 
 Resources:
-  S3Bucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      AccessControl: 'PublicRead'
-      BucketName: !Ref BucketName
-      WebsiteConfiguration:
-        ErrorDocument: !Ref ErrorDocument
-        IndexDocument: !Ref IndexDocument
