@@ -35,27 +35,29 @@ OUTPUT=$(aws acm request-certificate \
   --idempotency-token=${IDEMPOTENCY_TOKEN}
 )
 
-if [[ ${?} -ne 0 ]]
-then
+if [[ $? -ne 0 ]]; then
   echo 'AWS responded with an error to the request for a certificate' 1>&2
   exit 1
 fi
 
 echo ${OUTPUT}
-CERTIFICATE_ARN=$(echo ${OUTPUT} | jq '.CertificateArn' | cut -d\" -f 2)
+CERTIFICATE_ARN=$(echo ${OUTPUT} | jq '.CertificateArn' | cut -d \" -f 2)
 echo "Certificate ARN: ${CERTIFICATE_ARN}"
 
-OUTPUT=$(aws acm describe-certificate \
-  --profile ${PROFILE} \
-  --region us-east-1 \
-  --certificate-arn ${CERTIFICATE_ARN}
-)
+CERTIFICATE_EXISTS=false
 
-DNS_VALIDATION=$(echo ${OUTPUT} | jq '.Certificate.DomainValidationOptions[0]')
-RECORD_NAME=$(echo ${DNS_VALIDATION} | jq '.ResourceRecord.Name' | cut -d\" -f 2)
-RECORD_VALUE=$(echo ${DNS_VALIDATION} | jq '.ResourceRecord.Value' | cut -d\" -f 2)
+echo "Waiting for the certificate to be created ..."
+# TODO: Limit the number of attempts
+while [[ ${CERTIFICATE_EXISTS} == false ]]; do
+  sleep 10s
+  if acmCertificateExists ${Profile} ${DOMAIN_NAME}; then
+    CERTIFICATE_EXISTS=true
+  fi
+done
 
-echo ${OUTPUT} | jq '.'
-echo
-echo "CNAME record name: ${RECORD_NAME}"
-echo "CNAME record value: ${RECORD_VALUE}"
+if [[ ${CERTIFICATE_EXISTS} == false ]]; then
+  echo "Timeout reached. The certificate could not be created."
+  exit 1
+fi
+
+echo "The certificate has been created."
