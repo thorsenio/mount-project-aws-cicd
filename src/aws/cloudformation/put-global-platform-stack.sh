@@ -17,20 +17,8 @@ then
   exit 1
 fi
 
-if ! stackExists ${PROFILE} ${Region} ${RegionalPlatformStackName}; then
-  ./put-regional-platform-stack.sh
-  EXIT_CODE=$?
-  if [[ $? -ne 0 ]]
-  then
-    echo "The global platform stack depends on regional platform stack '${RegionalPlatformStackName}' in ${Region}" 1>&2
-    exit ${EXIT_CODE}
-  fi
-fi
-
 # Capture the mode that should be used put the stack: `create` or `update`
 PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${GlobalPlatformStackName})
-
-./package.sh ${CLOUDFORMATION_TEMPLATE} ${Region}
 
 if [[ $? -ne 0 ]]
 then

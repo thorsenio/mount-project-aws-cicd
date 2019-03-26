@@ -6,7 +6,6 @@ cd $(dirname "$0")
 for TEMPLATE in \
   'codebuild-project.yml' \
   'codepipeline.yml' \
-  'codepipeline-service-role.yml' \
   'ecs-cloudfront-distribution.yml' \
   'ecs-cluster.yml' \
   'events-repo-change-rule.yml' \
