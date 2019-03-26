@@ -11,7 +11,7 @@ source ../aws-functions.sh
 source ../../compute-variables.sh
 
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${SiteStackName})
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${S3SiteStackName})
 if [[ ${PUT_MODE} == 'create' ]]; then
   if distributionExistsForCname ${Profile} ${SiteDomainName}; then
      echo "The requested domain name already points to another CloudFront distribution.\nAborting." 1>&2
@@ -86,7 +86,7 @@ TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }'
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${Profile} \
   --region ${Region} \
-  --stack-name ${SiteStackName} \
+  --stack-name ${S3SiteStackName} \
   --template-body file://${TEMPLATE_BASENAME}--expanded.yml \
   --parameters \
     ParameterKey=AcmCertificateArn,ParameterValue=${CERTIFICATE_ARN} \

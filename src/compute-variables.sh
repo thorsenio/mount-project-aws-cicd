@@ -198,7 +198,7 @@ if [[ ! -v SiteIndexDocument ]]; then
 fi
 SiteErrorDocument="${SiteErrorDocument:=${SiteIndexDocument}}"
 
-SiteStackName="${SiteStackName:=${DeploymentId}-site}"
+S3SiteStackName="${S3SiteStackName:=${DeploymentId}-s3-site}"
 
 # ECS-hosted site
 #StaticFilesPathPattern="${StaticFilesPathPattern}:='/static/*'" # not yet implemented

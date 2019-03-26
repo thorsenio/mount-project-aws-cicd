@@ -19,11 +19,11 @@ then
   exit 1
 fi
 
-echo "Requesting deletion of the '${SiteStackName}' stack..."
+echo "Requesting deletion of the '${S3SiteStackName}' stack..."
 OUTPUT=$(aws cloudformation delete-stack \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --region ${Region} \
-  --stack-name ${SiteStackName} \
+  --stack-name ${S3SiteStackName} \
 )
 
 EXIT_STATUS=$?
