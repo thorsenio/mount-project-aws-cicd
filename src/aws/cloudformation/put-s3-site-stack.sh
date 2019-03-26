@@ -12,13 +12,23 @@ source ../../compute-variables.sh
 
 echo "Project bucket name: ${ProjectBucketName}"
 
+# TODO: REFACTOR: Modularize the functions in this script.
+# TODO: REFACTOR: Share code with other the ECS site-stack creation script
+
 # Get the ARN of the ACM certificate for the domain name
 CERTIFICATE_ARN=$(echoAcmCertificateArn ${Profile} ${CertifiedDomainName})
-if [[ -z ${CERTIFICATE_ARN} ]]
-then
-  echo "No certificate was found for the domain '${CertifiedDomainName}'."
-  echo "The creation of the stack has been aborted."
-  exit 1
+if [[ -z ${CERTIFICATE_ARN} ]]; then
+  echo -e "No certificate was found for the domain '${CertifiedDomainName}'."
+  ../acm/request-certificate.sh ${CertifiedDomainName}
+
+  if [[ $? -ne 0 ]]; then
+    exit 1
+  fi
+
+  CERTIFICATE_ARN=$(echoAcmCertificateArn ${Profile} ${CertifiedDomainName})
+  if [[ -z ${CERTIFICATE_ARN} ]]; then
+    exit 1
+  fi
 fi
 
 # Get the apex domain name, which can be used to reference the hosted zone for the site domain name.

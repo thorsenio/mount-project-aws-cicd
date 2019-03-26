@@ -4,7 +4,7 @@
 
 if [[ $# -lt 1 || $# -gt 2 ]]
 then
-  echo "Usage: ${0} DOMAIN_NAME [ATTEMPT_NUMBER]" >&2
+  echo "Usage: $0 DOMAIN_NAME [ATTEMPT_NUMBER]" >&2
   exit 1
 fi
 
@@ -26,6 +26,7 @@ source ../../compute-variables.sh
 DATE_STRING=$(date -I)
 IDEMPOTENCY_TOKEN=$(printf "${DOMAIN_NAME} ${DATE_STRING} ${ATTEMPT_NUMBER}" | md5sum | cut -d ' ' -f 1)
 
+echo "Requesting an SSL/TLS certificate for '${DOMAIN_NAME}' ..."
 OUTPUT=$(aws acm request-certificate \
   --profile ${PROFILE} \
   --region ${AWS_GLOBAL_REGION} \
