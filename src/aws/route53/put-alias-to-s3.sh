@@ -26,13 +26,13 @@ APEX_DOMAIN=$(echoApexDomain ${ALIAS_DNS_NAME})
 HOSTED_ZONE_ID=$(echoHostedZoneIdByApex ${PROFILE} ${APEX_DOMAIN})
 
 if [[ -z ${HOSTED_ZONE_ID} ]]; then
-  echo "The hosted zone ID could not be parsed.\nAborting" 1>&2
+  echo -e "The hosted zone ID could not be parsed.\nAborting." 1>&2
   exit 1
 fi
 
 # Verify that the bucket exists
 if ! bucketExists ${PROFILE} ${BUCKET_NAME}; then
-  echo "No bucket named '${BUCKET_NAME}' was found.\nAborting" 1>&2
+  echo -e "No bucket named '${BUCKET_NAME}' was found.\nAborting." 1>&2
   exit 1
 fi
 

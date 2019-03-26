@@ -22,7 +22,7 @@ SERVICE_COUNT=$(aws ecs list-services \
   > /dev/null \
 )
 if [[ $? -eq 0 && ${SERVICE_COUNT} -ne 0 ]]; then
-  echo "The stack cannot be deleted, because ${SERVICE_COUNT} services are running in the cluster.\nAborting." 1>&2
+  echo -e "The stack cannot be deleted, because ${SERVICE_COUNT} services are running in the cluster.\nAborting." 1>&2
   exit 1
 fi
 

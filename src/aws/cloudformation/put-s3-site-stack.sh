@@ -14,7 +14,7 @@ source ../../compute-variables.sh
 PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${S3SiteStackName})
 if [[ ${PUT_MODE} == 'create' ]]; then
   if distributionExistsForCname ${Profile} ${SiteDomainName}; then
-     echo "The requested domain name already points to another CloudFront distribution.\nAborting." 1>&2
+     echo -e "The requested domain name already points to another CloudFront distribution.\nAborting." 1>&2
      exit 1
   fi
 fi
@@ -23,7 +23,7 @@ fi
 echo "Project bucket name: ${ProjectBucketName}"
 
 # TODO: REFACTOR: Modularize the functions in this script.
-# TODO: REFACTOR: Share code with other the ECS site-stack creation script
+# TODO: REFACTOR: Share code with the ECS site-stack creation script
 
 # Get the ARN of the ACM certificate for the domain name
 CERTIFICATE_ARN=$(echoAcmCertificateArn ${Profile} ${CertifiedDomainName})
@@ -57,7 +57,7 @@ fi
 
 echo "Checking whether the SSL/TLS certificate for '${CertifiedDomainName}' has been validated ..."
 if acmCertificateIsValidated ${Profile} "${CertifiedDomainName}"; then
-  echo "The certificate has been validated.\n"
+  echo -e "The certificate has been validated.\n"
 else
   if [[ ${APEX_HOSTED_ZONE_EXISTS} == false ]]; then
     # The domain is not managed by Route 53, so we can't automatically validate the domain.

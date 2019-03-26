@@ -34,7 +34,7 @@ fi
 
 DISTRIBUTION_ID=$(echoDistributionIdByCname ${PROFILE} ${ALIAS_DNS_NAME})
 if [[ -z ${DISTRIBUTION_ID} ]]; then
-  echo "No CloudFront distribution serving ${ALIAS_DNS_NAME} could be found.\nAborting" 1>&2
+  echo -e "No CloudFront distribution serving ${ALIAS_DNS_NAME} could be found.\nAborting." 1>&2
   exit 1
 fi
 
@@ -42,7 +42,7 @@ echo "CloudFront distribution ID: ${DISTRIBUTION_ID}"
 
 TARGET_DNS_NAME=$(echoDomainNameByDistributionId ${PROFILE} ${DISTRIBUTION_ID})
 if [[ -z ${TARGET_DNS_NAME} ]]; then
-  echo "The CloudFront endpoint could not be retrieved.\nAborting" 1>&2
+  echo -e "The CloudFront endpoint could not be retrieved.\nAborting." 1>&2
   exit 1
 fi
 

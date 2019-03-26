@@ -57,7 +57,7 @@ awaitCertificateValidation () {
     --certificate-arn ${CERTIFICATE_ARN}
 
   if [[ $? -eq 0 ]]; then
-    echo 'The certificate has been validated.\n'
+    echo -e "The certificate has been validated.\n"
     return 0
   else
     echo 'Warning: Certificate validation failed.'
