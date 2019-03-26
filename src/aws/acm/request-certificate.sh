@@ -20,6 +20,12 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
+if acmCertificateExists ${Profile} ${DOMAIN_NAME}; then
+  echo -e "\nA certificate for ${DOMAIN_NAME} already exists in AWS Certificate Manager."
+  echo -e "View certificates at https://console.aws.amazon.com/acm/home?region=us-east-1#/\n"
+  exit 1
+fi
+
 # Generate an idempotency token that is unique for the requested domain & today's date.
 # If a fresh certificate request is needed for the same domain on the same date, increment the
 # attempt number
