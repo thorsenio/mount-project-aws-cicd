@@ -3,10 +3,6 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'Regional platform resources'
 
 Parameters:
-  CfTemplatesBucketName:
-    Description: "Name of the S3 bucket for CloudFormation templates"
-    Type: String
-
   CicdArtifactsBucketName:
     Description: "Name of the S3 bucket for CI/CD artifacts"
     Type: String
@@ -24,18 +20,6 @@ Parameters:
     Type: String
 
 Resources:
-  CfTemplatesBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Ref CfTemplatesBucketName
-      Tags:
-        - Key: 'PlatformCommitHash'
-          Value: !Ref PlatformCommitHash
-        - Key: 'PlatformId'
-          Value: !Ref PlatformId
-        - Key: 'PlatformVersionLabel'
-          Value: !Ref PlatformVersionLabel
-
   CicdArtifactsBucket:
     Type: AWS::S3::Bucket
     Properties:

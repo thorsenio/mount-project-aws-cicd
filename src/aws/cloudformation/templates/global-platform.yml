@@ -3,6 +3,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'Global platform resources'
 
 Parameters:
+  CfnTemplatesBucketName:
+    Description: "Name of the S3 bucket for CloudFormation templates"
+    Type: String
+
   CodePipelineServiceRoleName:
     Description: 'Name of the service role used by CodePipeline to call AWS services'
     Type: String
@@ -24,20 +28,163 @@ Parameters:
     Type: String
 
 Resources:
-  CodePipelineServiceRoleStack:
-    Type: AWS::CloudFormation::Stack
+  CfnTemplatesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref CfnTemplatesBucketName
+      Tags:
+        - Key: 'PlatformCommitHash'
+          Value: !Ref PlatformCommitHash
+        - Key: 'PlatformId'
+          Value: !Ref PlatformId
+        - Key: 'PlatformVersionLabel'
+          Value: !Ref PlatformVersionLabel
+
+  CodePipelineServiceRole:
+    Type: AWS::IAM::Role
     Description: 'Allows CodePipeline to call AWS services.'
     Properties:
-      Parameters:
-        CodePipelineServiceRoleName: !Ref CodePipelineServiceRoleName
-      TemplateURL: './codepipeline-service-role.yml'
-      TimeoutInMinutes: 2
+      RoleName: !Ref CodePipelineServiceRoleName
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service: 'codepipeline.amazonaws.com'
+            Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName: !Sub "${CodePipelineServiceRoleName}-policy"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action: 'iam:PassRole'
+                Resource: '*'
+                Condition:
+                  StringEqualsIfExists:
+                    iam:PassedToService:
+                      - 'cloudformation.amazonaws.com'
+                      - 'elasticbeanstalk.amazonaws.com'
+                      - 'ec2.amazonaws.com'
+                      - 'ecs-tasks.amazonaws.com'
+              - Effect: 'Allow'
+                Action:
+                  - 'codecommit:CancelUploadArchive'
+                  - 'codecommit:GetBranch'
+                  - 'codecommit:GetCommit'
+                  - 'codecommit:GetUploadArchiveStatus'
+                  - 'codecommit:UploadArchive'
+                Resource: '*'
+              - Effect: 'Allow'
+                Action:
+                  - 'codedeploy:CreateDeployment'
+                  - 'codedeploy:GetApplication'
+                  - 'codedeploy:GetApplicationRevision'
+                  - 'codedeploy:GetDeployment'
+                  - 'codedeploy:GetDeploymentConfig'
+                  - 'codedeploy:RegisterApplicationRevision'
+                Resource: '*'
+              - Effect: 'Allow'
+                Action:
+                  - 'autoscaling:*'
+                  - 'cloudformation:*'
+                  - 'cloudwatch:*'
+                  - 'ec2:*'
+                  - 'ecs:*'
+                  - 'elasticbeanstalk:*'
+                  - 'elasticloadbalancing:*'
+                  - 'rds:*'
+                  - 's3:*'
+                  - 'sns:*'
+                  - 'sqs:*'
+                Resource: '*'
+              - Effect: 'Allow'
+                Action:
+                  - 'lambda:InvokeFunction'
+                  - 'lambda:ListFunctions'
+                Resource: '*'
+              - Effect: 'Allow'
+                Action:
+                  - 'opsworks:CreateDeployment'
+                  - 'opsworks:DescribeApps'
+                  - 'opsworks:DescribeCommands'
+                  - 'opsworks:DescribeDeployments'
+                  - 'opsworks:DescribeInstances'
+                  - 'opsworks:DescribeStacks'
+                  - 'opsworks:UpdateApp'
+                  - 'opsworks:UpdateStack'
+                Resource: '*'
+              - Effect: 'Allow'
+                Action:
+                  - 'cloudformation:CreateStack'
+                  - 'cloudformation:DeleteStack'
+                  - 'cloudformation:DescribeStacks'
+                  - 'cloudformation:UpdateStack'
+                  - 'cloudformation:CreateChangeSet'
+                  - 'cloudformation:DeleteChangeSet'
+                  - 'cloudformation:DescribeChangeSet'
+                  - 'cloudformation:ExecuteChangeSet'
+                  - 'cloudformation:SetStackPolicy'
+                  - 'cloudformation:ValidateTemplate'
+                Resource: '*'
+              - Effect: 'Allow'
+                Action:
+                  - 'codebuild:BatchGetBuilds'
+                  - 'codebuild:StartBuild'
+                Resource: '*'
+              - Effect: 'Allow'
+                Action:
+                  - 'devicefarm:ListProjects'
+                  - 'devicefarm:ListDevicePools'
+                  - 'devicefarm:GetRun'
+                  - 'devicefarm:GetUpload'
+                  - 'devicefarm:CreateUpload'
+                  - 'devicefarm:ScheduleRun'
+                Resource: '*'
+              - Effect: 'Allow'
+                Action:
+                  - 'servicecatalog:ListProvisioningArtifacts'
+                  - 'servicecatalog:CreateProvisioningArtifact'
+                  - 'servicecatalog:DescribeProvisioningArtifact'
+                  - 'servicecatalog:DeleteProvisioningArtifact'
+                  - 'servicecatalog:UpdateProduct'
+                Resource: '*'
+              - Effect: 'Allow'
+                Action:
+                  - 'cloudformation:ValidateTemplate'
+                Resource: '*'
+              - Effect: 'Allow'
+                Action:
+                  - 'ecr:DescribeImages'
+                Resource: '*'
 
-  EcsTasksServiceRoleStack:
-    Type: AWS::CloudFormation::Stack
-    Description: 'Allows ECS Tasks to call AWS services.'
+  EcsTasksServiceRole:
+    Type: AWS::IAM::Role
+    Description: 'Allows ECS Tasks to call AWS services'
     Properties:
-      Parameters:
-        EcsTasksServiceRoleName: !Ref EcsTasksServiceRoleName
-      TemplateURL: './ecstasks-service-role.yml'
-      TimeoutInMinutes: 2
+      RoleName: !Ref EcsTasksServiceRoleName
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action: 'sts:AssumeRole'
+            Effect: 'Allow'
+            Principal:
+              Service: 'ecs-tasks.amazonaws.com'
+      Policies:
+        - PolicyName: !Sub "${EcsTasksServiceRoleName}-policy"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                  - 'ecr:GetAuthorizationToken'
+                  - 'ecr:BatchCheckLayerAvailability'
+                  - 'ecr:GetDownloadUrlForLayer'
+                  - 'ecr:BatchGetImage'
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:DescribeLogStreams'
+                  - 'logs:PutLogEvents'
+                  - 'secretsmanager:GetSecretValue'
+                Effect: 'Allow'
+                Resource:
+                  - '*'

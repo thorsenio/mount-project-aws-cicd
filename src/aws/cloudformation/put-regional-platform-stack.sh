@@ -20,7 +20,6 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --stack-name ${RegionalPlatformStackName} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
-    ParameterKey=CfTemplatesBucketName,ParameterValue=${CfTemplatesBucketName} \
     ParameterKey=CicdArtifactsBucketName,ParameterValue=${CicdArtifactsBucketName} \
     ParameterKey=PlatformCommitHash,ParameterValue=${PlatformCommitHash} \
     ParameterKey=PlatformId,ParameterValue=${PlatformId} \

@@ -123,7 +123,7 @@ EcsTasksServiceRoleName=${EcsTasksServiceRoleName:="ecs-tasks-service-role-${Pla
 
 # Name of the S3 bucket that holds CloudFormation templates for the region. It is part of the
 # regional platform stack
-CfTemplatesBucketName="${CfTemplatesBucketName:=cf-templates-${AccountName}-${PlatformId}-${Region//-/}}"
+CfnTemplatesBucketName="${CfnTemplatesBucketName:=cfn-templates-${AccountName}-${PlatformId}}"
 
 # Name of the S3 bucket that hosts CodeBuild & CodePipeline artifacts for all projects in the region
 # Here CodeBuild & CodePipeline share the same bucket

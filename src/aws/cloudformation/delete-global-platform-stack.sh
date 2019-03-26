@@ -6,8 +6,15 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
+../s3/empty-bucket.sh ${CfnTemplatesBucketName}
+
+if [[ $? -ne 0 ]]; then
+  echo -e "Aborting stack deletion.\n" 1>&2
+  exit 1
+fi
+
 OUTPUT=$(aws cloudformation delete-stack \
-  --profile=${PROFILE} \
+  --profile=${Profile} \
   --region=${AWS_GLOBAL_REGION} \
   --stack-name=${GlobalPlatformStackName} \
 )
