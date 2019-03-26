@@ -57,33 +57,20 @@ fi
 
 echo "Checking whether the SSL/TLS certificate for '${CertifiedDomainName}' has been validated ..."
 if acmCertificateIsValidated ${Profile} "${CertifiedDomainName}"; then
-  # The certificate has been validated, so nothing else needs to be done
-  echo -e "The certificate has been validated.\n"
+  echo "The certificate has been validated.\n"
 else
-  echo -e "The certificate has not been validated.\n"
-  if [[ ${APEX_HOSTED_ZONE_EXISTS} == true ]]; then
-    # A Route 53 hosted zone exists, so a validation record can be created automatically
-    ../route53/put-certificate-validation-record.sh ${Profile} ${CertifiedDomainName}
-
-    # -- Start of proposed code
-    # TODO: Implement this if it will improve the developer's user experience
-#    echo "Waiting for the certificate to be validated ..."
-#    aws acm wait certificate-validated \
-#      --profile ${Profile} \
-#      --region ${AWS_GLOBAL_REGION} \
-#      --certificate-validated \
-#      --certificate-arn ${CERTIFICATE_ARN}
-#    if [[ $? -eq 0 ]]; then
-#        echo 'The certificate has been validated.\n'
-#    else
-#      echo -e 'Warning: Certificate validation failed.'
-#      echo -e "Stack creation cannot be completed until the certificate has been validated.\n"
-#    fi
-    # -- End of proposed code
-
+  if [[ ${APEX_HOSTED_ZONE_EXISTS} == false ]]; then
+    # The domain is not managed by Route 53, so we can't automatically validate the domain.
+    echo -e "Warning: The certificate has not been validated."
   else
-    echo -e "Warning: Stack creation cannot be completed until the certificate has been validated.\n"
-    ../acm/describe-cname-record.sh ${CertifiedDomainName}
+    # TODO: MAYBE: Verify that a CNAME record for validation exists in Route 53
+    # It will exist if `request-certificate.sh` was used to create the certificate, but otherwise
+    # may not.
+    echo "The certificate has not yet been validated."
+    echo 'If `request-certificate.sh` was used to create the certificate, validation will happen automatically.'
+    echo 'If `request-certificate.sh` was not used, verify that a CNAME record for validation has been added'
+    echo "to the Route 53 hosted zone for '${SOURCE_ZONE_APEX}'. Use this command for details:"
+    echo -e "  describe-cname-record.sh ${CertifiedDomainName}\n"
   fi
 fi
 

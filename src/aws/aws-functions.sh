@@ -43,6 +43,27 @@ acmCertificateIsValidated () {
   [[ $? -eq 0 && ! ${COUNT} == '0' ]]
 }
 
+# Wait for the specified certificate to be validated.
+# Return 0 if the validation was successful; otherwise, return 1.
+awaitCertificateValidation () {
+
+  local PROFILE=$1
+  local CERTIFICATE_ARN=$2
+
+  echo "Waiting for the certificate to be validated ..."
+  aws acm wait certificate-validated \
+    --profile ${PROFILE} \
+    --region ${AWS_GLOBAL_REGION} \
+    --certificate-arn ${CERTIFICATE_ARN}
+
+  if [[ $? -eq 0 ]]; then
+    echo 'The certificate has been validated.\n'
+    return 0
+  else
+    echo 'Warning: Certificate validation failed.'
+    return 1
+  fi
+}
 
 bucketExists () {
 

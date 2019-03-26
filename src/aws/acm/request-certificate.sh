@@ -2,6 +2,10 @@
 
 # This script requests a TLS/SSL certificate for the specified domain
 
+# --- Behaviour tests
+# If the requested certificate already exists, the script should exit with a failure code.
+# If the domain is managed by Route 53, a validation record should be created.
+
 if [[ $# -lt 1 || $# -gt 2 ]]
 then
   echo "Usage: $0 DOMAIN_NAME [ATTEMPT_NUMBER]" >&2
@@ -34,7 +38,7 @@ IDEMPOTENCY_TOKEN=$(printf "${DOMAIN_NAME} ${DATE_STRING} ${ATTEMPT_NUMBER}" | m
 
 echo "Requesting an SSL/TLS certificate for '${DOMAIN_NAME}' ..."
 OUTPUT=$(aws acm request-certificate \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --region ${AWS_GLOBAL_REGION} \
   --domain-name=${DOMAIN_NAME} \
   --validation-method=DNS \
@@ -58,12 +62,27 @@ while [[ ${CERTIFICATE_EXISTS} == false ]]; do
   sleep 10s
   if acmCertificateExists ${Profile} ${DOMAIN_NAME}; then
     CERTIFICATE_EXISTS=true
+    echo 'The certificate has been created.'
   fi
 done
 
 if [[ ${CERTIFICATE_EXISTS} == false ]]; then
-  echo "Timeout reached. The certificate could not be created."
+  echo "Error: The certificate could not be created."
   exit 1
 fi
 
-echo "The certificate has been created."
+# From this point don't exit with an error status; the certificate has been created.
+# Troubleshooting of validation can be regarded as a separate issue.
+
+if hostedZoneExistsForDomain ${Profile} ${DOMAIN_NAME}; then
+  # The domain is managed by Route 53, so add a CNAME record to validate the certificate.
+  ../route53/put-certificate-validation-record.sh ${Profile} ${DOMAIN_NAME}
+  awaitCertificateValidation ${Profile} ${CERTIFICATE_ARN}
+else
+  ZONE_APEX="$(echoApexDomain ${DOMAIN_NAME})."
+  echo "Warning: The certificate cannot be validated automatically, because the '${ZONE_APEX}'"
+  echo -e "domain is not managed by Route 53.\n"
+
+  # Describe the details of the CNAME record to validate the certificate, then exit.
+  ../acm/describe-cname-record.sh ${CertifiedDomainName}
+fi
