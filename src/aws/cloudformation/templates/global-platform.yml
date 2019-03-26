@@ -3,6 +3,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'Global platform resources'
 
 Parameters:
+  CfnTemplatesBucketName:
+    Description: "Name of the S3 bucket for CloudFormation templates"
+    Type: String
+
   CodePipelineServiceRoleName:
     Description: 'Name of the service role used by CodePipeline to call AWS services'
     Type: String
@@ -24,6 +28,18 @@ Parameters:
     Type: String
 
 Resources:
+  CfnTemplatesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref CfnTemplatesBucketName
+      Tags:
+        - Key: 'PlatformCommitHash'
+          Value: !Ref PlatformCommitHash
+        - Key: 'PlatformId'
+          Value: !Ref PlatformId
+        - Key: 'PlatformVersionLabel'
+          Value: !Ref PlatformVersionLabel
+
   CodePipelineServiceRoleStack:
     Type: AWS::CloudFormation::Stack
     Description: 'Allows CodePipeline to call AWS services.'

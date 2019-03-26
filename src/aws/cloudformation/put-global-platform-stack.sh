@@ -43,8 +43,9 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${PROFILE} \
   --region ${Region} \
   --stack-name ${GlobalPlatformStackName} \
-  --template-body file://${TEMPLATE_BASENAME}--expanded.yml \
+  --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
+    ParameterKey=CfnTemplatesBucketName,ParameterValue=${CfnTemplatesBucketName} \
     ParameterKey=CodePipelineServiceRoleName,ParameterValue=${CodePipelineServiceRoleName} \
     ParameterKey=EcsTasksServiceRoleName,ParameterValue=${EcsTasksServiceRoleName} \
     ParameterKey=PlatformCommitHash,ParameterValue=${PlatformCommitHash} \
