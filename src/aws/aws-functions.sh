@@ -70,6 +70,24 @@ codecommitRepoExists () {
     &> /dev/null
 }
 
+distributionExistsForCname () {
+
+  local PROFILE=$1
+  local CNAME=$2
+
+  local DISTRIBUTION_ID=$(aws cloudfront list-distributions \
+    --profile ${PROFILE} \
+    --query "DistributionList.Items[?Aliases.Items[0]=='${CNAME}'].Id | [0]" \
+  )
+
+  if [[ -z ${DISTRIBUTION_ID} ||  ${DISTRIBUTION_ID} == 'null' ]]; then
+    return 1
+  fi
+
+  return 0
+}
+
+
 ecrRepoExists () {
 
   local PROFILE=$1

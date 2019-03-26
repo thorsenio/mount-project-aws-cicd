@@ -10,6 +10,16 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
+# Capture the mode that should be used put the stack: `create` or `update`
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${SiteStackName})
+if [[ ${PUT_MODE} == 'create' ]]; then
+  if distributionExistsForCname ${Profile} ${SiteDomainName}; then
+     echo "The requested domain name already points to another CloudFront distribution.\nAborting." 1>&2
+     exit 1
+  fi
+fi
+
+
 echo "Project bucket name: ${ProjectBucketName}"
 
 # TODO: REFACTOR: Modularize the functions in this script.
@@ -76,9 +86,6 @@ else
     ../acm/describe-cname-record.sh ${CertifiedDomainName}
   fi
 fi
-
-# Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${SiteStackName})
 
 ./package.sh ${CLOUDFORMATION_TEMPLATE}
 
