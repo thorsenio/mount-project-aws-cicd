@@ -4,11 +4,9 @@
 cd $(dirname "$0")
 
 for TEMPLATE in \
-  'codebuild-project.yml' \
   'codepipeline.yml' \
   'ecs-cloudfront-distribution.yml' \
   'ecs-cluster.yml' \
-  'events-repo-change-rule.yml' \
   'global-platform.yml' \
   'jump-host.yml' \
   'regional-platform.yml' \

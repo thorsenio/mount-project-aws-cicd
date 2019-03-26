@@ -77,40 +77,92 @@ Parameters:
     Type: String
 
 Resources:
-  EventsRepoChangeRuleStack:
-    Type: AWS::CloudFormation::Stack
-    DependsOn: CodePipeline
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
     Properties:
-      Parameters:
-        BranchName: !Ref BranchName
-        CodePipelineArn: !Sub "arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${CodePipelineName}"
-        CodePipelineName: !Ref CodePipelineName
-        DeploymentId: !Ref DeploymentId
-        EventsRuleRandomId: !Ref EventsRuleRandomId
-        PlatformId: !Ref PlatformId
-        ProjectName: !Ref ProjectName
-        RepoName: !Ref RepoName
-      TemplateURL: './events-repo-change-rule.yml'
+      Name: !Sub "${CodeBuildProjectName}"
+      Description: !Sub "CodeBuild project for ${ProjectDescription}"
+      Artifacts:
+        EncryptionDisabled: true
+        Location: !Sub "${CicdArtifactsBucketName}"
+        # Name of the build output folder or .zip file
+        Name: !Sub "codebuild-${DeploymentId}-${AWS::Region}"
+        NamespaceType: 'BUILD_ID'
+        OverrideArtifactName: true
+        Packaging: 'NONE'
+        Path: ''
+        Type: 'S3'
+      BadgeEnabled: true
+      Cache:
+        Type: 'NO_CACHE'
+      EncryptionKey: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/aws/s3"
+      Environment:
+        ComputeType: 'BUILD_GENERAL1_SMALL'
+        Image: !Ref CodeBuildEnvironmentImage
+        PrivilegedMode: true
+        Type: 'LINUX_CONTAINER'
+        EnvironmentVariables:
+          - Name: PROJECT_BUCKET_NAME
+            Type: PLAINTEXT
+            Value: !Ref ProjectBucketName
+          - Name: REPO_NAME
+            Type: PLAINTEXT
+            Value: !Ref RepoName
+      QueuedTimeoutInMinutes: 60
+      Source:
+        Type: 'CODECOMMIT'
+        Location: !Sub "https://git-codecommit.${AWS::Region}.amazonows.com/v1/repos/${RepoName}"
+        GitCloneDepth: 1
+      ServiceRole: !Ref CodeBuildServiceRole
+      TimeoutInMinutes: 10
 
-  CodeBuildProjectStack:
-    Type: AWS::CloudFormation::Stack
+  CodeBuildServiceRole:
+    Type: AWS::IAM::Role
+    Description: 'Allows CodeBuild to call AWS services on your behalf.'
     Properties:
-      Parameters:
-        CodeBuildProjectName: !Ref CodeBuildProjectName
-        CicdArtifactsBucketName: !Ref CicdArtifactsBucketName
-        CodeBuildEnvironmentImage: !Ref CodeBuildEnvironmentImage
-        CodeBuildServiceRoleName: !Ref CodeBuildServiceRoleName
-        DeploymentId: !Ref DeploymentId
-        PlatformId: !Ref PlatformId
-        ProjectBucketName: !Ref ProjectBucketName
-        ProjectDescription: !Ref ProjectDescription
-        RepoName: !Ref RepoName
-      TemplateURL: './codebuild-project.yml'
-      TimeoutInMinutes: 5
+      RoleName: !Ref CodeBuildServiceRoleName
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action: 'sts:AssumeRole'
+            Effect: 'Allow'
+            Principal:
+              Service: 'codebuild.amazonaws.com'
+      Policies:
+        - PolicyName: !Sub "${CodeBuildServiceRoleName}-policy"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action: 'codecommit:GitPull'
+                Resource: !Sub "arn:aws:codecommit:${AWS::Region}:${AWS::AccountId}:*"
+              - Effect: 'Allow'
+                Action:
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Resource:
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${CodeBuildProjectName}"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${CodeBuildProjectName}:*"
+              - Effect: 'Allow'
+                Action:
+                  - 'logs:CreateLogGroup'
+                  - 's3:PutAccountPublicAccessBlock'
+                  - 's3:GetAccountPublicAccessBlock'
+                  - 's3:HeadBucket'
+                  - 's3:ListAllMyBuckets'
+                Resource: '*'
+              -
+                Effect: 'Allow'
+                Action: 's3:*'
+                Resource: !Sub "arn:aws:s3:::${CicdArtifactsBucketName}/*"
+              -
+                Effect: 'Allow'
+                Action: 's3:*'
+                Resource: !Sub "arn:aws:s3:::${ProjectBucketName}/*"
 
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
-    DependsOn: CodeBuildProjectStack
+    DependsOn: CodeBuildProject
     Properties:
       Name: !Ref CodePipelineName
       RoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/${CodePipelineServiceRoleName}"
@@ -148,3 +200,51 @@ Resources:
       ArtifactStore:
         Location: !Ref CicdArtifactsBucketName
         Type: 'S3'
+
+  EventsRepoChangeRule:
+    Type: AWS::Events::Rule
+    DependsOn: StartPipelineExecutionRole
+    Properties:
+      Name: !Sub "events-repo-change-rule-${CodePipelineName}"
+      Description: 'Rule triggering the pipeline when the CodeCommit repo is changed'
+      EventPattern:
+        source:
+          - 'aws.codecommit'
+        detail-type:
+          - 'CodeCommit Repository State Change'
+        resources:
+          - !Sub "arn:aws:codecommit:${AWS::Region}:${AWS::AccountId}:${RepoName}"
+        detail:
+          event:
+            - 'referenceCreated'
+            - 'referenceUpdated'
+          referenceType:
+            - 'branch'
+          referenceName:
+            - !Ref BranchName
+      Targets:
+        - Arn: !Sub "arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${CodePipelineName}"
+          Id: !Ref EventsRuleRandomId
+          RoleArn: !GetAtt StartPipelineExecutionRole.Arn
+
+  StartPipelineExecutionRole:
+    Type: AWS::IAM::Role
+    Description: 'Allows CloudWatch Events to start execution of the code pipeline.'
+    DependsOn: CodePipeline
+    Properties:
+      RoleName: !Sub "events-start-execution-role-${CodePipelineName}-${AWS::Region}"
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service: 'events.amazonaws.com'
+            Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName: !Sub "events-start-pipeline-execution-role-policy-${ProjectName}-${AWS::Region}"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action: 'codepipeline:StartPipelineExecution'
+                Resource: !Sub "arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:${CodePipelineName}"

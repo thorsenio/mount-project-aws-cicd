@@ -11,11 +11,7 @@ source ../aws-functions.sh
 source ../../compute-variables.sh
 
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${CodePipelineStackName})
-
-# TODO: REFACTOR: Use a function to generate ParameterKey,ParameterValue strings
-
-./package.sh ${CLOUDFORMATION_TEMPLATE}
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${CodePipelineStackName})
 
 if [[ $? -ne 0 ]]
 then
@@ -27,7 +23,7 @@ fi
 TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }' | cut -d. -f1)
 
 # -- Check prerequisites
-if ! iamRoleExists ${PROFILE} ${Region} ${CodePipelineServiceRoleName}; then
+if ! iamRoleExists ${Profile} ${Region} ${CodePipelineServiceRoleName}; then
   echo 'The code pipeline service role was not found' 1>&2
   echo "Fix this by creating the global platform stack ('${GlobalPlatformStackName}'):" 1>&2
   echo "  put-global-platform-stack.sh" 1>&2
@@ -35,7 +31,7 @@ if ! iamRoleExists ${PROFILE} ${Region} ${CodePipelineServiceRoleName}; then
   exit 1
 fi
 
-if ! bucketExists ${PROFILE} ${CicdArtifactsBucketName}; then
+if ! bucketExists ${Profile} ${CicdArtifactsBucketName}; then
   echo 'The CI/CD artifacts bucket was not found' 1>&2
   echo "Fix this by creating the regional platform stack ('${RegionalPlatformStackName}'):" 1>&2
   echo "  put-regional-platform-stack.sh" 1>&2
@@ -43,10 +39,10 @@ if ! bucketExists ${PROFILE} ${CicdArtifactsBucketName}; then
 fi
 
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --region ${Region} \
   --stack-name ${CodePipelineStackName} \
-  --template-body file://${TEMPLATE_BASENAME}--expanded.yml \
+  --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
     ParameterKey=BranchName,ParameterValue=${BranchName} \
     ParameterKey=CicdArtifactsBucketName,ParameterValue=${CicdArtifactsBucketName} \
