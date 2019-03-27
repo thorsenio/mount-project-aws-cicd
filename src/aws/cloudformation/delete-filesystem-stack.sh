@@ -5,11 +5,5 @@ cd $(dirname "$0")
 
 source ../../config/compute-project-variables.sh
 
-OUTPUT=$(aws cloudformation delete-stack \
-  --profile=${PROFILE} \
-  --region=${Region} \
-  --stack-name=${FileSystemStackName} \
-)
-
-EXIT_STATUS=$?
-echoPutStackOutput 'delete' ${Region} ${EXIT_STATUS} ${OUTPUT}
+helpers/delete-stack.sh ${FileSystemStackName}
+exitOnError $?

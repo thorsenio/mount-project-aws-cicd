@@ -3,21 +3,13 @@
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
-source ../aws-functions.sh
+source ../aws-constants.sh
 source ../../compute-variables.sh
 
+STACK_NAME=${GlobalPlatformStackName}
+
 ../s3/empty-bucket.sh ${CfnTemplatesBucketName}
+exitOnError $? "Deletion of the '${STACK_NAME}' stack has been aborted."
 
-if [[ $? -ne 0 ]]; then
-  echo -e "Aborting stack deletion.\n" 1>&2
-  exit 1
-fi
-
-OUTPUT=$(aws cloudformation delete-stack \
-  --profile=${Profile} \
-  --region=${AWS_GLOBAL_REGION} \
-  --stack-name=${GlobalPlatformStackName} \
-)
-
-EXIT_STATUS=$?
-echoPutStackOutput 'delete' ${AWS_GLOBAL_REGION} ${EXIT_STATUS} ${OUTPUT}
+helpers/delete-stack.sh ${GlobalPlatformStackName} ${AWS_GLOBAL_REGION}
+exitOnError $?

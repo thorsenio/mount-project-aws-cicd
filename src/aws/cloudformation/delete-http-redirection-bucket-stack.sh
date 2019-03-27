@@ -23,6 +23,7 @@ fi
 
 # The bucket has the same name as the domain name being redirected
 BUCKET_NAME=$(echoStackParameterValue ${Profile} ${Region} ${STACK_NAME} 'SourceDomainName')
+
 if [[ -z ${BUCKET_NAME} ]]; then
   echo -e "No S3 bucket could be found for the '${STACK_NAME}' stack.\nAborting." 1>&2
   exit 1
@@ -30,19 +31,9 @@ fi
 
 echo "Bucket name: ${BUCKET_NAME}"
 
+# If the bucket exists, empty it; otherwise, CloudFormation won't be able to delete it
 ../s3/empty-bucket.sh ${BUCKET_NAME} 'redirection bucket'
-if [[ $? -ne 0 ]]
-then
-  echo -e "Deletion of the stack has been aborted.\n" 1>&2
-  exit 1
-fi
+exitOnError $? "Deletion of the '${STACK_NAME}' stack has been aborted."
 
-echo "Requesting deletion of the '${STACK_NAME}' stack..."
-OUTPUT=$(aws cloudformation delete-stack \
-  --profile=${Profile} \
-  --region=${Region} \
-  --stack-name=${STACK_NAME} \
-)
-
-EXIT_STATUS=$?
-echoPutStackOutput 'delete' ${Region} ${EXIT_STATUS} ${OUTPUT}
+helpers/delete-stack.sh ${STACK_NAME}
+exitOnError $?

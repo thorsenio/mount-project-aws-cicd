@@ -10,7 +10,6 @@ fi
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
-source ../aws-functions.sh
 source ../../compute-variables.sh
 
 # Check whether services are running in the cluster
@@ -26,16 +25,8 @@ if [[ $? -eq 0 && ${SERVICE_COUNT} -ne 0 ]]; then
   exit 1
 fi
 
-OUTPUT=$(aws cloudformation delete-stack \
-  --profile ${Profile} \
-  --region ${Region} \
-  --stack-name ${EcsClusterStackName} \
-)
 
-EXIT_STATUS=$?
-echoPutStackOutput 'delete' ${Region} ${EXIT_STATUS} ${OUTPUT}
+helpers/delete-stack.sh ${EcsClusterStackName}
+exitOnError $?
 
-if [[ ${EXIT_STATUS} -eq 0 ]]
-then
-  ../ec2/delete-key-pair.sh ${PROFILE} ${Region} ${KeyPairKeyName} ${DELETE_KEY_PAIR_PARAM}
-fi
+../ec2/delete-key-pair.sh ${PROFILE} ${Region} ${KeyPairKeyName} ${DELETE_KEY_PAIR_PARAM}

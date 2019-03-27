@@ -8,23 +8,13 @@
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
-source ../aws-functions.sh
 source ../../compute-variables.sh
+
+STACK_NAME=${S3SiteStackName}
 
 # If the bucket exists, empty it; otherwise, CloudFormation won't be able to delete it
 ../s3/empty-bucket.sh ${ProjectBucketName} 'site'
-if [[ $? -ne 0 ]]
-then
-  echo 'Deletion of the stack has been aborted.'
-  exit 1
-fi
+exitOnError $? "Deletion of the '${STACK_NAME}' stack has been aborted."
 
-echo "Requesting deletion of the '${S3SiteStackName}' stack..."
-OUTPUT=$(aws cloudformation delete-stack \
-  --profile ${Profile} \
-  --region ${Region} \
-  --stack-name ${S3SiteStackName} \
-)
-
-EXIT_STATUS=$?
-echoPutStackOutput 'delete' ${Region} ${EXIT_STATUS} ${OUTPUT}
+helpers/delete-stack.sh ${STACK_NAME}
+exitOnError $?
