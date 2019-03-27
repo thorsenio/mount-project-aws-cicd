@@ -32,7 +32,7 @@ OUTPUT=$(aws codecommit create-repository \
 if [[ $? -eq 0 ]]; then
   echo "The '${REPO_NAME}' CodeCommit repository has been created."
   cd "${PROJECT_DIR}"
-  git remote add aws ssh://git-codecommit.ca-central-1.amazonaws.com/v1/repos/${REPO_NAME}
+  git remote add aws ssh://git-codecommit.${Region}.amazonaws.com/v1/repos/${REPO_NAME}
 else
   echo "${OUTPUT}"
   echo "The '${REPO_NAME}' CodeCommit repository could not be created." 1>&2
