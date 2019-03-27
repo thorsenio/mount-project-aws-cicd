@@ -94,3 +94,14 @@ embold () {
   echo "${bold}${TEXT_TO_EMBOLD}${normal}"
 }
 
+exitOnError () {
+  local RETURN_CODE=$1
+  local ERROR_MESSAGE=${2:-''}
+
+  if [[ ${RETURN_CODE} -ne 0 ]]; then
+    if [[ -n ${ERROR_MESSAGE} ]]; then
+      echo -e "${ERROR_MESSAGE}\n" 1>&2
+    fi
+    exit 1
+  fi
+}
