@@ -28,4 +28,4 @@ if [[ -z ${SUBDOMAIN} ]]; then
 fi
 
 STACK_NAME="redirect-${SOURCE_DOMAIN_NAME//./-}-to-${SUBDOMAIN}"
-./put-redirection-stack.sh ${Profile} ${Region} ${SOURCE_DOMAIN_NAME} ${TARGET_DOMAIN_NAME} ${STACK_NAME}
+./put-redirection-stack.sh ${SOURCE_DOMAIN_NAME} ${TARGET_DOMAIN_NAME} ${STACK_NAME}

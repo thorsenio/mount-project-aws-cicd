@@ -12,7 +12,6 @@
 cd $(dirname "$0")
 
 source ../../functions.sh
-source ../aws-functions.sh
 source ../../compute-variables.sh
 
 TARGET_DOMAIN_NAME=$(echoApexDomain ${SiteDomainName})
@@ -27,4 +26,4 @@ STACK_NAME="redirect-www-to-${TARGET_DOMAIN_NAME//./-}"
 echo "Domain name to redirect: ${SOURCE_DOMAIN_NAME}"
 echo "Redirection target: ${TARGET_DOMAIN_NAME}"
 
-./put-redirection-stack.sh ${Profile} ${Region} ${SOURCE_DOMAIN_NAME} ${TARGET_DOMAIN_NAME} ${STACK_NAME}
+./put-redirection-stack.sh ${SOURCE_DOMAIN_NAME} ${TARGET_DOMAIN_NAME} ${STACK_NAME}

@@ -2,9 +2,9 @@
 
 # This script deletes the HTTP redirection stack created by `put-http-redirection-stack.sh`
 
-if [[ $# -ne 3 ]]
+if [[ $# -ne 1 ]]
 then
-  echo "Usage: $0 PROFILE REGION STACK_NAME" >&2
+  echo "Usage: $0 STACK_NAME" >&2
   exit 1
 fi
 
@@ -12,4 +12,4 @@ fi
 cd $(dirname "$0")
 
 # The deletion process is the same as that for a redirection bucket
-./delete-http-redirection-bucket-stack.sh $1 $2 $3
+./delete-http-redirection-bucket-stack.sh $1
