@@ -54,5 +54,7 @@ docker container run \
   --mount type=bind,source="${HOME}/.aws",target=/root/.aws \
   --mount type=bind,source="${HOME}/.ecs",target=/root/.ecs \
   --mount type=bind,source="${HOME}/.ssh",target=/root/.ssh \
+  --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
   ${BASE_NAME}:${TAG} \
   bash
+

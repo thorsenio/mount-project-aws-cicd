@@ -8,14 +8,13 @@
 # Name of the project. This value is used to generate names for some of this project's resources
 ProjectName='my-project'
 ProjectDescription='My project'
-
 ProjectDomainName='example.com'
 SiteDomainName="www.${ProjectDomainName}"
+ProjectVersion='0.1.0'
 
 RepoName=${ProjectName}
 RepoDescription="${ProjectDescription}"
 
-ProjectVersion='0.1.0'
 CodeBuildEnvironmentImage='aws/codebuild/nodejs:10.14.1'
 # Other common images:
 #aws/codebuild/docker:18.09.0
