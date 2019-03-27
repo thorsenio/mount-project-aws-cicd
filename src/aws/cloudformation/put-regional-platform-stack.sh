@@ -29,5 +29,5 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     CAPABILITY_NAMED_IAM \
 )
 
-EXIT_STATUS=$?
-echoPutStackOutput ${PUT_MODE} ${Region} ${EXIT_STATUS} ${OUTPUT}
+echoPutStackOutput ${RegionalPlatformStackName} ${PUT_MODE} ${Region} $? ${OUTPUT}
+exitOnError $?

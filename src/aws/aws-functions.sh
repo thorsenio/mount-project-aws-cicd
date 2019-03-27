@@ -394,9 +394,10 @@ echoPutStackMode () {
 
 echoPutStackOutput () {
 
-  local PUT_MODE=$1
-  local REGION=$2
-  local EXIT_STATUS=$3
+  local STACK_NAME=$1
+  local PUT_MODE=$2
+  local REGION=$3
+  local EXIT_STATUS=$4
 
   shift 3
   local OUTPUT=$*
@@ -407,7 +408,7 @@ echoPutStackOutput () {
     return 1
   fi
 
-  echo "The request to ${PUT_MODE} the stack was accepted by AWS."
+  echo "The request to ${PUT_MODE} the '${STACK_NAME}' stack was accepted by AWS."
   echo "View the stack's status at https://${REGION}.console.aws.amazon.com/cloudformation/home?region=${REGION}#/stacks?filter=active"
   echo ${OUTPUT} | jq '.'
   return 0

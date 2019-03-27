@@ -24,5 +24,5 @@ OUTPUT=$(aws cloudformation delete-stack \
   --stack-name ${STACK_NAME} \
 )
 
-EXIT_STATUS=$?
-echoPutStackOutput 'delete' ${REGION} ${EXIT_STATUS} ${OUTPUT}
+echoPutStackOutput ${STACK_NAME} 'delete' ${REGION} $? ${OUTPUT}
+exitOnError $?

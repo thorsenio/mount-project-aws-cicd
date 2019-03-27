@@ -40,5 +40,5 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     ParameterKey=TargetDomainName,ParameterValue=${TARGET_DOMAIN_NAME} \
 )
 
-EXIT_STATUS=$?
-echoPutStackOutput ${PUT_MODE} ${Region} ${EXIT_STATUS} ${OUTPUT}
+echoPutStackOutput ${STACK_NAME} ${PUT_MODE} ${Region} $? ${OUTPUT}
+exitOnError $?

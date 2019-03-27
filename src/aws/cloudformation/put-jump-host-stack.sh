@@ -137,5 +137,5 @@ OUTPUT=$(aws cloudformation create-stack \
   --capabilities CAPABILITY_IAM \
 )
 
-EXIT_STATUS=$?
-echoPutStackOutput ${PUT_MODE} ${Region} ${EXIT_STATUS} ${OUTPUT}
+echoPutStackOutput ${JumpHostStackName} ${PUT_MODE} ${Region} $? ${OUTPUT}
+exitOnError $?

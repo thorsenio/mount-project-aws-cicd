@@ -8,6 +8,7 @@ cd $(dirname "$0")
 
 THIS_SCRIPT_DIR=$(dirname $(realpath ${PWD}/${BASH_SOURCE[0]}))
 cd ${THIS_SCRIPT_DIR} > /dev/null
+source /var/lib/functions.sh
 source /var/lib/aws/aws-functions.sh
 source /var/lib/compute-variables.sh
 cd - > /dev/null

@@ -38,5 +38,5 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     CAPABILITY_NAMED_IAM \
 )
 
-EXIT_STATUS=$?
-echoPutStackOutput ${PUT_MODE} ${AWS_GLOBAL_REGION} ${EXIT_STATUS} ${OUTPUT}
+echoPutStackOutput ${GlobalPlatformStackName} ${PUT_MODE} ${AWS_GLOBAL_REGION} $? ${OUTPUT}
+exitOnError $?

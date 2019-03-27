@@ -37,5 +37,5 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     ParameterKey=IndexDocument,ParameterValue=${SiteIndexDocument} \
 )
 
-EXIT_STATUS=$?
-echoPutStackOutput ${PUT_MODE} ${Region} ${EXIT_STATUS} ${OUTPUT}
+echoPutStackOutput ${ProjectBucketStackName} ${PUT_MODE} ${Region} $? ${OUTPUT}
+exitOnError $?

@@ -25,5 +25,5 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     ParameterKey=PlatformVersionLabel,ParameterValue=${PlatformVersionLabel} \
 )
 
-EXIT_STATUS=$?
-echoPutStackOutput ${PUT_MODE} ${Region} ${EXIT_STATUS} ${OUTPUT}
+echoPutStackOutput ${FileSystemStackName} ${PUT_MODE} ${Region} $? ${OUTPUT}
+exitOnError $?
