@@ -14,7 +14,7 @@ source ../../compute-variables.sh
 PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${S3SiteStackName})
 if [[ ${PUT_MODE} == 'create' ]]; then
   if distributionExistsForCname ${Profile} ${SiteDomainName}; then
-     echo -e "The requested domain name already points to another CloudFront distribution.\nAborting." 1>&2
+     echo -e "\nThe requested domain name '${SiteDomainName}' already points to another CloudFront distribution.\nAborting the stack operation.\n" 1>&2
      exit 1
   fi
 fi

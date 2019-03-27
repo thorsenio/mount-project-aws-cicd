@@ -26,7 +26,7 @@ APEX_DOMAIN=$(echoApexDomain ${ALIAS_DNS_NAME})
 HOSTED_ZONE_ID=$(echoHostedZoneIdByApex ${PROFILE} ${APEX_DOMAIN})
 
 if [[ -z ${HOSTED_ZONE_ID} ]]; then
-  echo -e "The hosted zone ID could not be parsed.\nAborting." 1>&2
+  echo -e "The hosted zone ID for '${APEX_DOMAIN}'could not be parsed.\nAborting." 1>&2
   exit 1
 fi
 
@@ -42,7 +42,7 @@ S3_HOSTED_ZONE_ID=$(echoS3HostedZoneIdByRegion ${Region})
 TARGET_DNS_NAME="s3-website.${Region}.amazonaws.com"
 
 if [[ -z ${S3_HOSTED_ZONE_ID} ]]; then
-  echo "The hosted zone ID of the S3 endpoint could not be found.\Aborting" 1>&2
+  echo "The hosted zone ID of the S3 endpoint for the '${Region}' region could not be found.\Aborting." 1>&2
   exit 1
 fi
 
