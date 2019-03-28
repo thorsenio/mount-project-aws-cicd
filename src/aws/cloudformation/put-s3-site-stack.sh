@@ -19,7 +19,7 @@ if [[ ${PUT_MODE} == 'create' ]]; then
   fi
 fi
 
-
+echo "Site domain name: ${SiteDomainName}"
 echo "Project bucket name: ${ProjectBucketName}"
 
 # TODO: REFACTOR: Modularize the functions in this script.
