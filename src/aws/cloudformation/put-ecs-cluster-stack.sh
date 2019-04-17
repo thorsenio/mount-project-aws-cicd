@@ -51,6 +51,7 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     ParameterKey=PlatformCommitHash,ParameterValue=${PlatformCommitHash} \
     ParameterKey=PlatformId,ParameterValue=${PlatformId} \
     ParameterKey=PlatformVersionLabel,ParameterValue=${PlatformVersionLabel} \
+    ParameterKey=SiteDomainName,ParameterValue=${SiteDomainName} \
     ParameterKey=VpcName,ParameterValue=${EcsClusterVpcName} \
   --capabilities \
     CAPABILITY_AUTO_EXPAND \

@@ -58,6 +58,10 @@ Parameters:
     Description: 'AWS CI/CD platform version label (version + stage)'
     Type: String
 
+  SiteDomainName:
+    Description: 'Domain name of the site'
+    Type: String
+
   VpcName:
     Description: 'Name of the VPC'
     Type: String
@@ -333,12 +337,29 @@ Resources:
   AlbListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
+      # By default, reject all traffic that falls through the other rules
       DefaultActions:
-        - Type: 'forward'
-          TargetGroupArn: !Ref TargetGroup
+        - Type: 'fixed-response'
+          FixedResponseConfig:
+            StatusCode: '403' # Forbidden
       LoadBalancerArn: !Ref AppLoadBalancer
       Port: 80
       Protocol: 'HTTP'
+
+  AlbListenerRule:
+    # This rule forwards traffic to the EC2 target group only if the request contains a
+    # Host header with a value equal to the site's domain name
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Actions:
+        - Type: 'forward'
+          TargetGroupArn: !Ref TargetGroup
+      Conditions:
+        - Field: 'host-header'
+          Values:
+            - !Ref SiteDomainName
+      ListenerArn: !Ref AlbListener
+      Priority: 1
   # ----- End of Application Load Balancer resources
 
   # ----- FileSystem resources
