@@ -9,6 +9,10 @@ Parameters:
     Description: 'Name of the default security group for the VPC'
     Type: String
 
+  DesiredAsgCapacity:
+    Description: 'Desired number of instances in the autoscaling group'
+    Type: Number
+
   DesiredAzCount:
     Description: 'Desired number of AZs in the VPC (2-3)'
     Type: Number
@@ -142,8 +146,8 @@ Resources:
         - !Ref TargetGroup
 
       # Size constraints
-      DesiredCapacity: 2
-      MinSize: 2
+      DesiredCapacity: !Ref DesiredAsgCapacity
+      MinSize: !Ref DesiredAsgCapacity
       MaxSize: 2
 
       Tags:

@@ -35,6 +35,13 @@ AZ_COUNT=$(echoCountAzsInRegion ${Profile} ${Region})
 MAX_AZ_COUNT=3
 DESIRED_AZ_COUNT=$(echoMin AZ_COUNT MAX_AZ_COUNT)
 
+# TODO: MAYBE: Allow these values to be customized
+if [[ ${BranchName} == 'master' ]]; then
+  DESIRED_ASG_CAPACITY=2
+else
+  DESIRED_ASG_CAPACITY=1
+fi
+
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${Profile} \
   --region ${Region} \
@@ -42,6 +49,7 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --template-body file://${TEMPLATE_BASENAME}--expanded.yml \
   --parameters \
     ParameterKey=DefaultSecurityGroupName,ParameterValue=${VpcDefaultSecurityGroupName} \
+    ParameterKey=DesiredAsgCapacity,ParameterValue=${DESIRED_ASG_CAPACITY} \
     ParameterKey=DesiredAzCount,ParameterValue=${DESIRED_AZ_COUNT} \
     ParameterKey=Ec2InstanceName,ParameterValue=${Ec2InstanceName} \
     ParameterKey=Ec2InstanceType,ParameterValue=${Ec2InstanceType} \
