@@ -19,7 +19,7 @@ source ../../functions.sh
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
-CERTIFICATE_ARN=$(echoAcmCertificateArn ${PROFILE} ${DOMAIN_NAME})
+CERTIFICATE_ARN=$(echoAcmCertificateArn ${Profile} ${DOMAIN_NAME})
 
 if [[ -z ${CERTIFICATE_ARN} ]]
 then
@@ -28,7 +28,7 @@ then
 fi
 
 DESCRIPTION=$(aws acm describe-certificate \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --region ${AWS_GLOBAL_REGION} \
   --certificate-arn ${CERTIFICATE_ARN}
 )

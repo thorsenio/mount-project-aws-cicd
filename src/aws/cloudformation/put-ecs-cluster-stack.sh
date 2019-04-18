@@ -13,7 +13,7 @@ source ../aws-functions.sh
 source ../../compute-variables.sh
 
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${EcsClusterStackName})
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${EcsClusterStackName})
 
 ./package.sh ${CLOUDFORMATION_TEMPLATE}
 
@@ -31,12 +31,12 @@ fi
 
 TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }' | cut -d. -f1)
 
-AZ_COUNT=$(echoCountAzsInRegion ${PROFILE} ${Region})
+AZ_COUNT=$(echoCountAzsInRegion ${Profile} ${Region})
 MAX_AZ_COUNT=3
 DESIRED_AZ_COUNT=$(echoMin AZ_COUNT MAX_AZ_COUNT)
 
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --region ${Region} \
   --stack-name ${EcsClusterStackName} \
   --template-body file://${TEMPLATE_BASENAME}--expanded.yml \

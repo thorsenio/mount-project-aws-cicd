@@ -12,7 +12,7 @@ source ../aws-functions.sh
 source ../../compute-variables.sh
 
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${PROFILE} ${AWS_GLOBAL_REGION} ${GlobalPlatformStackName})
+PUT_MODE=$(echoPutStackMode ${Profile} ${AWS_GLOBAL_REGION} ${GlobalPlatformStackName})
 
 if [[ $? -ne 0 ]]
 then
@@ -22,7 +22,7 @@ fi
 TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }' | cut -d. -f1)
 
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --region ${AWS_GLOBAL_REGION} \
   --stack-name ${GlobalPlatformStackName} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \

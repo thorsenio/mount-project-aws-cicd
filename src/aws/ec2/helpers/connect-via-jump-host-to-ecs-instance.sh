@@ -66,7 +66,7 @@ extractInstanceIdFromArn () {
 getEcsInstanceArnByIndex () {
   local INDEX=${1}
   echo $(aws ecs list-container-instances \
-    --profile ${PROFILE} \
+    --profile ${Profile} \
     --region ${Region} \
     --cluster ${EcsClusterName} \
   ) | jq ".containerInstanceArns[${INDEX}]" | cut -d\" -f 2
@@ -75,7 +75,7 @@ getEcsInstanceArnByIndex () {
 getContainerInstanceIdByArn () {
   local INSTANCE_ARN=${1}
   echo $(aws ecs describe-container-instances \
-    --profile=${PROFILE} \
+    --profile=${Profile} \
     --region=${Region} \
     --cluster ${EcsClusterName} \
     --container-instances ${INSTANCE_ARN} \
@@ -85,7 +85,7 @@ getContainerInstanceIdByArn () {
 getInstanceIdByName () {
   local INSTANCE_NAME=${1}
   echo $(aws ec2 describe-instances \
-    --profile=${PROFILE} \
+    --profile=${Profile} \
     --region=${Region} \
     --filters Name=instance-state-name,Values=running Name=tag:Name,Values=${INSTANCE_NAME} \
     --query 'Reservations[0].Instances[0].InstanceId'
@@ -95,7 +95,7 @@ getInstanceIdByName () {
 getPrivateIpbyInstanceId () {
   local INSTANCE_ID=${1}
   echo $(aws ec2 describe-instances \
-    --profile=${PROFILE} \
+    --profile=${Profile} \
     --region=${Region} \
     --instance-ids ${INSTANCE_ID} \
   ) | jq '.Reservations[0].Instances[0].PrivateIpAddress' | cut -d\" -f 2
@@ -104,7 +104,7 @@ getPrivateIpbyInstanceId () {
 getPublicIpbyInstanceId () {
   local INSTANCE_ID=${1}
   echo $(aws ec2 describe-instances \
-    --profile=${PROFILE} \
+    --profile=${Profile} \
     --region=${Region} \
     --instance-ids ${INSTANCE_ID} \
   ) | jq '.Reservations[0].Instances[0].PublicIpAddress' | cut -d\" -f 2

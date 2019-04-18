@@ -24,7 +24,7 @@ source ../../compute-variables.sh
 IDEMPOTENCY_TOKEN=$(echoDailyIdempotencyToken ${DOMAIN_NAME} ${ATTEMPT_NUMBER})
 
 OUTPUT=$(aws route53 create-hosted-zone \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --name ${DOMAIN_NAME} \
   --caller-reference ${IDEMPOTENCY_TOKEN} \
   --hosted-zone-config Comment="Created by ${PlatformName}-${PlatformVersionLabel}" \

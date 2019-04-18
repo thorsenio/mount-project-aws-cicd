@@ -14,7 +14,7 @@ cd $(dirname "$0")
 source ../../compute-variables.sh
 
 aws cloudformation validate-template \
-  --profile=${PROFILE} \
+  --profile=${Profile} \
   --region=${Region} \
   --template-body=file://${TEMPLATE} 1> /dev/null
 

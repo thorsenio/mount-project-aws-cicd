@@ -10,10 +10,10 @@ cd $(dirname "$0")
 source ../../config/compute-project-variables.sh
 
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${FileSystemStackName})
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${FileSystemStackName})
 
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --region ${Region} \
   --stack-name ${FileSystemStackName} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \

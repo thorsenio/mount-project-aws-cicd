@@ -12,7 +12,7 @@ source ../aws-functions.sh
 source ../../compute-variables.sh
 
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${VpcStackName})
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${VpcStackName})
 
 ./package.sh ${CLOUDFORMATION_TEMPLATE}
 
@@ -21,12 +21,12 @@ then
   exit 1
 fi
 
-AZ_COUNT=$(echoCountAzsInRegion ${PROFILE} ${Region})
+AZ_COUNT=$(echoCountAzsInRegion ${Profile} ${Region})
 MAX_AZ_COUNT=3
 DESIRED_AZ_COUNT=$(echoMin AZ_COUNT MAX_AZ_COUNT)
 
 OUTPUT=$(aws cloudformation create-stack \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --region ${Region} \
   --stack-name ${VpcStackName} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \

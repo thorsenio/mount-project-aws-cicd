@@ -16,7 +16,7 @@ source ../../compute-variables.sh
 
 TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }' | cut -d. -f1)
 
-if ! bucketExists ${PROFILE} ${CfnTemplatesBucketName}; then
+if ! bucketExists ${Profile} ${CfnTemplatesBucketName}; then
   echo "The CloudFormation templates bucket was not found." 1>&2
   echo "Fix this by creating the global platform stack ('${GlobalPlatformStackName}'):" 1>&2
   echo "  put-global-platform-stack.sh"
@@ -24,7 +24,7 @@ if ! bucketExists ${PROFILE} ${CfnTemplatesBucketName}; then
 fi
 
 OUTPUT=$(aws cloudformation package \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --region ${AWS_GLOBAL_REGION} \
   --template-file ${CLOUDFORMATION_TEMPLATE} \
   --s3-bucket ${CfnTemplatesBucketName} \

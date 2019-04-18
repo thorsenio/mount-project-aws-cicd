@@ -18,14 +18,14 @@ source ../../compute-variables.sh
 
 REPO_NAME=${DeploymentId}/${IMAGE_NAME}
 
-if ecrRepoExists ${PROFILE} ${Region} ${REPO_NAME}; then
+if ecrRepoExists ${Profile} ${Region} ${REPO_NAME}; then
   echo "The '${REPO_NAME}' ECR repository exists and will be re-used."
   exit 0
 fi
 
 OUTPUT=$(
   aws ecr create-repository \
-    --profile ${PROFILE} \
+    --profile ${Profile} \
     --region ${Region} \
     --repository-name ${REPO_NAME} \
     --tags Key=DeploymentId,Value=${DeploymentId} \

@@ -22,7 +22,7 @@ FQ_ALIAS=$(echoFqdn ${ALIAS_DNS_NAME})
 
 # Use the apex domain name to look up the Hosted Zone ID
 APEX_DOMAIN=$(echoApexDomain ${ALIAS_DNS_NAME})
-HOSTED_ZONE_ID=$(echoHostedZoneIdByApex ${PROFILE} ${APEX_DOMAIN})
+HOSTED_ZONE_ID=$(echoHostedZoneIdByApex ${Profile} ${APEX_DOMAIN})
 
 echo "Apex domain: ${APEX_DOMAIN}"
 echo "Hosted zone ID: ${HOSTED_ZONE_ID}"
@@ -32,7 +32,7 @@ if [[ -z ${HOSTED_ZONE_ID} ]]; then
   exit 1
 fi
 
-DISTRIBUTION_ID=$(echoDistributionIdByCname ${PROFILE} ${ALIAS_DNS_NAME})
+DISTRIBUTION_ID=$(echoDistributionIdByCname ${Profile} ${ALIAS_DNS_NAME})
 if [[ -z ${DISTRIBUTION_ID} ]]; then
   echo -e "No CloudFront distribution serving ${ALIAS_DNS_NAME} could be found.\nAborting." 1>&2
   exit 1
@@ -40,7 +40,7 @@ fi
 
 echo "CloudFront distribution ID: ${DISTRIBUTION_ID}"
 
-TARGET_DNS_NAME=$(echoDomainNameByDistributionId ${PROFILE} ${DISTRIBUTION_ID})
+TARGET_DNS_NAME=$(echoDomainNameByDistributionId ${Profile} ${DISTRIBUTION_ID})
 if [[ -z ${TARGET_DNS_NAME} ]]; then
   echo -e "The CloudFront endpoint could not be retrieved.\nAborting." 1>&2
   exit 1
@@ -68,7 +68,7 @@ read -r -d '' CHANGES <<-EOF
 EOF
 
 aws route53 change-resource-record-sets \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --hosted-zone-id ${HOSTED_ZONE_ID} \
   --change-batch "${CHANGES}"
 

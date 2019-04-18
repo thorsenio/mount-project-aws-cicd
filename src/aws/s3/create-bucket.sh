@@ -16,14 +16,14 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
-if bucketExists ${PROFILE} ${BUCKET_NAME}; then
+if bucketExists ${Profile} ${BUCKET_NAME}; then
   echo "The ${BUCKET_NAME} bucket already exists." 1>&2
   exit 1
 fi
 
 # Create an S3 bucket with the specified name
 OUTPUT=$(aws s3 mb s3://${BUCKET_NAME} \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --region ${Region} \
 )
 

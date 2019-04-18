@@ -18,14 +18,14 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
-if ! bucketExists ${PROFILE} ${BUCKET_NAME}; then
+if ! bucketExists ${Profile} ${BUCKET_NAME}; then
   echo "The ${BUCKET_NAME} bucket does not exist." 1>&2
   exit 1
 fi
 
 # Set the bucket's access-control list (ACL) to allow read access by anyone
 aws s3api put-bucket-acl \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --bucket ${BUCKET_NAME} \
   --acl public-read
 
@@ -46,7 +46,7 @@ read -r -d '' WEBSITE_CONFIGURATION <<-EOF
 EOF
 
 aws s3api put-bucket-website \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --bucket ${BUCKET_NAME} \
   --website-configuration "${WEBSITE_CONFIGURATION}"
 

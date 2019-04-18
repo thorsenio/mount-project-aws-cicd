@@ -11,7 +11,7 @@ source ../../compute-variables.sh
 
 $(aws ecr get-login \
   --no-include-email \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --region ${Region} \
 )
 

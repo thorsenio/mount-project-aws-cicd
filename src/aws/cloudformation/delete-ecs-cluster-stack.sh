@@ -29,4 +29,4 @@ fi
 helpers/delete-stack.sh ${EcsClusterStackName}
 exitOnError $?
 
-../ec2/delete-key-pair.sh ${PROFILE} ${Region} ${KeyPairKeyName} ${DELETE_KEY_PAIR_PARAM}
+../ec2/delete-key-pair.sh ${Profile} ${Region} ${KeyPairKeyName} ${DELETE_KEY_PAIR_PARAM}

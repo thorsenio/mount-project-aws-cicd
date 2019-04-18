@@ -17,13 +17,13 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
-if codecommitRepoExists ${PROFILE} ${Region} ${REPO_NAME}; then
+if codecommitRepoExists ${Profile} ${Region} ${REPO_NAME}; then
   echo "The '${REPO_NAME}' CodeCommit repository exists and will be re-used."
   exit 0
 fi
 
 OUTPUT=$(aws codecommit create-repository \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --region ${Region} \
   --repository-name ${REPO_NAME} \
   --repository-description "${REPO_DESCRIPTION}"

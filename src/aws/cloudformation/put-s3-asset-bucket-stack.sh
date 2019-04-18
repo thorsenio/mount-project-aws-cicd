@@ -15,15 +15,15 @@ source ../aws-functions.sh
 source ../../compute-variables.sh
 
 # Skip creation of the bucket if it already exists
-if bucketExists ${PROFILE} ${ProjectBucketName}; then
+if bucketExists ${Profile} ${ProjectBucketName}; then
   exit 0
 fi
 
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${ProjectBucketStackName})
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${ProjectBucketStackName})
 
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --region ${Region} \
   --stack-name ${ProjectBucketStackName} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \

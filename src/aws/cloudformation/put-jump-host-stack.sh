@@ -12,12 +12,12 @@ source ../aws-functions.sh
 source ../../compute-variables.sh
 
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${JumpHostStackName})
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${JumpHostStackName})
 
 # Echo the ID of the VPC specified by name
 echoEcsClusterVpcId () {
   echo $(aws ec2 describe-vpcs \
-    --profile ${PROFILE} \
+    --profile ${Profile} \
     --region ${Region} \
     --filters Name=tag:Name,Values=${EcsClusterVpcName} \
     --query 'Vpcs[0].VpcId' \
@@ -30,7 +30,7 @@ getContainerInstanceArn () {
   echo $(
     aws ecs \
       list-container-instances \
-      --profile ${PROFILE} \
+      --profile ${Profile} \
       --region ${Region} \
       --cluster ${EcsClusterName} \
     ) | jq '.containerInstanceArns[0]'
@@ -44,7 +44,7 @@ getInstanceAttribute () {
   echo $(
     aws ecs describe-container-instances \
       --cluster ${EcsClusterName} \
-      --profile ${PROFILE} \
+      --profile ${Profile} \
       --region ${Region} \
       --container-instances ${CONTAINER_INSTANCE_ID} \
     ) | jq ".containerInstances[0].attributes | .[] | select(.name==\"${KEY}\").value" | sed 's/\"//g'
@@ -53,7 +53,7 @@ getInstanceAttribute () {
 # Given a container instance ID, return the ID of its first security group
 getSecurityGroupId () {
   echo $(aws ec2 describe-security-groups \
-    --profile ${PROFILE} \
+    --profile ${Profile} \
     --region ${Region} \
     --filters Name=group-name,Values=${VpcDefaultSecurityGroupName} \
     --query 'SecurityGroups[0].GroupId' \
@@ -65,7 +65,7 @@ getSecurityGroupId () {
 getPrivateSubnetId () {
   local VPC_ID=$1
   echo $(aws ec2 describe-subnets \
-    --profile ${PROFILE} \
+    --profile ${Profile} \
     --region ${Region} \
     --filters \
       Name=tag:Access,Values=public \
@@ -123,7 +123,7 @@ else
 fi
 
 OUTPUT=$(aws cloudformation create-stack \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --region ${Region} \
   --stack-name ${JumpHostStackName} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \

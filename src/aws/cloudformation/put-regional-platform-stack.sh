@@ -12,10 +12,10 @@ source ../aws-functions.sh
 source ../../compute-variables.sh
 
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${PROFILE} ${Region} ${RegionalPlatformStackName})
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${RegionalPlatformStackName})
 
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --region ${Region} \
   --stack-name ${RegionalPlatformStackName} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \

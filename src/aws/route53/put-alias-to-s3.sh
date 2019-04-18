@@ -23,7 +23,7 @@ FQ_ALIAS=$(echoFqdn ${ALIAS_DNS_NAME})
 
 # Use the apex domain name to look up the Hosted Zone ID
 APEX_DOMAIN=$(echoApexDomain ${ALIAS_DNS_NAME})
-HOSTED_ZONE_ID=$(echoHostedZoneIdByApex ${PROFILE} ${APEX_DOMAIN})
+HOSTED_ZONE_ID=$(echoHostedZoneIdByApex ${Profile} ${APEX_DOMAIN})
 
 if [[ -z ${HOSTED_ZONE_ID} ]]; then
   echo -e "The hosted zone ID for '${APEX_DOMAIN}'could not be parsed.\nAborting." 1>&2
@@ -31,7 +31,7 @@ if [[ -z ${HOSTED_ZONE_ID} ]]; then
 fi
 
 # Verify that the bucket exists
-if ! bucketExists ${PROFILE} ${BUCKET_NAME}; then
+if ! bucketExists ${Profile} ${BUCKET_NAME}; then
   echo -e "No bucket named '${BUCKET_NAME}' was found.\nAborting." 1>&2
   exit 1
 fi
@@ -69,7 +69,7 @@ read -r -d '' CHANGES <<-EOF
 EOF
 
 aws route53 change-resource-record-sets \
-  --profile ${PROFILE} \
+  --profile ${Profile} \
   --hosted-zone-id ${HOSTED_ZONE_ID} \
   --change-batch "${CHANGES}"
 
