@@ -54,6 +54,11 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --parameters \
     ParameterKey=AcmCertificateArn,ParameterValue=${CERTIFICATE_ARN} \
     ParameterKey=CloudFrontHostedZoneId,ParameterValue=${CLOUDFRONT_HOSTED_ZONE_ID} \
+    ParameterKey=PlatformCommitHash,ParameterValue=${PlatformCommitHash} \
+    ParameterKey=PlatformId,ParameterValue=${PlatformId} \
+    ParameterKey=PlatformVersionLabel,ParameterValue=${PlatformVersionLabel} \
+    ParameterKey=ProjectCommitHash,ParameterValue=${ProjectCommitHash} \
+    ParameterKey=ProjectVersionLabel,ParameterValue=${ProjectVersionLabel} \
     ParameterKey=SourceDomainName,ParameterValue=${SOURCE_DOMAIN_NAME} \
     ParameterKey=SourceZoneApex,ParameterValue=${SOURCE_ZONE_APEX} \
     ParameterKey=TargetDomainName,ParameterValue=${TARGET_DOMAIN_NAME} \

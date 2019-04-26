@@ -39,6 +39,11 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --parameters \
     ParameterKey=AcmCertificateArn,ParameterValue=${CERTIFICATE_ARN} \
     ParameterKey=ApplicationServerOrigin,ParameterValue=${APPLICATION_SERVER_ORIGIN} \
+    ParameterKey=PlatformCommitHash,ParameterValue=${PlatformCommitHash} \
+    ParameterKey=PlatformId,ParameterValue=${PlatformId} \
+    ParameterKey=PlatformVersionLabel,ParameterValue=${PlatformVersionLabel} \
+    ParameterKey=ProjectCommitHash,ParameterValue=${ProjectCommitHash} \
+    ParameterKey=ProjectVersionLabel,ParameterValue=${ProjectVersionLabel} \
     ParameterKey=SiteDomainName,ParameterValue=${SiteDomainName} \
     ParameterKey=SiteIndexDocument,ParameterValue=${SiteIndexDocument} \
     ParameterKey=StaticFilesOrigin,ParameterValue=${STATIC_FILES_ORIGIN} \

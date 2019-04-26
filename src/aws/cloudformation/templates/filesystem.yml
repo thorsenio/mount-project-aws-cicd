@@ -23,6 +23,14 @@ Parameters:
     Description: 'AWS CI/CD platform version label (version + stage)'
     Type: String
 
+  ProjectCommitHash:
+    Description: 'Commit hash of the deployed project'
+    Type: String
+
+  ProjectVersionLabel:
+    Description: 'Project version label (version + stage)'
+    Type: String
+
 Resources:
   FileSystem:
     Type: AWS::EFS::FileSystem

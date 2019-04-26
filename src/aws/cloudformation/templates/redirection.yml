@@ -11,6 +11,26 @@ Parameters:
     Description: 'Hosted zone ID for CloudFront'
     Type: String
 
+  PlatformCommitHash:
+    Description: 'Commit hash of the CI/CD platform'
+    Type: String
+
+  PlatformId:
+    Description: 'Platform ID'
+    Type: String
+
+  PlatformVersionLabel:
+    Description: 'AWS CI/CD platform version label (version + stage)'
+    Type: String
+
+  ProjectCommitHash:
+    Description: 'Commit hash of the deployed project'
+    Type: String
+
+  ProjectVersionLabel:
+    Description: 'Project version label (version + stage)'
+    Type: String
+
   SourceDomainName:
     Description: 'Domain name to redirect'
     Type: String

@@ -35,6 +35,11 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --stack-name ${STACK_NAME} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
+    ParameterKey=PlatformCommitHash,ParameterValue=${PlatformCommitHash} \
+    ParameterKey=PlatformId,ParameterValue=${PlatformId} \
+    ParameterKey=PlatformVersionLabel,ParameterValue=${PlatformVersionLabel} \
+    ParameterKey=ProjectCommitHash,ParameterValue=${ProjectCommitHash} \
+    ParameterKey=ProjectVersionLabel,ParameterValue=${ProjectVersionLabel} \
     ParameterKey=SourceDomainName,ParameterValue=${SOURCE_DOMAIN_NAME} \
     ParameterKey=SourceZoneApex,ParameterValue=${SOURCE_ZONE_APEX} \
     ParameterKey=TargetDomainName,ParameterValue=${TARGET_DOMAIN_NAME} \
