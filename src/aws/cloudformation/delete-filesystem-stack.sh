@@ -3,7 +3,7 @@
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
-source ../../config/compute-project-variables.sh
+source ../../compute-variables.sh
 
 STACK_NAME=${FileSystemStackName}
 
