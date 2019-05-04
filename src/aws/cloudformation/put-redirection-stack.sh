@@ -31,9 +31,10 @@ echo "Source domain apex: ${SOURCE_ZONE_APEX}"
 # Capture the mode that should be used to put the stack: `create` or `update`
 PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${STACK_NAME})
 if [[ ${PUT_MODE} == 'create' ]]; then
-  ACTION_ON_FAILURE='DO_NOTHING'
+  ACTION_ON_FAILURE_PARAM='--on-failure DO_NOTHING'
 else
-  ACTION_ON_FAILURE='ROLLBACK'
+  # There is no `--on-failure` parameter for `update-stack`
+  ACTION_ON_FAILURE_PARAM=''
 fi
 
 # Get the ARN of the ACM certificate for the domain name being redirected
@@ -48,7 +49,7 @@ fi
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${Profile} \
   --region ${Region} \
-  --on-failure ${ACTION_ON_FAILURE} \
+  ${ACTION_ON_FAILURE_PARAM} \
   --stack-name ${STACK_NAME} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
