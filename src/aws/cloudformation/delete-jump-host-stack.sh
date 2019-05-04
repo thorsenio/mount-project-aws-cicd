@@ -5,5 +5,7 @@ cd $(dirname "$0")
 
 source ../../compute-variables.sh
 
-helpers/delete-stack.sh ${JumpHostStackName}
+STACK_NAME=${JumpHostStackName}
+
+helpers/delete-stack.sh ${STACK_NAME}
 exitOnError $?

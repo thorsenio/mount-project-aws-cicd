@@ -7,5 +7,7 @@ cd $(dirname "$0")
 
 source ../../compute-variables.sh
 
-helpers/delete-stack.sh ${CloudfrontDistributionStackName}
+STACK_NAME=${CloudfrontDistributionStackName}
+
+helpers/delete-stack.sh ${STACK_NAME}
 exitOnError $?

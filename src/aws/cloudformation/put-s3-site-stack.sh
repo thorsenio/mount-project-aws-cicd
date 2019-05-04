@@ -10,8 +10,10 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
+STACK_NAME=${S3SiteStackName}
+
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${S3SiteStackName})
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${STACK_NAME})
 if [[ ${PUT_MODE} == 'create' ]]; then
   if distributionExistsForCname ${Profile} ${SiteDomainName}; then
      echo -e "\nThe requested domain name '${SiteDomainName}' already points to another CloudFront distribution.\nAborting the stack operation.\n" 1>&2
@@ -86,7 +88,7 @@ TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }'
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${Profile} \
   --region ${Region} \
-  --stack-name ${S3SiteStackName} \
+  --stack-name ${STACK_NAME} \
   --template-body file://${TEMPLATE_BASENAME}--expanded.yml \
   --parameters \
     ParameterKey=AcmCertificateArn,ParameterValue=${CERTIFICATE_ARN} \
@@ -108,5 +110,5 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     CAPABILITY_AUTO_EXPAND \
 )
 
-echoPutStackOutput ${S3SiteStackName} ${PUT_MODE} ${Region} $? ${OUTPUT}
+echoPutStackOutput ${STACK_NAME} ${PUT_MODE} ${Region} $? ${OUTPUT}
 exitOnError $?

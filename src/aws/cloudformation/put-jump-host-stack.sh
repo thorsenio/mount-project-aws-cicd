@@ -11,8 +11,10 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
+STACK_NAME=${JumpHostStackName}
+
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${JumpHostStackName})
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${STACK_NAME})
 
 # Echo the ID of the VPC specified by name
 echoEcsClusterVpcId () {
@@ -125,7 +127,7 @@ fi
 OUTPUT=$(aws cloudformation create-stack \
   --profile ${Profile} \
   --region ${Region} \
-  --stack-name ${JumpHostStackName} \
+  --stack-name ${STACK_NAME} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
     ParameterKey=JumpHostName,ParameterValue=${JumpHostName} \
@@ -137,5 +139,5 @@ OUTPUT=$(aws cloudformation create-stack \
   --capabilities CAPABILITY_IAM \
 )
 
-echoPutStackOutput ${JumpHostStackName} ${PUT_MODE} ${Region} $? ${OUTPUT}
+echoPutStackOutput ${STACK_NAME} ${PUT_MODE} ${Region} $? ${OUTPUT}
 exitOnError $?

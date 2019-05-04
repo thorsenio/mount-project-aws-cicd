@@ -11,8 +11,10 @@ source ../../functions.sh
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
+STACK_NAME=${VpcStackName}
+
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${VpcStackName})
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${STACK_NAME})
 
 ./package.sh ${CLOUDFORMATION_TEMPLATE}
 
@@ -28,7 +30,7 @@ DESIRED_AZ_COUNT=$(echoMin AZ_COUNT MAX_AZ_COUNT)
 OUTPUT=$(aws cloudformation create-stack \
   --profile ${Profile} \
   --region ${Region} \
-  --stack-name ${VpcStackName} \
+  --stack-name ${STACK_NAME} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
     ParameterKey=DefaultSecurityGroupName,ParameterValue=${VpcDefaultSecurityGroupName} \
@@ -37,5 +39,5 @@ OUTPUT=$(aws cloudformation create-stack \
   --capabilities CAPABILITY_IAM \
 )
 
-echoPutStackOutput ${VpcStackName} ${PUT_MODE} ${Region} $? ${OUTPUT}
+echoPutStackOutput ${STACK_NAME} ${PUT_MODE} ${Region} $? ${OUTPUT}
 exitOnError $?

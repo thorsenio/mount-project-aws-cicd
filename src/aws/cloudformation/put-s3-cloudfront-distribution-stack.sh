@@ -8,8 +8,10 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
+STACK_NAME=${CloudfrontDistributionStackName}
+
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${CloudfrontDistributionStackName})
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${STACK_NAME})
 
 # Get the ARN of the ACM certificate for the domain name
 CERTIFICATE_ARN=$(echoAcmCertificateArn ${Profile} ${CertifiedDomainName})
@@ -23,7 +25,7 @@ fi
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${Profile} \
   --region ${Region} \
-  --stack-name ${CloudfrontDistributionStackName} \
+  --stack-name ${STACK_NAME} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
     ParameterKey=AcmCertificateArn,ParameterValue=${CERTIFICATE_ARN} \
@@ -36,5 +38,5 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     CAPABILITY_NAMED_IAM \
 )
 
-echoPutStackOutput ${CloudfrontDistributionStackName} ${PUT_MODE} ${Region} $? ${OUTPUT}
+echoPutStackOutput ${STACK_NAME} ${PUT_MODE} ${Region} $? ${OUTPUT}
 exitOnError $?

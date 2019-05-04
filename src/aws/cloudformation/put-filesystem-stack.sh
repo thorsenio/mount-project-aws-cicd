@@ -9,13 +9,15 @@ cd $(dirname "$0")
 
 source ../../config/compute-project-variables.sh
 
+STACK_NAME=${FileSystemStackName}
+
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${FileSystemStackName})
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${STACK_NAME})
 
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${Profile} \
   --region ${Region} \
-  --stack-name ${FileSystemStackName} \
+  --stack-name ${STACK_NAME} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
     ParameterKey=EcsClusterName,ParameterValue=${EcsClusterName} \
@@ -27,5 +29,5 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     ParameterKey=ProjectVersionLabel,ParameterValue=${ProjectVersionLabel} \
 )
 
-echoPutStackOutput ${FileSystemStackName} ${PUT_MODE} ${Region} $? ${OUTPUT}
+echoPutStackOutput ${STACK_NAME} ${PUT_MODE} ${Region} $? ${OUTPUT}
 exitOnError $?

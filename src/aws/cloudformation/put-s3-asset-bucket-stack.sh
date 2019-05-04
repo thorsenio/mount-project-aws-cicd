@@ -14,22 +14,24 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
+STACK_NAME=${ProjectBucketStackName}
+
 # Skip creation of the bucket if it already exists
 if bucketExists ${Profile} ${ProjectBucketName}; then
   exit 0
 fi
 
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${ProjectBucketStackName})
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${STACK_NAME})
 
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${Profile} \
   --region ${Region} \
-  --stack-name ${ProjectBucketStackName} \
+  --stack-name ${STACK_NAME} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
     ParameterKey=BucketName,ParameterValue=${ProjectBucketName} \
 )
 
-echoPutStackOutput ${ProjectBucketStackName} ${PUT_MODE} ${Region} $? ${OUTPUT}
+echoPutStackOutput ${STACK_NAME} ${PUT_MODE} ${Region} $? ${OUTPUT}
 exitOnError $?

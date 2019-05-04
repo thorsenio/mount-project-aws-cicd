@@ -5,5 +5,7 @@ cd $(dirname "$0")
 
 source ../../config/compute-project-variables.sh
 
-helpers/delete-stack.sh ${FileSystemStackName}
+STACK_NAME=${FileSystemStackName}
+
+helpers/delete-stack.sh ${STACK_NAME}
 exitOnError $?

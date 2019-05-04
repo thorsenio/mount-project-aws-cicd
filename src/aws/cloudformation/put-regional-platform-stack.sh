@@ -11,13 +11,15 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
+STACK_NAME=${RegionalPlatformStackName}
+
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${RegionalPlatformStackName})
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${STACK_NAME})
 
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${Profile} \
   --region ${Region} \
-  --stack-name ${RegionalPlatformStackName} \
+  --stack-name ${STACK_NAME} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
     ParameterKey=CicdArtifactsBucketName,ParameterValue=${CicdArtifactsBucketName} \
@@ -29,5 +31,5 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     CAPABILITY_NAMED_IAM \
 )
 
-echoPutStackOutput ${RegionalPlatformStackName} ${PUT_MODE} ${Region} $? ${OUTPUT}
+echoPutStackOutput ${STACK_NAME} ${PUT_MODE} ${Region} $? ${OUTPUT}
 exitOnError $?

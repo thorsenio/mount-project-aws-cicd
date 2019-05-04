@@ -11,8 +11,10 @@ cd $(dirname "$0")
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
+STACK_NAME=${GlobalPlatformStackName}
+
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${Profile} ${AWS_GLOBAL_REGION} ${GlobalPlatformStackName})
+PUT_MODE=$(echoPutStackMode ${Profile} ${AWS_GLOBAL_REGION} ${STACK_NAME})
 
 if [[ $? -ne 0 ]]
 then
@@ -24,7 +26,7 @@ TEMPLATE_BASENAME=$(echo ${CLOUDFORMATION_TEMPLATE} | awk -F '/' '{ print $NF }'
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${Profile} \
   --region ${AWS_GLOBAL_REGION} \
-  --stack-name ${GlobalPlatformStackName} \
+  --stack-name ${STACK_NAME} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
     ParameterKey=CfnTemplatesBucketName,ParameterValue=${CfnTemplatesBucketName} \
@@ -38,5 +40,5 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     CAPABILITY_NAMED_IAM \
 )
 
-echoPutStackOutput ${GlobalPlatformStackName} ${PUT_MODE} ${AWS_GLOBAL_REGION} $? ${OUTPUT}
+echoPutStackOutput ${STACK_NAME} ${PUT_MODE} ${AWS_GLOBAL_REGION} $? ${OUTPUT}
 exitOnError $?

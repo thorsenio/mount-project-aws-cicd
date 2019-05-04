@@ -5,5 +5,7 @@ cd $(dirname "$0")
 
 source ../../compute-variables.sh
 
-helpers/delete-stack.sh ${VpcStackName}
+STACK_NAME=${VpcStackName}
+
+helpers/delete-stack.sh ${STACK_NAME}
 exitOnError $?

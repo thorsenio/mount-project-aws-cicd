@@ -12,8 +12,10 @@ source ../../functions.sh
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
+STACK_NAME=${EcsClusterStackName}
+
 # Capture the mode that should be used put the stack: `create` or `update`
-PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${EcsClusterStackName})
+PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${STACK_NAME})
 
 ./package.sh ${CLOUDFORMATION_TEMPLATE}
 
@@ -45,7 +47,7 @@ fi
 OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --profile ${Profile} \
   --region ${Region} \
-  --stack-name ${EcsClusterStackName} \
+  --stack-name ${STACK_NAME} \
   --template-body file://${TEMPLATE_BASENAME}--expanded.yml \
   --parameters \
     ParameterKey=DefaultSecurityGroupName,ParameterValue=${VpcDefaultSecurityGroupName} \
@@ -68,5 +70,5 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     CAPABILITY_IAM \
 )
 
-echoPutStackOutput ${EcsClusterStackName} ${PUT_MODE} ${Region} $? ${OUTPUT}
+echoPutStackOutput ${STACK_NAME} ${PUT_MODE} ${Region} $? ${OUTPUT}
 exitOnError $?

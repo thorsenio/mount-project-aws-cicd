@@ -12,6 +12,8 @@ cd $(dirname "$0")
 
 source ../../compute-variables.sh
 
+STACK_NAME=${EcsClusterStackName}
+
 # Check whether services are running in the cluster
 SERVICE_COUNT=$(aws ecs list-services \
   --profile ${Profile} \
@@ -26,7 +28,7 @@ if [[ $? -eq 0 && ${SERVICE_COUNT} -ne 0 ]]; then
 fi
 
 
-helpers/delete-stack.sh ${EcsClusterStackName}
+helpers/delete-stack.sh ${STACK_NAME}
 exitOnError $?
 
 ../ec2/delete-key-pair.sh ${Profile} ${Region} ${KeyPairKeyName} ${DELETE_KEY_PAIR_PARAM}
