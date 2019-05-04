@@ -15,7 +15,6 @@ ATTEMPT_NUMBER=${2:-1}
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
-source ../../functions.sh
 source ../../compute-variables.sh
 
 # Generate an idempotency token that is unique for the requested domain & today's date.

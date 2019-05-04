@@ -11,7 +11,6 @@
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
-source ../../functions.sh
 source ../../compute-variables.sh
 
 TARGET_DOMAIN_NAME=$(echoApexDomain ${SiteDomainName})

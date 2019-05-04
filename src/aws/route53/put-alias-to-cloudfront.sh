@@ -14,7 +14,6 @@ ALIAS_DNS_NAME=$1
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
-source ../../functions.sh
 source ../aws-functions.sh
 source ../../compute-variables.sh
 

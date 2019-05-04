@@ -21,7 +21,6 @@ ATTEMPT_NUMBER=${3:-1}
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
-source ../../functions.sh
 source ../aws-constants.sh
 source ../aws-functions.sh
 
