@@ -65,6 +65,26 @@ awaitCertificateValidation () {
   fi
 }
 
+# Wait for the completion of the stack put operation.
+awaitStackPutComplete () {
+  local PROFILE=$1
+  local REGION=$2
+  local PUT_MODE=$3
+  local STACK_NAME=$4
+
+  aws cloudformation wait stack-${PUT_MODE}-complete \
+    --profile ${PROFILE} \
+    --region ${REGION} \
+    --stack-name ${STACK_NAME}
+
+  if [[ $? -eq 0 ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+
 bucketExists () {
 
   local PROFILE=$1

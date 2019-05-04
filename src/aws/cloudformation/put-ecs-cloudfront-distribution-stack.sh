@@ -81,8 +81,6 @@ echoPutStackOutput ${STACK_NAME} ${PUT_MODE} ${Region} $? ${OUTPUT}
 exitOnError $?
 
 if [[ ${WAIT} == true ]]; then
-  aws cloudformation wait stack-${PUT_MODE}-complete \
-    --profile ${Profile} \
-    --region ${Region} \
-    --stack-name ${STACK_NAME}
+  awaitStackOperationComplete ${Profile} ${Region} ${PUT_MODE} ${STACK_NAME}
+  exitOnError $?
 fi

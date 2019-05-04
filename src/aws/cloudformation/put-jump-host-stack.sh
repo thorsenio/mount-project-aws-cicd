@@ -3,7 +3,27 @@
 # This script creates a jump host in a public subnet of the VPC that hosts container instances
 # of the ECS cluster.
 
+# Constants
 CLOUDFORMATION_TEMPLATE='templates/jump-host.yml'
+
+## Parse arguments
+while :; do
+  case $1 in
+    # Handle known options
+    --wait) WAIT=true ;;
+
+    # End of known options
+    --) shift ; break ;;
+
+    # Handle unknown options
+    -?*) printf 'WARNING: Unknown option (ignored): %s\n' "$1" 1>&2 ;;
+
+    # No more options
+    *) break
+  esac
+  shift
+done
+
 
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
@@ -141,3 +161,8 @@ OUTPUT=$(aws cloudformation create-stack \
 
 echoPutStackOutput ${STACK_NAME} ${PUT_MODE} ${Region} $? ${OUTPUT}
 exitOnError $?
+
+if [[ ${WAIT} == true ]]; then
+  awaitStackOperationComplete ${Profile} ${Region} ${PUT_MODE} ${STACK_NAME}
+  exitOnError $?
+fi
