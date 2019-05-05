@@ -7,6 +7,7 @@ CLOUDFORMATION_TEMPLATE='templates/filesystem.yml'
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
+source include/parse-stack-operation-options.sh "$@"
 source ../../compute-variables.sh
 
 STACK_NAME=${FileSystemStackName}
@@ -31,3 +32,8 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
 
 echoPutStackOutput ${STACK_NAME} ${PUT_MODE} ${Region} $? ${OUTPUT}
 exitOnError $?
+
+if [[ ${WAIT} == true ]]; then
+  awaitStackOperationComplete ${Profile} ${Region} ${PUT_MODE} ${STACK_NAME}
+  exitOnError $?
+fi
