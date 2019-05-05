@@ -72,13 +72,14 @@ awaitStackOperationComplete () {
   local OPERATION=$3
   local STACK_NAME=$4
 
-  echo "Waiting for CloudFormation to ${OPERATION} the stack ..."
+  echo "Waiting for CloudFormation to ${OPERATION} the stack (press Ctrl+C to stop waiting while allowing the operation to continue) ..."
   aws cloudformation wait stack-${OPERATION}-complete \
     --profile ${PROFILE} \
     --region ${REGION} \
     --stack-name ${STACK_NAME}
 
   if [[ $? -eq 0 ]]; then
+    echo "The stack has been ${OPERATION}d."
     return 0
   else
     return 1
