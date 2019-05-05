@@ -97,6 +97,6 @@ echoPutStackOutput ${STACK_NAME} ${PUT_MODE} ${Region} $? ${OUTPUT}
 exitOnError $?
 
 if [[ ${WAIT} == true ]]; then
-  awaitStackPutComplete ${Profile} ${Region} ${PUT_MODE} ${STACK_NAME}
+  awaitStackOperationComplete ${Profile} ${Region} ${PUT_MODE} ${STACK_NAME}
   exitOnError $?
 fi

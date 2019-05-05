@@ -6,6 +6,10 @@
 # Constants
 CLOUDFORMATION_TEMPLATE='templates/jump-host.yml'
 
+# Parse arguments
+## Initialize arguments
+WAIT=false
+
 ## Parse arguments
 while :; do
   case $1 in

@@ -65,14 +65,15 @@ awaitCertificateValidation () {
   fi
 }
 
-# Wait for the completion of the stack put operation.
-awaitStackPutComplete () {
+# Wait for the completion of the stack operation.
+awaitStackOperationComplete () {
   local PROFILE=$1
   local REGION=$2
-  local PUT_MODE=$3
+  local OPERATION=$3
   local STACK_NAME=$4
 
-  aws cloudformation wait stack-${PUT_MODE}-complete \
+  echo "Waiting for CloudFormation to ${OPERATION} the stack ..."
+  aws cloudformation wait stack-${OPERATION}-complete \
     --profile ${PROFILE} \
     --region ${REGION} \
     --stack-name ${STACK_NAME}
