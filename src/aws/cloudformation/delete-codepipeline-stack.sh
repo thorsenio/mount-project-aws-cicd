@@ -9,5 +9,5 @@ source ../../compute-variables.sh
 
 STACK_NAME=${CodePipelineStackName}
 
-helpers/delete-stack.sh ${STACK_NAME}
+helpers/delete-stack.sh ${STACK_NAME} "$@"
 exitOnError $?

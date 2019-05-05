@@ -7,5 +7,5 @@ source ../../compute-variables.sh
 
 STACK_NAME=${VpcStackName}
 
-helpers/delete-stack.sh ${STACK_NAME}
+helpers/delete-stack.sh ${STACK_NAME} "$@"
 exitOnError $?

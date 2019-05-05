@@ -28,7 +28,7 @@ if [[ $? -eq 0 && ${SERVICE_COUNT} -ne 0 ]]; then
 fi
 
 
-helpers/delete-stack.sh ${STACK_NAME}
+helpers/delete-stack.sh ${STACK_NAME} "$@"
 exitOnError $?
 
 ../ec2/delete-key-pair.sh ${Profile} ${Region} ${KeyPairKeyName} ${DELETE_KEY_PAIR_PARAM}
