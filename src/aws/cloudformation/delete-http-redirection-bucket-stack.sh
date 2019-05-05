@@ -35,5 +35,5 @@ echo "Bucket name: ${BUCKET_NAME}"
 ../s3/empty-bucket.sh ${BUCKET_NAME} 'redirection bucket'
 exitOnError $? "Deletion of the '${STACK_NAME}' stack has been aborted."
 
-helpers/delete-stack.sh ${STACK_NAME}
+helpers/delete-stack.sh ${STACK_NAME} "$@"
 exitOnError $?

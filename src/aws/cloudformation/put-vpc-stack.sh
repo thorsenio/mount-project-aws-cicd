@@ -7,6 +7,7 @@ CLOUDFORMATION_TEMPLATE='templates/vpc.yml'
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
+source include/parse-stack-operation-options.sh "$@"
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
@@ -40,3 +41,8 @@ OUTPUT=$(aws cloudformation create-stack \
 
 echoPutStackOutput ${STACK_NAME} ${PUT_MODE} ${Region} $? ${OUTPUT}
 exitOnError $?
+
+if [[ ${WAIT} == true ]]; then
+  awaitStackOperationComplete ${Profile} ${Region} ${PUT_MODE} ${STACK_NAME}
+  exitOnError $?
+fi

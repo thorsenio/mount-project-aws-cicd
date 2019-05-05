@@ -16,5 +16,5 @@ STACK_NAME=${ProjectBucketStackName}
 ../s3/empty-bucket.sh ${ProjectBucketName} 'static files'
 exitOnError $? "Deletion of the '${STACK_NAME}' stack has been aborted."
 
-helpers/delete-stack.sh ${STACK_NAME}
+helpers/delete-stack.sh ${STACK_NAME} "$@"
 exitOnError $?

@@ -13,5 +13,5 @@ STACK_NAME=${CloudfrontDistributionStackName}
 ../s3/empty-bucket.sh ${ProjectBucketName} 'site'
 exitOnError $? "Deletion of the '${STACK_NAME}' stack has been aborted."
 
-helpers/delete-stack.sh ${STACK_NAME}
+helpers/delete-stack.sh ${STACK_NAME} "$@"
 exitOnError $?

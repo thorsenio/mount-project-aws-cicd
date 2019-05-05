@@ -6,32 +6,10 @@
 # Constants
 CLOUDFORMATION_TEMPLATE='templates/ecs-cluster.yml'
 
-# Parse arguments
-## Initialize arguments
-WAIT=false
-
-## Parse arguments
-while :; do
-  case $1 in
-    # Handle known options
-    --wait) WAIT=true ;;
-
-    # End of known options
-    --) shift ; break ;;
-
-    # Handle unknown options
-    -?*) printf 'WARNING: Unknown option (ignored): %s\n' "$1" 1>&2 ;;
-
-    # No more options
-    *) break
-  esac
-  shift
-done
-
-
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
 
+source include/parse-stack-operation-options.sh "$@"
 source ../aws-functions.sh
 source ../../compute-variables.sh
 
@@ -97,8 +75,6 @@ echoPutStackOutput ${STACK_NAME} ${PUT_MODE} ${Region} $? ${OUTPUT}
 exitOnError $?
 
 if [[ ${WAIT} == true ]]; then
-  aws cloudformation wait stack-${PUT_MODE}-complete \
-    --profile ${Profile} \
-    --region ${Region} \
-    --stack-name ${STACK_NAME}
+  awaitStackOperationComplete ${Profile} ${Region} ${PUT_MODE} ${STACK_NAME}
+  exitOnError $?
 fi
