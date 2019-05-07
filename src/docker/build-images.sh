@@ -52,6 +52,7 @@ for IMAGE_NAME in ${EcrRepoNames}; do
   docker build \
     --build-arg IMAGE_NAME=${IMAGE_NAME} \
     --build-arg IMAGE_VERSION_LABEL=${VERSION_LABEL} \
+    --build-arg VERSION_STAGE=${ProjectVersionStage} \
     --build-arg SITE_DOMAIN_NAME=${SiteDomainName} \
     --file ${DOCKERFILE_PATH} \
     --tag ${LONG_TAG} \
