@@ -5,8 +5,8 @@ RUN apk update && \
   apk add \
     --no-cache \
     git \
-    docker \
-    ncurses
+    docker
+
 
 # The aws-cicd source code is copied into this directory
 ARG PLATFORM_DIR='/var/lib'
