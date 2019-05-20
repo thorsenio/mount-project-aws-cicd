@@ -1,4 +1,4 @@
-# aws-cicd
+# mount-project-aws-cicd
 
 Docker image for managing a CI/CD pipeline hosted on AWS
 

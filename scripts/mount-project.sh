@@ -6,7 +6,7 @@
 # Container code is copied into the container at /var/lib
 # The current directory is mounted into the container at /var/project
 
-BASE_NAME='skypilot/aws-cicd'
+PACKAGE_NAME='mount-project-aws-cicd'
 
 # TODO: FEATURE: Allow custom path(s) to the variables files
 # TODO: REFACTOR: Move as much code as possible into the platform code
@@ -27,6 +27,7 @@ fi
 
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
+IMAGE_BASE_NAME=${ACCOUNT_NAME}/${PACKAGE_NAME}
 
 # Read environment variables
 if [[ -f '.env' ]]
