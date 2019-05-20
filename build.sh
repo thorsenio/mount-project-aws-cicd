@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # This script builds the Docker image and tags it with the version information
-# contained in `platform-variables.sh` and derived from the current Git branch name
+# contained in `variables.sh` and derived from the current Git branch name
 
 if [[ ! $1 == '--force' ]]; then
   if [[ -n "$(git status --porcelain)" ]]; then
@@ -13,17 +13,17 @@ fi
 
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
-source platform-variables.sh
+source variables.sh
 
 if [[ $? -ne 0 ]]
 then
-  echo "The variables file, 'platform-variables.sh', was not found" 1>&2
+  echo "The variables file, 'variables.sh', was not found" 1>&2
   exit 1
 fi
 
 if [[ -z ${ACCOUNT_NAME} || -z ${PACKAGE_NAME} || -z ${VERSION} ]]
 then
-  echo "platform-variables.sh must define ACCOUNT_NAME, PACKAGE_NAME, and VERSION" 1>&2
+  echo "variables.sh must define ACCOUNT_NAME, PACKAGE_NAME, and VERSION" 1>&2
   exit 1
 fi
 
