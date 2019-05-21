@@ -55,7 +55,7 @@ getProjectRoot () {
 
 
 showHelp () {
-  echo "Usage: $0 [PROJECT_VERSION_STAGE]" 1>&2
+  echo "Usage: $0 [VERSION_STAGE]" 1>&2
   echo "The version stage defaults to the branch name."
 }
 # -- End of helper functions
