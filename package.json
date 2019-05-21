@@ -1,6 +1,6 @@
 {
   "name": "mount-project-aws-cicd",
-  "version": "2.5.0",
+  "version": "2.6.1",
   "description": "Docker container for runing AWS/CICD platform code",
   "bin": "scripts/mount-project.sh",
   "scripts": {

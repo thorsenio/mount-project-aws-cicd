@@ -172,7 +172,7 @@ docker container run \
   --interactive \
   --rm \
   --tty \
-  --env BRANCH_NAME=${VERSION_STAGE} \
+  --env BRANCH=${VERSION_STAGE} \
   --env COMMIT_HASH=$(getGitCommitHash) \
   --mount type=bind,source=${PWD},target=${MPAC_PROJECT_DIR} \
   --mount type=bind,source=${PWD}/config,target=/var/lib/config \
