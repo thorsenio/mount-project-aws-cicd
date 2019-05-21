@@ -61,20 +61,6 @@ getProjectRoot () {
 # -- End of helper functions
 
 
-# Handle arguments
-if [[ $# -gt 1 ]]; then
-  echo "Usage: $0 [PROJECT_VERSION_STAGE]" 1>&2
-  echo 'If no version stage is specified, the name of the current Git branch will be used.'
-  exit 1
-fi
-
-if [[ $# -eq 1 ]]; then
-  VERSION_STAGE=$1
-else
-  VERSION_STAGE=$(getGitBranchName)
-fi
-
-
 # -- Read package variables
 # Store the project's root dir so that the project's `.env` file can be loaded
 MPAC_PROJECT_ROOT=$(getProjectRoot)
@@ -108,6 +94,20 @@ if [[ $? -ne 0 ]]; then
   echo -e "The functions file could not be found. Aborting."
   exit 1
 fi
+
+# Handle arguments
+if [[ $# -gt 1 ]]; then
+  echo "Usage: $0 [PROJECT_VERSION_STAGE]" 1>&2
+  echo 'If no version stage is specified, the name of the current Git branch will be used.'
+  exit 1
+fi
+
+if [[ $# -eq 1 ]]; then
+  VERSION_STAGE=$1
+else
+  VERSION_STAGE=$(getGitBranchName)
+fi
+
 
 # Store values in unique variables, to avoid potential collisions
 MPAC_PROJECT_DIR=${PROJECT_DIR:='/var/project'}
