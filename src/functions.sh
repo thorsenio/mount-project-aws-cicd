@@ -20,6 +20,18 @@ assertNotEmpty () {
 }
 
 
+# Given a Git branch name, make it safe for use as a text fragment in AWS resource names
+branchNameToVersionStage () {
+  local BRANCH_NAME=$1
+
+  # Convert branch name to lowercase and strip `\` and `-`
+  VERSION_STAGE=$(echo ${BRANCH_NAME} | tr '[:upper:]' '[:lower:]')
+  VERSION_STAGE=${VERSION_STAGE//\//}
+  VERSION_STAGE=${VERSION_STAGE//-/}
+  echo ${VERSION_STAGE}
+}
+
+
 # Return 0 if the Docker image exists locally; otherwise, return 1
 dockerLocalImageExists () {
   local TAG=$1
@@ -131,6 +143,19 @@ exitOnError () {
 }
 
 
+# TODO: Refactor versioning
+generateVersionLabel () {
+  local VERSION=$1
+  local VERSION_STAGE=$2
+
+  if [[ ${VERSION_STAGE} == 'master' ]]; then
+    echo "${VERSION}"
+  else
+    echo "${VERSION}-${VERSION_STAGE}"
+  fi
+}
+
+
 getGitBranchName () {
   git symbolic-ref --short HEAD
 }
@@ -138,4 +163,12 @@ getGitBranchName () {
 
 getGitCommitHash () {
   git rev-parse HEAD
+}
+
+
+gitRepoIsClean () {
+  if [[ -z "$(git status --porcelain)" ]]; then
+    return 0
+  fi
+  return 1
 }
