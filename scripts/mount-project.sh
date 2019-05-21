@@ -3,17 +3,16 @@
 # This script opens a shell in which the AWS CLI and the AWS ECS CLI are enabled for management
 # of the CI/CD pipeline
 
-# Container code is copied into the container at /var/lib
-# The current directory is mounted into the container at /var/project
+# Container code is copied into the container at the location set in `PROJECT_LIB` (default: `/var/lib`)
+# The current directory is mounted into the container at the location set in `PROJECT_DIR` (default: `/var/project`)
 
 # TODO: FEATURE: Allow custom path(s) to the project's config files
-# TODO: REFACTOR: Move as much code as possible into the platform code
 # TODO: REFACTOR: Don't allow stack to be launched when the working tree is dirty
 
 # -- Helper functions
 # Given a relative path to a file, echo its absolute path.
 # macOS doesn't have `realpath`, so we do it the hard way here.
-# Source: https://stackoverflow.com/questions/4175264/bash-retrieve-absolute-path-given-relative/21951256#21951256
+# Source: https://stackoverflow.com/questions/4175264/
 absolutePath () {
   local thePath
   if [[ ! "$1" =~ ^/ ]]; then
@@ -73,7 +72,6 @@ if [[ -h "${SCRIPT_RELATIVE_PATH}" ]]; then
   # relative path is correctly resolved
   cd $(dirname "$0")
   SCRIPT_RELATIVE_PATH=$(readlink "$0")
-  echo "Relative path to real script: ${SCRIPT_RELATIVE_PATH}"
 fi
 
 SCRIPT_ABSOLUTE_PATH=$(absolutePath ${SCRIPT_RELATIVE_PATH})
@@ -113,6 +111,7 @@ MPAC_VERSION=${VERSION}
 IMAGE_BASE_NAME=${DOCKER_ACCOUNT_NAME}/${MPAC_PACKAGE_NAME}
 # -- End of read package variables
 
+
 # Handle arguments
 if [[ $# -gt 1 ]]; then
   showHelp
@@ -121,7 +120,7 @@ fi
 
 if [[ $1 == '--help' || $1 == '-h'  || $1 == '-\?' ]]; then
   showHelp
-  exit 1
+  exit 0
 fi
 
 if [[ $# -eq 1 ]]; then
@@ -161,13 +160,14 @@ mkdir -p config \
   "${HOME}/.ecs" \
   "${HOME}/.ssh"
 
+# Pull the Docker image, unless it is already available locally
 if ! dockerUseLocalImageOrPull ${IMAGE_BASE_NAME}:${MPAC_VERSION}; then
   exit 1
 fi
 
 
 # TODO: Update the target directories when `USER` is set to something other than `root`
-# TODO: The Docker image should expect `VERSION_STAGE` instead of `BRANCH_NAME`
+# TODO: For clarity, the Docker image should be rewritten to expect `VERSION_STAGE` instead of `BRANCH`
 docker container run \
   --interactive \
   --rm \
