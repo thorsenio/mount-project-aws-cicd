@@ -104,6 +104,15 @@ if [[ $? -ne 0 ]]; then
 fi
 
 
+# Store values in unique variables, to avoid potential collisions
+# Note: This script assumes that the package name is the same as the Docker repo name.
+MPAC_DEBUG=${DEBUG:=false}
+MPAC_PACKAGE_NAME=${PACKAGE_NAME}
+MPAC_PROJECT_DIR=${PROJECT_DIR:='/var/project'}
+MPAC_VERSION=${VERSION}
+IMAGE_BASE_NAME=${DOCKER_ACCOUNT_NAME}/${MPAC_PACKAGE_NAME}
+# -- End of read package variables
+
 # Handle arguments
 if [[ $# -gt 1 ]]; then
   showHelp
@@ -123,23 +132,6 @@ else
 fi
 
 
-# TODO: Remove this debugging info
-echo "Version stage: ${VERSION_STAGE}"
-echo "Project root: ${MPAC_PROJECT_ROOT}"
-echo "Relative path to script: ${SCRIPT_RELATIVE_PATH}"
-echo "Absolute path to script: ${SCRIPT_ABSOLUTE_PATH}"
-echo "Absolute dir of script: ${SCRIPT_ABSOLUTE_DIR}"
-
-
-# Store values in unique variables, to avoid potential collisions
-# Note: This script assumes that the package name is the same as the Docker repo name.
-MPAC_PACKAGE_NAME=${PACKAGE_NAME}
-MPAC_PROJECT_DIR=${PROJECT_DIR:='/var/project'}
-MPAC_VERSION=${VERSION}
-IMAGE_BASE_NAME=${DOCKER_ACCOUNT_NAME}/${MPAC_PACKAGE_NAME}
-# -- End of read package variables
-
-
 # -- Read project variables
 # Change to the project's root directory
 cd "${MPAC_PROJECT_ROOT}"
@@ -151,6 +143,15 @@ then
   source .env
 fi
 # -- End of read project variables
+
+
+if [[ ${MPAC_DEBUG} == true ]]; then
+  echo "Project version stage: ${VERSION_STAGE}"
+  echo "Project root: ${MPAC_PROJECT_ROOT}"
+  echo "Relative path to script: ${SCRIPT_RELATIVE_PATH}"
+  echo "Absolute path to script: ${SCRIPT_ABSOLUTE_PATH}"
+  echo "Absolute dir of script: ${SCRIPT_ABSOLUTE_DIR}"
+fi
 
 
 # Create directories that will be mounted into the container, if they don't already exist
