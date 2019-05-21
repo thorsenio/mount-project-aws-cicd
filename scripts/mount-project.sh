@@ -6,10 +6,8 @@
 # Container code is copied into the container at /var/lib
 # The current directory is mounted into the container at /var/project
 
-# Note: This script assumes that the package name is the same as the Docker repo name.
+# TODO: FEATURE: Allow custom path(s) to the project's config files
 MPAC_PACKAGE_NAME='mount-project-aws-cicd'
-
-# TODO: FEATURE: Allow custom path(s) to the variables files
 # TODO: REFACTOR: Move as much code as possible into the platform code
 # TODO: REFACTOR: Don't allow stack to be launched when the working tree is dirty
 
@@ -85,7 +83,6 @@ cd "${SCRIPT_ABSOLUTE_DIR}"
 
 
 # Read this module's environment variables from file.
-# The script should be run from `node_modules`, so use relative paths from that location.
 source ../variables.sh
 if [[ $? -ne 0 ]]; then
   echo -e "The variables file for ${MPAC_PACKAGE_NAME} could not be found. Aborting."
@@ -96,12 +93,14 @@ then
   exit 1
 fi
 
-# Get helper functions.
+
+# Include helper functions.
 source ../src/functions.sh
 if [[ $? -ne 0 ]]; then
   echo -e "The functions file could not be found. Aborting."
   exit 1
 fi
+
 
 # Handle arguments
 if [[ $# -gt 1 ]]; then
@@ -135,6 +134,7 @@ echo "Absolute dir of script: ${SCRIPT_ABSOLUTE_DIR}"
 
 
 # Store values in unique variables, to avoid potential collisions
+# Note: This script assumes that the package name is the same as the Docker repo name.
 MPAC_PROJECT_DIR=${PROJECT_DIR:='/var/project'}
 MPAC_VERSION=${VERSION}
 IMAGE_BASE_NAME=${DOCKER_ACCOUNT_NAME}/${MPAC_PACKAGE_NAME}
