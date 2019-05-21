@@ -51,6 +51,16 @@ absolutePath () {
 }
 
 
+getGitBranchName () {
+  git symbolic-ref --short HEAD
+}
+
+
+getGitCommitHash () {
+  git rev-parse HEAD
+}
+
+
 getProjectRoot () {
   # TODO: Use a more certain method of finding the project root. This method fails if the current
   #  project is not in a Git repo or if the project has submodules.
@@ -59,6 +69,20 @@ getProjectRoot () {
 
 
 # -- End of helper functions
+
+
+# Handle arguments
+if [[ $# -gt 1 ]]; then
+  echo "Usage: $0 [PROJECT_VERSION_STAGE]" 1>&2
+  echo 'If no version stage is specified, the name of the current Git branch will be used.'
+  exit 1
+fi
+
+if [[ $# -eq 1 ]]; then
+  VERSION_STAGE=$1
+else
+  VERSION_STAGE=$(getGitBranchName)
+fi
 
 
 
@@ -114,12 +138,13 @@ mkdir -p config \
   "${HOME}/.ssh"
 
 # TODO: Update the target directories when `USER` is set to something other than `root`
+# TODO: The Docker image should expect `VERSION_STAGE` instead of `BRANCH_NAME`
 docker container run \
   --interactive \
   --rm \
   --tty \
-  --env BRANCH=$(git symbolic-ref --short HEAD) \
-  --env COMMIT_HASH=$(git rev-parse HEAD) \
+  --env BRANCH_NAME=${VERSION_STAGE} \
+  --env COMMIT_HASH=$(getGitCommitHash) \
   --mount type=bind,source=${PWD},target=${MPAC_PROJECT_DIR} \
   --mount type=bind,source=${PWD}/config,target=/var/lib/config \
   --mount type=bind,source="${HOME}/.aws",target=/root/.aws \
