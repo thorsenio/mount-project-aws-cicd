@@ -133,6 +133,11 @@ mkdir -p config \
   "${HOME}/.ecs" \
   "${HOME}/.ssh"
 
+if ! dockerUseLocalImageOrPull ${IMAGE_BASE_NAME}:${MPAC_VERSION}; then
+  exit 1
+fi
+
+
 # TODO: Update the target directories when `USER` is set to something other than `root`
 # TODO: The Docker image should expect `VERSION_STAGE` instead of `BRANCH_NAME`
 docker container run \

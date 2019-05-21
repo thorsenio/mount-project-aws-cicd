@@ -19,6 +19,30 @@ assertNotEmpty () {
   true
 }
 
+
+# Return 0 if the Docker image exists locally; otherwise, return 1
+dockerLocalImageExists () {
+  local TAG=$1
+  if [[ "$(docker image ls --quiet ${TAG} 2> /dev/null)" == '' ]]; then
+    return 1
+  fi
+  return 0
+}
+
+
+dockerUseLocalImageOrPull () {
+  local IMAGE_TAG=$1
+
+  if dockerLocalImageExists ${IMAGE_TAG}; then
+    echo "Using local Docker image '${IMAGE_TAG}'"
+  else
+    echo "The '${IMAGE_TAG}' image was not found locally. Pulling from Docker Hub ..."
+    docker pull ${IMAGE_TAG}
+    return $?
+  fi
+}
+
+
 # Given a domain name, echo the first two levels of the domain name
 # Example: Given `any.subdomain.example.com`, echo `example.com`
 echoApexDomain () {
