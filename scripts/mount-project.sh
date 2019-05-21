@@ -108,6 +108,12 @@ else
   VERSION_STAGE=$(getGitBranchName)
 fi
 
+# Convert branch name to lowercase and strip `\` and `-`
+VERSION_STAGE=$(echo ${VERSION_STAGE} | tr '[:upper:]' '[:lower:]')
+VERSION_STAGE=${VERSION_STAGE//\//}
+VERSION_STAGE=${VERSION_STAGE//-/}
+
+
 
 # Store values in unique variables, to avoid potential collisions
 MPAC_PROJECT_DIR=${PROJECT_DIR:='/var/project'}
