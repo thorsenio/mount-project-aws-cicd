@@ -116,15 +116,11 @@ if [[ $1 == '--help' || $1 == '-h'  || $1 == '-\?' ]]; then
 fi
 
 if [[ $# -eq 1 ]]; then
-  VERSION_STAGE=$1
+  VERSION_STAGE=$(branchNameToVersionStage $1)
 else
-  VERSION_STAGE=$(getGitBranchName)
+  BRANCH_NAME=$(getGitBranchName)
+  VERSION_STAGE=$(branchNameToVersionStage ${BRANCH_NAME})
 fi
-
-# Convert branch name to lowercase and strip `\` and `-`
-VERSION_STAGE=$(echo ${VERSION_STAGE} | tr '[:upper:]' '[:lower:]')
-VERSION_STAGE=${VERSION_STAGE//\//}
-VERSION_STAGE=${VERSION_STAGE//-/}
 
 
 # TODO: Remove this debugging info
