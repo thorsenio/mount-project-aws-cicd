@@ -51,16 +51,6 @@ absolutePath () {
 }
 
 
-getGitBranchName () {
-  git symbolic-ref --short HEAD
-}
-
-
-getGitCommitHash () {
-  git rev-parse HEAD
-}
-
-
 getProjectRoot () {
   # TODO: Use a more certain method of finding the project root. This method fails if the current
   #  project is not in a Git repo or if the project has submodules.
@@ -83,7 +73,6 @@ if [[ $# -eq 1 ]]; then
 else
   VERSION_STAGE=$(getGitBranchName)
 fi
-
 
 
 # -- Read package variables
@@ -110,6 +99,13 @@ cd "${SCRIPT_ABSOLUTE_DIR}"
 source ../variables.sh
 if [[ $? -ne 0 ]]; then
   echo -e "The variables file for ${MPAC_PACKAGE_NAME} could not be found. Aborting."
+  exit 1
+fi
+
+# Get helper functions.
+source ../src/functions.sh
+if [[ $? -ne 0 ]]; then
+  echo -e "The functions file could not be found. Aborting."
   exit 1
 fi
 

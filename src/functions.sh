@@ -105,3 +105,13 @@ exitOnError () {
     exit 1
   fi
 }
+
+
+getGitBranchName () {
+  git symbolic-ref --short HEAD
+}
+
+
+getGitCommitHash () {
+  git rev-parse HEAD
+}
