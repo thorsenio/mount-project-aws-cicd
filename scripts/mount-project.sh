@@ -58,6 +58,10 @@ getProjectRoot () {
 }
 
 
+showHelp () {
+  echo "Usage: $0 [PROJECT_VERSION_STAGE]" 1>&2
+  echo "The version stage defaults to the branch name."
+}
 # -- End of helper functions
 
 
@@ -97,8 +101,12 @@ fi
 
 # Handle arguments
 if [[ $# -gt 1 ]]; then
-  echo "Usage: $0 [PROJECT_VERSION_STAGE]" 1>&2
-  echo 'If no version stage is specified, the name of the current Git branch will be used.'
+  showHelp
+  exit 1
+fi
+
+if [[ $1 == '--help' || $1 == '-h'  || $1 == '-\?' ]]; then
+  showHelp
   exit 1
 fi
 
