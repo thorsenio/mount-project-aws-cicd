@@ -6,7 +6,8 @@
 # Container code is copied into the container at /var/lib
 # The current directory is mounted into the container at /var/project
 
-PACKAGE_NAME='mount-project-aws-cicd'
+# Note: This script assumes that the package name is the same as the Docker repo name.
+MPAC_PACKAGE_NAME='mount-project-aws-cicd'
 
 # TODO: FEATURE: Allow custom path(s) to the variables files
 # TODO: REFACTOR: Move as much code as possible into the platform code
@@ -72,19 +73,53 @@ else
   TAG='latest'
 fi
 
-# Change to the directory of this script so that relative paths resolve correctly
-cd $(dirname "$0")
-IMAGE_BASE_NAME=${ACCOUNT_NAME}/${PACKAGE_NAME}
 
-# Read environment variables
+# -- Read package variables
+# Store the project's root dir so that the project's `.env` file can be loaded
+MPAC_PROJECT_ROOT=$(getProjectRoot)
+
+# Find the real location of the current script
+SCRIPT_RELATIVE_PATH="$0"
+if [[ -h "${SCRIPT_RELATIVE_PATH}" ]]; then
+  # The file is a symlink, so find its target. Change to the script's directory so that the
+  # relative path is correctly resolved
+  cd $(dirname "$0")
+  SCRIPT_RELATIVE_PATH=$(readlink "$0")
+  echo "Relative path to real script: ${SCRIPT_RELATIVE_PATH}"
+fi
+
+SCRIPT_ABSOLUTE_PATH=$(absolutePath ${SCRIPT_RELATIVE_PATH})
+SCRIPT_ABSOLUTE_DIR=$(dirname ${SCRIPT_ABSOLUTE_PATH})
+cd "${SCRIPT_ABSOLUTE_DIR}"
+
+
+# Read this module's environment variables from file.
+# The script should be run from `node_modules`, so use relative paths from that location.
+source ../variables.sh
+if [[ $? -ne 0 ]]; then
+  echo -e "The variables file for ${MPAC_PACKAGE_NAME} could not be found. Aborting."
+  exit 1
+fi
+
+# Store values in unique variables, to avoid potential collisions
+MPAC_PROJECT_DIR=${PROJECT_DIR:='/var/project'}
+MPAC_VERSION=${VERSION}
+IMAGE_BASE_NAME=${DOCKER_ACCOUNT_NAME}/${MPAC_PACKAGE_NAME}
+
+
+# Change to the project's root directory
+cd "${MPAC_PROJECT_ROOT}"
+
+
+# Read environment variables from the project's `.env` file, if any
 if [[ -f '.env' ]]
 then
   source .env
 fi
-PROJECT_DIR=${PROJECT_DIR:='/var/project'}
 
 # TODO: Allow different sources to be specified for `.aws`, `.ecs`, .ssh`
 
+# Create directories that will be mounted into the container, if they don't already exist
 mkdir -p config \
   "${HOME}/.aws" \
   "${HOME}/.ecs" \
@@ -97,12 +132,11 @@ docker container run \
   --tty \
   --env BRANCH=$(git symbolic-ref --short HEAD) \
   --env COMMIT_HASH=$(git rev-parse HEAD) \
-  --mount type=bind,source=${PWD},target=${PROJECT_DIR} \
+  --mount type=bind,source=${PWD},target=${MPAC_PROJECT_DIR} \
   --mount type=bind,source=${PWD}/config,target=/var/lib/config \
   --mount type=bind,source="${HOME}/.aws",target=/root/.aws \
   --mount type=bind,source="${HOME}/.ecs",target=/root/.ecs \
   --mount type=bind,source="${HOME}/.ssh",target=/root/.ssh \
   --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
-  ${BASE_NAME}:${TAG} \
+  ${IMAGE_BASE_NAME}:${TAG} \
   bash
-
