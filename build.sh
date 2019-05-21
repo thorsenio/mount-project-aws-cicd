@@ -90,6 +90,7 @@ docker build \
   . \
   --build-arg COMMIT_HASH=${COMMIT_HASH} \
   --build-arg PACKAGE_NAME=${PACKAGE_NAME} \
+  --build-arg PLATFORM_NAME=${PLATFORM_NAME} \
   --build-arg VERSION=${VERSION} \
   --build-arg VERSION_LABEL=${VERSION_LABEL} \
   --build-arg VERSION_STAGE=${VERSION_STAGE}
