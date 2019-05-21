@@ -89,6 +89,10 @@ cd "${SCRIPT_ABSOLUTE_DIR}"
 source ../variables.sh
 if [[ $? -ne 0 ]]; then
   echo -e "The variables file for ${MPAC_PACKAGE_NAME} could not be found. Aborting."
+# Validate variables
+if [[ -z ${DOCKER_ACCOUNT_NAME} || -z ${PACKAGE_NAME} || -z ${VERSION} ]]
+then
+  echo "variables.sh must define ACCOUNT_NAME, PACKAGE_NAME, and VERSION" 1>&2
   exit 1
 fi
 
