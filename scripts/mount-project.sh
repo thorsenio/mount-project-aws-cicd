@@ -7,7 +7,6 @@
 # The current directory is mounted into the container at /var/project
 
 # TODO: FEATURE: Allow custom path(s) to the project's config files
-MPAC_PACKAGE_NAME='mount-project-aws-cicd'
 # TODO: REFACTOR: Move as much code as possible into the platform code
 # TODO: REFACTOR: Don't allow stack to be launched when the working tree is dirty
 
@@ -85,7 +84,10 @@ cd "${SCRIPT_ABSOLUTE_DIR}"
 # Read this module's environment variables from file.
 source ../variables.sh
 if [[ $? -ne 0 ]]; then
-  echo -e "The variables file for ${MPAC_PACKAGE_NAME} could not be found. Aborting."
+  echo -e "The variables file for could not be found. Aborting."
+  exit 1
+fi
+
 # Validate variables
 if [[ -z ${DOCKER_ACCOUNT_NAME} || -z ${PACKAGE_NAME} || -z ${VERSION} ]]
 then
@@ -135,6 +137,7 @@ echo "Absolute dir of script: ${SCRIPT_ABSOLUTE_DIR}"
 
 # Store values in unique variables, to avoid potential collisions
 # Note: This script assumes that the package name is the same as the Docker repo name.
+MPAC_PACKAGE_NAME=${PACKAGE_NAME}
 MPAC_PROJECT_DIR=${PROJECT_DIR:='/var/project'}
 MPAC_VERSION=${VERSION}
 IMAGE_BASE_NAME=${DOCKER_ACCOUNT_NAME}/${MPAC_PACKAGE_NAME}
