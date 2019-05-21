@@ -60,18 +60,6 @@ getProjectRoot () {
 
 # -- End of helper functions
 
-if [[ $# -gt 1 ]]
-then
-  echo "Usage: $0 [IMAGE_TAG]" 1>&2
-  exit 1
-fi
-
-if [[ $# -eq 1 ]]
-then
-  TAG=$1
-else
-  TAG='latest'
-fi
 
 
 # -- Read package variables
@@ -138,5 +126,5 @@ docker container run \
   --mount type=bind,source="${HOME}/.ecs",target=/root/.ecs \
   --mount type=bind,source="${HOME}/.ssh",target=/root/.ssh \
   --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
-  ${IMAGE_BASE_NAME}:${TAG} \
+  ${IMAGE_BASE_NAME}:${MPAC_VERSION} \
   bash
