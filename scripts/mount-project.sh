@@ -12,6 +12,53 @@ PACKAGE_NAME='mount-project-aws-cicd'
 # TODO: REFACTOR: Move as much code as possible into the platform code
 # TODO: REFACTOR: Don't allow stack to be launched when the working tree is dirty
 
+# -- Helper functions
+# Given a relative path to a file, echo its absolute path.
+# macOS doesn't have `realpath`, so we do it the hard way here.
+# Source: https://stackoverflow.com/questions/4175264/bash-retrieve-absolute-path-given-relative/21951256#21951256
+absolutePath () {
+  local thePath
+  if [[ ! "$1" =~ ^/ ]]; then
+    thePath="$PWD/$1"
+  else
+    thePath="$1"
+  fi
+
+  echo "$thePath"|(
+    IFS=/
+    read -a parr
+    declare -a outp
+    for i in "${parr[@]}";do
+      case "$i" in
+      ''|.) continue ;;
+      ..)
+        len=${#outp[@]}
+        if ((len == 0));then
+          continue
+        else
+          unset outp[$((len-1))]
+        fi
+        ;;
+      *)
+        len=${#outp[@]}
+        outp[$len]="$i"
+        ;;
+      esac
+    done
+    echo /"${outp[*]}"
+  )
+}
+
+
+getProjectRoot () {
+  # TODO: Use a more certain method of finding the project root. This method fails if the current
+  #  project is not in a Git repo or if the project has submodules.
+  echo $(git rev-parse --show-toplevel)
+}
+
+
+# -- End of helper functions
+
 if [[ $# -gt 1 ]]
 then
   echo "Usage: $0 [IMAGE_TAG]" 1>&2
