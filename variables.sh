@@ -8,5 +8,5 @@ PLATFORM_DIR="/var/lib/${PACKAGE_NAME}"
 PROJECT_DIR='/var/project'
 
 # TODO: Read the version from `package.json`
-VERSION='2.6.4'
+VERSION='2.6.5'
 VERSION_STAGE='master' # deprecated

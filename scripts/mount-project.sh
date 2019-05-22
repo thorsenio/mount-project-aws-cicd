@@ -123,17 +123,23 @@ if [[ $1 == '--help' || $1 == '-h'  || $1 == '-\?' ]]; then
   exit 0
 fi
 
+# -- Read project variables
+# Change to the project's root directory before getting the Git branch name & reading `.env`
+cd "${MPAC_PROJECT_ROOT}"
+
+
 if [[ $# -eq 1 ]]; then
-  VERSION_STAGE=$(branchNameToVersionStage $1)
+  DEFAULT_VERSION_STAGE=$(branchNameToVersionStage $1)
 else
   BRANCH_NAME=$(getGitBranchName)
-  VERSION_STAGE=$(branchNameToVersionStage ${BRANCH_NAME})
+  DEFAULT_VERSION_STAGE=$(branchNameToVersionStage ${BRANCH_NAME})
 fi
 
-
-# -- Read project variables
-# Change to the project's root directory
-cd "${MPAC_PROJECT_ROOT}"
+read -p "Version stage: [${DEFAULT_VERSION_STAGE}] " VERSION_STAGE
+# TODO: Validate the entered text (should consist only of alphanumeric chars)
+if [[ -z ${VERSION_STAGE} ]]; then
+  VERSION_STAGE=${DEFAULT_VERSION_STAGE}
+fi
 
 
 # Read environment variables from the project's `.env` file, if any
