@@ -9,6 +9,10 @@ Parameters:
     Description: 'Name of the default security group for the VPC'
     Type: String
 
+  DeploymentId:
+    Description: 'Identifier of the project, major version, and version stage'
+    Type: String
+
   DesiredAsgCapacity:
     Description: 'Desired number of instances in the autoscaling group'
     Type: Number
@@ -323,7 +327,6 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     DependsOn: VpcStack
     Properties:
-      Name: !Sub "${AWS::StackName}-alb"
       SecurityGroups:
         - !Ref AlbSecurityGroup
         - !GetAtt VpcStack.Outputs.SecurityGroupId
@@ -331,6 +334,9 @@ Resources:
         - !GetAtt VpcStack.Outputs.PublicSubnetA
         - !GetAtt VpcStack.Outputs.PublicSubnetB
         - !GetAtt VpcStack.Outputs.PublicSubnetC
+      Tags:
+        - Key: DeploymentId
+          Value: !Ref DeploymentId
 
   AlbSecurityGroup:
     Type: AWS::EC2::SecurityGroup
