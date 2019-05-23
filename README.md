@@ -1,4 +1,4 @@
-# aws-cicd
+# mount-project-aws-cicd
 
 Docker image for managing a CI/CD pipeline hosted on AWS
 
@@ -6,80 +6,79 @@ Variables are read from the following two files:
 - `config/project-variables.sh`
 - `config/regional-variables.sh`
 
-### General
+## General
 
-##### 1. Set values in the variables files
+#### 1. Set values in the variables files
 
 Enter regional and project-specific settings into
 - `config/project-variables.sh`
 - `config/regional-variables.sh`
 
-##### 2. Activate the containerized environment:
+#### 2. Mount the project into the container:
 
 ```bash
-./activate-aws-cicd.sh [DEPLOYMENT_NAME]
+mount-project-aws-cicd [DEPLOYMENT_NAME]
 ```
 
-### ECS cluster stack
+In all stack operations, use the `--wait` option if you want to wait for the stack operation to be completed.
 
-##### 1. Create a key pair for the ECS cluster (if one doesn't exist already)
+## ECS cluster stack
 
-```bash
-create-key-pair.sh
-```
+### 1. To create or update an ECS cluster stack
 
-##### 2. Create or update the ECS stack:
-
-```bash
-put-ecs-stack.sh
-```
-
-##### Delete the stack when it is no longer needed
+This stack consists of an ECS cluster, VPC spanning multiple availability zones, public & private
+subnets in each zone, and two EC2 instances (one instance in development).
 
 ```bash
-delete-ecs-stack.sh
-```
-
-### CI/CD pipeline
-
-##### 1. Create or update the pipeline stack:
-
-```bash
-put-codepipeline-stack.sh
+put-ecs-cluster-stack.sh [--wait]
 ```
 
 ##### Delete the stack when it is no longer needed
 
 ```bash
-delete-codepipeline-stack.sh
+delete-ecs-cluster-stack.sh [--wait]
 ```
 
-### Containerized site in ECS cluster
+## CI/CD pipeline
 
-##### 1. Create or update the ECS site stack:
-
-```bash
-put-ecs-site-stack.sh
-```
-
-##### Delete the stack when it is no longer needed
+### 1. Create or update the pipeline stack:
 
 ```bash
-delete-ecs-site-stack.sh
-```
-
-### Static site served from S3
-
-##### 1. Create or update the S3 site stack:
-
-```bash
-put-s3-site-stack.sh
+put-codepipeline-stack.sh [--wait]
 ```
 
 ##### Delete the stack when it is no longer needed
 
 ```bash
-delete-ecs-site-stack.sh
+delete-codepipeline-stack.sh [--wait]
+```
+
+## Containerized site in ECS cluster
+
+### 1. Create or update the ECS site stack:
+
+```bash
+put-ecs-site-stack.sh [--wait]
+```
+
+##### Delete the stack when it is no longer needed
+
+```bash
+delete-ecs-site-stack.sh [--wait]
+```
+
+## Static site served from S3
+
+#### 1. Create or update the S3 site stack:
+
+```bash
+put-s3-site-stack.sh [--wait]
+```
+
+##### Delete the stack when it is no longer needed
+
+```bash
+delete-ecs-site-stack.sh [--wait]
 ```
 
 ##### Utility scripts

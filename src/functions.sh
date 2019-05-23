@@ -19,6 +19,42 @@ assertNotEmpty () {
   true
 }
 
+
+# Given a Git branch name, make it safe for use as a text fragment in AWS resource names
+branchNameToVersionStage () {
+  local BRANCH_NAME=$1
+
+  # Convert branch name to lowercase and strip `\` and `-`
+  VERSION_STAGE=$(echo ${BRANCH_NAME} | tr '[:upper:]' '[:lower:]')
+  VERSION_STAGE=${VERSION_STAGE//\//}
+  VERSION_STAGE=${VERSION_STAGE//-/}
+  echo ${VERSION_STAGE}
+}
+
+
+# Return 0 if the Docker image exists locally; otherwise, return 1
+dockerLocalImageExists () {
+  local TAG=$1
+  if [[ "$(docker image ls --quiet ${TAG} 2> /dev/null)" == '' ]]; then
+    return 1
+  fi
+  return 0
+}
+
+
+dockerUseLocalImageOrPull () {
+  local IMAGE_TAG=$1
+
+  if dockerLocalImageExists ${IMAGE_TAG}; then
+    echo "Using local Docker image '${IMAGE_TAG}'"
+  else
+    echo "The '${IMAGE_TAG}' image was not found locally. Pulling from Docker Hub ..."
+    docker pull ${IMAGE_TAG}
+    return $?
+  fi
+}
+
+
 # Given a domain name, echo the first two levels of the domain name
 # Example: Given `any.subdomain.example.com`, echo `example.com`
 echoApexDomain () {
@@ -104,4 +140,35 @@ exitOnError () {
     fi
     exit 1
   fi
+}
+
+
+# TODO: Refactor versioning
+generateVersionLabel () {
+  local VERSION=$1
+  local VERSION_STAGE=$2
+
+  if [[ ${VERSION_STAGE} == 'master' ]]; then
+    echo "${VERSION}"
+  else
+    echo "${VERSION}-${VERSION_STAGE}"
+  fi
+}
+
+
+getGitBranchName () {
+  git symbolic-ref --short HEAD
+}
+
+
+getGitCommitHash () {
+  git rev-parse HEAD
+}
+
+
+gitRepoIsClean () {
+  if [[ -z "$(git status --porcelain)" ]]; then
+    return 0
+  fi
+  return 1
 }

@@ -1,57 +1,96 @@
 #!/usr/bin/env bash
 
 # This script builds the Docker image and tags it with the version information
-# contained in `platform-variables.sh` and derived from the current Git branch name
+# contained in `variables.sh` and derived from the current Git branch name
 
-if [[ ! $1 == '--force' ]]; then
-  if [[ -n "$(git status --porcelain)" ]]; then
-    echo -e "Please commit or stash your changes before building or use --force.\nAborting build" 1>&2
-    exit 1
-  fi
+# TODO: Eliminate code duplication between `mount-project.sh` and this script
+
+# -- Helper functions
+showHelp () {
+  echo "Usage: $0 [--force]"
+}
+# -- End of helper functions
+
+
+# -- Handle options
+# Initialize options
+FORCE_DIRTY_BUILD=false
+
+while :; do
+  case $1 in
+     -h|-\?|--help)
+       showHelp ; exit ;;
+     -F|--force)
+       FORCE_DIRTY_BUILD=true ;;
+     --) # End of all options
+       shift ; break ;;
+     -?*)
+       printf 'WARNING: Unknown option (ignored): %s\n' "$1" >&2 ;;
+     *)  # No more options, so break out of the loop
+       break
+   esac
+   shift
+ done
+
+
+# Handle arguments
+if [[ $# -ne 0 ]]; then
+  showHelp
+  exit 1
 fi
 
 
 # Change to the directory of this script so that relative paths resolve correctly
 cd $(dirname "$0")
-source platform-variables.sh
 
-if [[ $? -ne 0 ]]
-then
-  echo "The variables file, 'platform-variables.sh', was not found" 1>&2
+# Read this module's environment variables from file.
+source variables.sh
+if [[ $? -ne 0 ]]; then
+  echo -e "The variables file could not be found. Aborting."
   exit 1
 fi
 
-if [[ -z ${ACCOUNT_NAME} || -z ${PACKAGE_NAME} || -z ${VERSION} ]]
+# Validate variables
+if [[ -z ${DOCKER_ACCOUNT_NAME} || -z ${PACKAGE_NAME} || -z ${VERSION} ]]
 then
-  echo "platform-variables.sh must define ACCOUNT_NAME, PACKAGE_NAME, and VERSION" 1>&2
+  echo "variables.sh must define ACCOUNT_NAME, PACKAGE_NAME, and VERSION" 1>&2
   exit 1
 fi
 
-IMAGE_NAME="${ACCOUNT_NAME}/${PACKAGE_NAME}"
-
-# By default use the current branch name as the version stage (remove / and -)
-if [[ -z ${VERSION_STAGE} ]]; then
-  BRANCH=$(git symbolic-ref --short HEAD)
-  VERSION_STAGE=${BRANCH//\//}
-  VERSION_STAGE=${VERSION_STAGE//-/}
+# Include helper functions.
+source src/functions.sh
+if [[ $? -ne 0 ]]; then
+  echo -e "The functions file could not be found. Aborting."
+  exit 1
 fi
-COMMIT_HASH=$(git rev-parse HEAD)
+
+if gitRepoIsClean; then
+  COMMIT_HASH=$(getGitCommitHash)
+else
+  if [[ ${FORCE_DIRTY_BUILD} == true ]]; then
+    echo "WARNING: There are uncommitted changes in the working tree. The commit hash will be set to 'unknown'."
+    COMMIT_HASH='unknown'
+  else
+    echo -e "Please commit or stash your changes before building or use the \`--force\` option.\nThe build has been aborted." 1>&2
+    exit 1
+  fi
+fi
+
+
+IMAGE_BASE_NAME="${DOCKER_ACCOUNT_NAME}/${PACKAGE_NAME}"
+VERSION_LABEL=$(generateVersionLabel ${VERSION} ${VERSION_STAGE})
+IMAGE_BASE_NAME=${DOCKER_ACCOUNT_NAME}/${PACKAGE_NAME}
 
 # TODO: REFACTOR: Reduce duplication of code with `docker/build-images.sh`
-# Build the version label: version number + version stage
-# Omit the version stage if this is the master version
-if [[ ${VERSION_STAGE} == 'master' ]]; then
-  LABEL='latest'
-  VERSION_LABEL="v${VERSION}"
-else
-  LABEL=${VERSION_STAGE}
-  VERSION_LABEL="v${VERSION}-${VERSION_STAGE}"
-fi
+# TODO: REFACTOR: Versioning
 
 # Tag the build
-docker build -t ${IMAGE_NAME}:${LABEL} . \
+docker build \
+  --tag ${IMAGE_BASE_NAME}:${VERSION_LABEL} \
+  . \
   --build-arg COMMIT_HASH=${COMMIT_HASH} \
   --build-arg PACKAGE_NAME=${PACKAGE_NAME} \
+  --build-arg PLATFORM_NAME=${PLATFORM_NAME} \
   --build-arg VERSION=${VERSION} \
   --build-arg VERSION_LABEL=${VERSION_LABEL} \
   --build-arg VERSION_STAGE=${VERSION_STAGE}
@@ -60,10 +99,3 @@ if [[ $? -ne 0 ]]
 then
   exit 1
 fi
-
-# Also tag the image with the version number, prefixed by the custom tag (if any)
-docker tag ${IMAGE_NAME}:${LABEL} ${IMAGE_NAME}:${VERSION_LABEL}
-if [[ $? -ne 0 ]]; then
-  exit 1
-fi
-echo "Successfully tagged ${IMAGE_NAME}:${VERSION_LABEL}"
