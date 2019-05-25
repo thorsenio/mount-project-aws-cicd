@@ -76,10 +76,7 @@ else
   fi
 fi
 
-
-IMAGE_BASE_NAME="${DOCKER_ACCOUNT_NAME}/${PACKAGE_NAME}"
 VERSION_LABEL=$(generateVersionLabel ${VERSION} ${VERSION_STAGE})
-IMAGE_BASE_NAME=${DOCKER_ACCOUNT_NAME}/${PACKAGE_NAME}
 
 # TODO: REFACTOR: Reduce duplication of code with `docker/build-images.sh`
 # TODO: REFACTOR: Versioning
