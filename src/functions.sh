@@ -172,3 +172,28 @@ gitRepoIsClean () {
   fi
   return 1
 }
+
+
+promptForVersionStage () {
+  local VERSION_STAGE=$1
+  local BRANCH_NAME
+  local DEFAULT_VERSION_STAGE
+
+  if [[ -n ${VERSION_STAGE} ]]; then
+    # TODO: Instead of sanitizing the name, inform the user that it is invalid & exit
+    VERSION_STAGE=$(branchNameToVersionStage ${VERSION_STAGE})
+    echo ${VERSION_STAGE}
+    return 0
+  fi
+
+  BRANCH_NAME=$(getGitBranchName)
+  DEFAULT_VERSION_STAGE=$(branchNameToVersionStage ${BRANCH_NAME})
+
+  read -p "Version stage: [${DEFAULT_VERSION_STAGE}] " VERSION_STAGE
+  # TODO: Validate the entered text (should consist only of alphanumeric chars)
+  if [[ -z ${VERSION_STAGE} ]]; then
+    VERSION_STAGE=${DEFAULT_VERSION_STAGE}
+  fi
+
+  echo ${VERSION_STAGE}
+}

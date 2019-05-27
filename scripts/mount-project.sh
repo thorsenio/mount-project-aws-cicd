@@ -56,7 +56,7 @@ getProjectRoot () {
 
 showHelp () {
   echo "Usage: $0 [VERSION_STAGE]" 1>&2
-  echo "The version stage defaults to the branch name."
+  echo "(The version stage defaults to the current branch name.)"
 }
 # -- End of helper functions
 
@@ -112,40 +112,24 @@ IMAGE_BASE_NAME=${DOCKER_ACCOUNT_NAME}/${MPAC_PACKAGE_NAME}
 # -- End of read package variables
 
 
-# Handle arguments
-if [[ $# -gt 1 ]]; then
-  showHelp
-  exit 1
-fi
-
+# Handle options & arguments
 if [[ $1 == '--help' || $1 == '-h'  || $1 == '-\?' ]]; then
   showHelp
   exit 0
 fi
 
+if [[ $# -gt 1 ]]; then
+  showHelp
+  exit 1
+fi
+
+VERSION_STAGE=$(promptForVersionStage $1)
+
 # -- Read project variables
-# Change to the project's root directory before getting the Git branch name & reading `.env`
-cd "${MPAC_PROJECT_ROOT}"
-
-
-if [[ $# -eq 1 ]]; then
-  DEFAULT_VERSION_STAGE=$(branchNameToVersionStage $1)
-else
-  BRANCH_NAME=$(getGitBranchName)
-  DEFAULT_VERSION_STAGE=$(branchNameToVersionStage ${BRANCH_NAME})
-fi
-
-read -p "Version stage: [${DEFAULT_VERSION_STAGE}] " VERSION_STAGE
-# TODO: Validate the entered text (should consist only of alphanumeric chars)
-if [[ -z ${VERSION_STAGE} ]]; then
-  VERSION_STAGE=${DEFAULT_VERSION_STAGE}
-fi
-
-
 # Read environment variables from the project's `.env` file, if any
 if [[ -f '.env' ]]
 then
-  source .env
+  source ${MPAC_PROJECT_ROOT}/.env
 fi
 # -- End of read project variables
 
