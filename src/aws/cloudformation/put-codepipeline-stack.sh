@@ -47,7 +47,7 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
   --stack-name ${STACK_NAME} \
   --template-body file://${CLOUDFORMATION_TEMPLATE} \
   --parameters \
-    ParameterKey=BranchName,ParameterValue=${BranchName} \
+    ParameterKey=BranchName,ParameterValue=${ProjectVersionStage} \
     ParameterKey=CicdArtifactsBucketName,ParameterValue=${CicdArtifactsBucketName} \
     ParameterKey=CodeBuildEnvironmentImage,ParameterValue=${CodeBuildEnvironmentImage} \
     ParameterKey=CodeBuildProjectName,ParameterValue=${CodeBuildProjectName} \

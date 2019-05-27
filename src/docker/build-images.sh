@@ -21,22 +21,11 @@ source ../compute-variables.sh
 PROJECT_DIR=${PROJECT_DIR:-'/var/project'}
 cd "${PROJECT_DIR}"
 
-echo "PROJECT_DIR: ${PROJECT_DIR}"
-
-# TODO: REFACTOR: Reduce duplication of code with `build.sh`
-# Build the version label: version number + version stage
-# Omit the version stage if this is the master version
-if [[ ${ProjectVersionStage} == 'master' ]]; then
-  LABEL='latest'
-  VERSION_LABEL="v${ProjectVersion}"
-else
-  LABEL=${ProjectVersionStage}
-  VERSION_LABEL="v${ProjectVersion}-${ProjectVersionStage}"
-fi
+echo "Docker version label: ${DockerVersionLabel}"
 
 for IMAGE_NAME in ${EcrRepoNames}; do
 
-  SHORT_TAG=${DeploymentId}/${IMAGE_NAME}:${VERSION_LABEL}
+  SHORT_TAG=${DeploymentId}/${IMAGE_NAME}:${DockerVersionLabel}
   LONG_TAG=${AccountNumber}.dkr.ecr.${Region}.amazonaws.com/${SHORT_TAG}
 
   DOCKERFILE=${IMAGE_NAME}.Dockerfile
@@ -51,7 +40,7 @@ for IMAGE_NAME in ${EcrRepoNames}; do
 
   docker build \
     --build-arg IMAGE_NAME=${IMAGE_NAME} \
-    --build-arg IMAGE_VERSION_LABEL=${VERSION_LABEL} \
+    --build-arg IMAGE_VERSION_LABEL=${DockerVersionLabel} \
     --build-arg VERSION_STAGE=${ProjectVersionStage} \
     --build-arg SITE_DOMAIN_NAME=${SiteDomainName} \
     --file ${DOCKERFILE_PATH} \

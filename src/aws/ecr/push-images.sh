@@ -21,24 +21,13 @@ then
   exit 1
 fi
 
-# TODO: REFACTOR: Reduce duplication of code with `docker/build-images.sh`
-# Build the version label: version number + version stage
-# Omit the version stage if this is the master version
-if [[ ${ProjectVersionStage} == 'master' ]]; then
-  LABEL='latest'
-  VERSION_LABEL="v${ProjectVersion}"
-else
-  LABEL=${ProjectVersionStage}
-  VERSION_LABEL="v${ProjectVersion}-${ProjectVersionStage}"
-fi
-
 for IMAGE_NAME in ${EcrRepoNames}; do
   # Create the repo if it doesn't exist
 
   ./put-ecr-repository.sh ${IMAGE_NAME}
 
   # Note that `LABEL` isn't used
-  SHORT_TAG=${DeploymentId}/${IMAGE_NAME}:${VERSION_LABEL}
+  SHORT_TAG=${DeploymentId}/${IMAGE_NAME}:${DockerVersionLabel}
   LONG_TAG=${AccountNumber}.dkr.ecr.${Region}.amazonaws.com/${SHORT_TAG}
 
   docker push ${LONG_TAG}

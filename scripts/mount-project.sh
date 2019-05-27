@@ -178,8 +178,8 @@ docker container run \
   --interactive \
   --rm \
   --tty \
-  --env BRANCH=${VERSION_STAGE} \
   --env COMMIT_HASH=$(getGitCommitHash) \
+  --env VERSION_STAGE=${VERSION_STAGE} \
   --mount type=bind,source=${PWD},target=${MPAC_PROJECT_DIR} \
   --mount type=bind,source=${PWD}/config,target=/var/lib/config \
   --mount type=bind,source="${HOME}/.aws",target=/root/.aws \

@@ -39,7 +39,7 @@ MAX_AZ_COUNT=3
 DESIRED_AZ_COUNT=$(echoMin AZ_COUNT MAX_AZ_COUNT)
 
 # TODO: Allow these values to be customized; read `DesiredAsgCapacity` from project vars
-if [[ ${BranchName} == 'master' ]]; then
+if [[ ${ProjectVersionStage} == 'master' ]]; then
   DESIRED_ASG_CAPACITY=2
 else
   DESIRED_ASG_CAPACITY=1

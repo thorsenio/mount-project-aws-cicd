@@ -17,14 +17,15 @@
 Profile=${Profile:=${PROFILE}}
 PROFILE=${Profile}
 
+# Verify that all required variables have values
 for SETTING_NAME in \
-    BRANCH \
     COMMIT_HASH \
     PLATFORM_COMMIT_HASH \
     PLATFORM_NAME \
     PLATFORM_VERSION \
     PLATFORM_VERSION_LABEL \
     PLATFORM_VERSION_STAGE \
+    VERSION_STAGE \
     Profile \
     Region \
     ProjectDomainName \
@@ -57,9 +58,8 @@ GlobalPlatformStackName="${PlatformId}-global"
 RegionalPlatformStackName="${PlatformId}-regional"
 
 # -- Project descriptors
-# The values of `BRANCH` and `COMMIT_HASH` are set in the activation script
-BranchName=${BranchName:=${BRANCH}}
-ProjectVersionStage=${ProjectVersionStage:=${BranchName}}
+# The values of `VERSION_STAGE` and `COMMIT_HASH` are set in the project mount script
+ProjectVersionStage=${VERSION_STAGE}
 ProjectVersionStage=${ProjectVersionStage//\//}
 ProjectVersionStage=${ProjectVersionStage//-/}
 
@@ -70,15 +70,16 @@ ProjectMajorVersion=$(echo ${ProjectVersion} | head -n 1 | cut -d . -f 1)
 
 if [[ ${ProjectVersionStage} == 'master' ]]; then
   DeploymentId="${ProjectName}-v${ProjectMajorVersion}"
-  ProjectVersionLabel="v${ProjectVersion}"
+  DockerVersionLabel=${ProjectVersion}
 else
   DeploymentId="${ProjectName}-v${ProjectMajorVersion}${ProjectVersionStage}"
-  ProjectVersionLabel="v${ProjectVersion}-${ProjectVersionStage}"
+  DockerVersionLabel="${ProjectVersion}-${ProjectVersionStage}"
 fi
+ProjectVersionLabel="v${DockerVersionLabel}"
 
 # ----- Domain names
 NonproductionBaseDomainName=${NonproductionBaseDomainName:=${ProjectDomainName}}
-if [[ ${BranchName} == 'master' ]]; then
+if [[ ${ProjectVersionStage} == 'master' ]]; then
   SiteDomainName=${SiteDomainName:="www.${ProjectDomainName}"}
   CertifiedDomainName=${SiteDomainName}
 else
