@@ -8,8 +8,8 @@
   THIS_SCRIPT_DIR=$(dirname $(realpath ${PWD}/${BASH_SOURCE[0]}))
   cd ${THIS_SCRIPT_DIR} > /dev/null
   source ./functions.sh
-  source ./config/global-variables.sh
-  source ./config/regional-variables.sh
+  [[ -f ./config/global-variables.sh ]] && source ./config/global-variables.sh
+  [[ -f ./config/regional-variables.sh ]] && source ./config/regional-variables.sh
   source ./config/project-variables.sh
   cd - > /dev/null
 
