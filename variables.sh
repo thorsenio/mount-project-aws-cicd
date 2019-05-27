@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 
-DOCKER_ACCOUNT_NAME='skypilot'
-PACKAGE_NAME='mount-project-aws-cicd'
-PLATFORM_NAME='aws-cicd' # shorter name used to generate AWS resource names
+DOCKER_ACCOUNT_NAME=skypilot
+PACKAGE_NAME=mount-project-aws-cicd
+VERSION_STAGE='master'
 
-PLATFORM_DIR="/var/lib/${PACKAGE_NAME}"
-PROJECT_DIR='/var/project'
+PLATFORM_DIR=/var/lib/${PACKAGE_NAME}
+PROJECT_DIR=/var/project
 
-# TODO: Read the version from `package.json`
-VERSION='2.7.0'
+# shorter name used to generate AWS resource names
+PLATFORM_NAME=aws-cicd
+PLATFORM_VERSION=$(cat ./package.json | jq '.version' --raw-output)
 IMAGE_BASE_NAME=${DOCKER_ACCOUNT_NAME}/${PACKAGE_NAME}
-
-VERSION_STAGE='master' # deprecated

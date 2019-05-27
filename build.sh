@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# This script builds the Docker image and tags it with the version information
-# contained in `variables.sh` and derived from the current Git branch name
+# This script builds the Docker image and tags it with the version information contained in
+# `variables.sh` and derived from the current Git branch name or manually specified version stage
 
 # TODO: Eliminate code duplication between `mount-project.sh` and this script
 
@@ -33,15 +33,27 @@ while :; do
  done
 
 
+# Change to the directory of this script so that relative paths resolve correctly
+cd $(dirname "$0")
+
+# Include helper functions.
+source src/functions.sh
+if [[ $? -ne 0 ]]; then
+  echo -e "The functions file could not be found. Aborting."
+  exit 1
+fi
+
 # Handle arguments
+# -- Handle options & arguments
+if [[ $1 == '--help' || $1 == '-h' || $1 == '-\?' ]]; then
+  showHelp
+  exit 0
+fi
+
 if [[ $# -ne 0 ]]; then
   showHelp
   exit 1
 fi
-
-
-# Change to the directory of this script so that relative paths resolve correctly
-cd $(dirname "$0")
 
 # Read this module's environment variables from file.
 source variables.sh
@@ -51,16 +63,9 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # Validate variables
-if [[ -z ${DOCKER_ACCOUNT_NAME} || -z ${PACKAGE_NAME} || -z ${VERSION} ]]
+if [[ -z ${DOCKER_ACCOUNT_NAME} || -z ${PACKAGE_NAME} || -z ${PLATFORM_VERSION} ]]
 then
-  echo "variables.sh must define ACCOUNT_NAME, PACKAGE_NAME, and VERSION" 1>&2
-  exit 1
-fi
-
-# Include helper functions.
-source src/functions.sh
-if [[ $? -ne 0 ]]; then
-  echo -e "The functions file could not be found. Aborting."
+  echo "set-environment-variables.sh must define DOCKER_ACCOUNT_NAME, PACKAGE_NAME, and VERSION" 1>&2
   exit 1
 fi
 
@@ -76,7 +81,7 @@ else
   fi
 fi
 
-VERSION_LABEL=$(generateVersionLabel ${VERSION} ${VERSION_STAGE})
+VERSION_LABEL=$(generateVersionLabel ${PLATFORM_VERSION} ${VERSION_STAGE})
 
 # TODO: REFACTOR: Reduce duplication of code with `docker/build-images.sh`
 # TODO: REFACTOR: Versioning
@@ -88,7 +93,7 @@ docker build \
   --build-arg COMMIT_HASH=${COMMIT_HASH} \
   --build-arg PACKAGE_NAME=${PACKAGE_NAME} \
   --build-arg PLATFORM_NAME=${PLATFORM_NAME} \
-  --build-arg VERSION=${VERSION} \
+  --build-arg VERSION=${PLATFORM_VERSION} \
   --build-arg VERSION_LABEL=${VERSION_LABEL} \
   --build-arg VERSION_STAGE=${VERSION_STAGE}
 

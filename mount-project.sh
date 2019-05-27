@@ -78,16 +78,15 @@ SCRIPT_ABSOLUTE_PATH=$(absolutePath ${SCRIPT_RELATIVE_PATH})
 SCRIPT_ABSOLUTE_DIR=$(dirname ${SCRIPT_ABSOLUTE_PATH})
 cd "${SCRIPT_ABSOLUTE_DIR}"
 
-
-# Read this module's environment variables from file.
-source ../variables.sh
+# Read this module's environment variables from file
+source variables.sh
 if [[ $? -ne 0 ]]; then
   echo -e "The variables file for could not be found. Aborting."
   exit 1
 fi
 
 # Validate variables
-if [[ -z ${DOCKER_ACCOUNT_NAME} || -z ${PACKAGE_NAME} || -z ${VERSION} ]]
+if [[ -z ${DOCKER_ACCOUNT_NAME} || -z ${PACKAGE_NAME} || -z ${PLATFORM_VERSION} ]]
 then
   echo "variables.sh must define ACCOUNT_NAME, PACKAGE_NAME, and VERSION" 1>&2
   exit 1
@@ -95,7 +94,7 @@ fi
 
 
 # Include helper functions.
-source ../src/functions.sh
+source src/functions.sh
 if [[ $? -ne 0 ]]; then
   echo -e "The functions file could not be found. Aborting."
   exit 1
@@ -107,7 +106,7 @@ fi
 MPAC_DEBUG=${DEBUG:=false}
 MPAC_PACKAGE_NAME=${PACKAGE_NAME}
 MPAC_PROJECT_DIR=${PROJECT_DIR:='/var/project'}
-MPAC_VERSION=${VERSION}
+MPAC_VERSION=${PLATFORM_VERSION}
 IMAGE_BASE_NAME=${DOCKER_ACCOUNT_NAME}/${MPAC_PACKAGE_NAME}
 # -- End of read package variables
 
@@ -123,13 +122,14 @@ if [[ $# -gt 1 ]]; then
   exit 1
 fi
 
+cd ${MPAC_PROJECT_ROOT}
 VERSION_STAGE=$(promptForVersionStage $1)
 
 # -- Read project variables
 # Read environment variables from the project's `.env` file, if any
 if [[ -f '.env' ]]
 then
-  source ${MPAC_PROJECT_ROOT}/.env
+  source .env
 fi
 # -- End of read project variables
 
@@ -154,7 +154,6 @@ mkdir -p config \
 if ! dockerUseLocalImageOrPull ${IMAGE_BASE_NAME}:${MPAC_VERSION}; then
   exit 1
 fi
-
 
 # TODO: Update the target directories when `USER` is set to something other than `root`
 # TODO: For clarity, the Docker image should be rewritten to expect `VERSION_STAGE` instead of `BRANCH`
