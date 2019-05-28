@@ -21,11 +21,11 @@ source ../compute-variables.sh
 PROJECT_DIR=${PROJECT_DIR:-'/var/project'}
 cd "${PROJECT_DIR}"
 
-echo "Docker version label: ${DockerVersionLabel}"
+echo "Docker version label: ${ProjectVersionLabel}"
 
 for IMAGE_NAME in ${EcrRepoNames}; do
 
-  SHORT_TAG=${DeploymentId}/${IMAGE_NAME}:${DockerVersionLabel}
+  SHORT_TAG=${DeploymentId}/${IMAGE_NAME}:${ProjectVersionLabel}
   LONG_TAG=${AccountNumber}.dkr.ecr.${Region}.amazonaws.com/${SHORT_TAG}
 
   DOCKERFILE=${IMAGE_NAME}.Dockerfile
@@ -40,7 +40,7 @@ for IMAGE_NAME in ${EcrRepoNames}; do
 
   docker build \
     --build-arg IMAGE_NAME=${IMAGE_NAME} \
-    --build-arg IMAGE_VERSION_LABEL=${DockerVersionLabel} \
+    --build-arg IMAGE_VERSION_LABEL=${ProjectVersionLabel} \
     --build-arg VERSION_STAGE=${ProjectVersionStage} \
     --build-arg SITE_DOMAIN_NAME=${SiteDomainName} \
     --file ${DOCKERFILE_PATH} \

@@ -27,7 +27,7 @@ for IMAGE_NAME in ${EcrRepoNames}; do
   ./put-ecr-repository.sh ${IMAGE_NAME}
 
   # Note that `LABEL` isn't used
-  SHORT_TAG=${DeploymentId}/${IMAGE_NAME}:${DockerVersionLabel}
+  SHORT_TAG=${DeploymentId}/${IMAGE_NAME}:${ProjectVersionLabel}
   LONG_TAG=${AccountNumber}.dkr.ecr.${Region}.amazonaws.com/${SHORT_TAG}
 
   docker push ${LONG_TAG}

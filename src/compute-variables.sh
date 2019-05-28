@@ -70,12 +70,11 @@ ProjectMajorVersion=$(echo ${ProjectVersion} | head -n 1 | cut -d . -f 1)
 
 if [[ ${ProjectVersionStage} == 'master' ]]; then
   DeploymentId="${ProjectName}-v${ProjectMajorVersion}"
-  DockerVersionLabel=${ProjectVersion}
+  ProjectVersionLabel=${ProjectVersion}
 else
   DeploymentId="${ProjectName}-v${ProjectMajorVersion}${ProjectVersionStage}"
-  DockerVersionLabel="${ProjectVersion}-${ProjectVersionStage}"
+  ProjectVersionLabel="${ProjectVersion}-${ProjectVersionStage}"
 fi
-ProjectVersionLabel="v${DockerVersionLabel}"
 
 # ----- Domain names
 NonproductionBaseDomainName=${NonproductionBaseDomainName:=${ProjectDomainName}}
