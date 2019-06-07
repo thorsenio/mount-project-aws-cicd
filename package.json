@@ -1,9 +1,10 @@
 {
   "name": "mount-project-aws-cicd",
-  "version": "2.8.0",
+  "version": "2.9.0",
   "description": "Docker container for runing AWS/CICD platform code",
   "bin": "mount-project.sh",
   "scripts": {
+    "mpac": "bash mount-project.sh",
     "test": "echo \"No tests\""
   },
   "repository": {

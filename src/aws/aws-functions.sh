@@ -435,3 +435,21 @@ echoPutStackOutput () {
   echo ${OUTPUT} | jq '.'
   return 0
 }
+
+
+# Echo the Route 53 Hosted Zone ID for the ELB endpoint (application & classic load balancers only)
+# in the specified region. For network load balancers, see https://docs.aws.amazon.com/general/latest/gr/rande.html#elb_region).
+getElbHostedZoneIdByRegion () {
+
+  local REGION=$1
+
+  HOSTED_ZONE_ID=${ELB_HOSTED_ZONE_ID_REGION_MAP[${REGION}]}
+
+  if [[ -z "${HOSTED_ZONE_ID}" ]]; then
+    echo ''
+    return 1
+  fi
+
+  echo ${HOSTED_ZONE_ID}
+  return 0
+}
