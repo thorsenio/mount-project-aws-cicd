@@ -65,6 +65,7 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     ParameterKey=ProjectName,ParameterValue=${ProjectName} \
     ParameterKey=ProjectVersionLabel,ParameterValue=${ProjectVersionLabel} \
     ParameterKey=RepoName,ParameterValue=${RepoName} \
+    ParameterKey=VersionStage,ParameterValue=${ProjectVersionStage} \
   --capabilities \
     CAPABILITY_AUTO_EXPAND \
     CAPABILITY_IAM \

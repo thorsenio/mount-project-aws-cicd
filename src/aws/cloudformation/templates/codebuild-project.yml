@@ -39,6 +39,10 @@ Parameters:
     Description: "Name of the CodeCommit repo holding the project's source code"
     Type: String
 
+  VersionStage:
+    Description: "Version stage of development (e.g., master, staging, dev, alpha)"
+    Type: String
+
 Resources:
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
@@ -71,6 +75,9 @@ Resources:
           - Name: REPO_NAME
             Type: PLAINTEXT
             Value: !Ref RepoName
+          - Name: VERSION_STAGE
+            Type: PLAINTEXT
+            Value: !Ref VersionStage
       QueuedTimeoutInMinutes: 60
       Source:
         Type: 'CODECOMMIT'
