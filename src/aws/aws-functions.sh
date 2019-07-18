@@ -130,6 +130,22 @@ distributionExistsForCname () {
   return 0
 }
 
+# Return true if the specified ECR repo contains an image with the specified tag
+ecrImageExists () {
+  local PROFILE=$1
+  local REGION=$2
+  local REPOSITORY_NAME=$3
+  local IMAGE_TAG=$4
+
+  # This command will generate an error if the image doesn't exist
+  aws ecr describe-images \
+    --profile ${PROFILE}\
+    --region ${REGION} \
+    --repository-name ${REPOSITORY_NAME} \
+    --image-ids imageTag=${IMAGE_TAG} \
+    &> /dev/null
+}
+
 
 ecrRepoExists () {
 
