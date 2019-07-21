@@ -18,6 +18,14 @@ STACK_NAME=${EcsClusterStackName}
 # Capture the mode that should be used put the stack: `create` or `update`
 PUT_MODE=$(echoPutStackMode ${Profile} ${Region} ${STACK_NAME})
 
+if [[ ${DRY_RUN} == true ]]; then
+  OPERATION='create-change-set'
+  CHANGE_SET_PARAMS="--change-set-name ${STACK_NAME}-v${ProjectVersion//./-}"
+else
+  OPERATION="${PUT_MODE}-stack"
+  CHANGE_SET_PARAMS=''
+fi
+
 ./package.sh ${CLOUDFORMATION_TEMPLATE}
 
 if [[ $? -ne 0 ]]
@@ -45,10 +53,10 @@ else
   DESIRED_ASG_CAPACITY=1
 fi
 
-OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
+OUTPUT=$(aws cloudformation ${OPERATION} \
   --profile ${Profile} \
   --region ${Region} \
-  --stack-name ${STACK_NAME} \
+  --stack-name ${STACK_NAME} ${CHANGE_SET_PARAMS} \
   --template-body file://${TEMPLATE_BASENAME}--expanded.yml \
   --parameters \
     ParameterKey=DefaultSecurityGroupName,ParameterValue=${VpcDefaultSecurityGroupName} \
@@ -72,7 +80,7 @@ OUTPUT=$(aws cloudformation ${PUT_MODE}-stack \
     CAPABILITY_IAM \
 )
 
-echoPutStackOutput ${STACK_NAME} ${PUT_MODE} ${Region} $? ${OUTPUT}
+echoPutStackOutput ${STACK_NAME} ${OPERATION} ${Region} $? ${OUTPUT}
 exitOnError $?
 
 if [[ ${WAIT} == true ]]; then

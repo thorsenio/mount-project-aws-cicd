@@ -430,10 +430,11 @@ echoPutStackMode () {
 }
 
 
+# TODO: Rename to `echoStackOperationOutput`
 echoPutStackOutput () {
 
   local STACK_NAME=$1
-  local PUT_MODE=$2
+  local OPERATION=$2
   local REGION=$3
   local EXIT_STATUS=$4
 
@@ -441,12 +442,12 @@ echoPutStackOutput () {
   local OUTPUT=$*
 
   if [[ ${EXIT_STATUS} -ne 0 ]]; then
-    echo "The request to ${PUT_MODE} the stack was not accepted by AWS." 1>&2
+    echo "The '${OPERATION}' operation requested on the '${STACK_NAME}' stack was not accepted by AWS." 1>&2
     echo ${OUTPUT} 1>&2
     return 1
   fi
 
-  echo "The request to ${PUT_MODE} the '${STACK_NAME}' stack was accepted by AWS."
+  echo "The '${OPERATION}' operation requested on the '${STACK_NAME}' stack was accepted by AWS."
   echo "View the stack's status at https://${REGION}.console.aws.amazon.com/cloudformation/home?region=${REGION}#/stacks?filter=active"
   echo ${OUTPUT} | jq '.'
   return 0
