@@ -2,6 +2,7 @@
 
 DOCKER_ACCOUNT_NAME=skypilot
 PACKAGE_NAME=mount-project-aws-cicd
+PACKAGE_SHORT_NAME=mpac
 VERSION_STAGE='master'
 
 PLATFORM_DIR=/var/lib/${PACKAGE_NAME}

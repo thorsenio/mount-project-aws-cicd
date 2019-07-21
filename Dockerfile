@@ -15,6 +15,7 @@ ARG PROJECT_DIR='/var/project'
 
 ARG COMMIT_HASH
 ARG PACKAGE_NAME
+ARG PACKAGE_SHORT_NAME
 ARG PLATFORM_NAME
 ARG VERSION
 ARG VERSION_LABEL
@@ -34,7 +35,7 @@ RUN mkdir -p \
   ${PROJECT_DIR}
 
 RUN touch /root/.bashrc && \
-  echo "export PS1=\"\u@${PACKAGE_NAME}-${PLATFORM_VERSION_LABEL} [\w] \$ \"" >> /root/.bashrc
+  echo "export PS1=\"\u@${PACKAGE_SHORT_NAME}-${PLATFORM_VERSION_LABEL} [\w] \$ \"" >> /root/.bashrc
 
 COPY src/ ${PLATFORM_DIR}
 # The config files in `./config/` are shadowed by the project's `./config/`; make a copy

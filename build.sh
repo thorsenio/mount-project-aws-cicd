@@ -81,6 +81,7 @@ else
   fi
 fi
 
+PACKAGE_SHORT_NAME=${PACKAGE_SHORT_NAME:=${PACKAGE_NAME}}
 VERSION_LABEL=$(generateVersionLabel ${PLATFORM_VERSION} ${VERSION_STAGE})
 
 # TODO: REFACTOR: Reduce duplication of code with `docker/build-images.sh`
@@ -92,6 +93,7 @@ docker build \
   . \
   --build-arg COMMIT_HASH=${COMMIT_HASH} \
   --build-arg PACKAGE_NAME=${PACKAGE_NAME} \
+  --build-arg PACKAGE_SHORT_NAME=${PACKAGE_SHORT_NAME} \
   --build-arg PLATFORM_NAME=${PLATFORM_NAME} \
   --build-arg VERSION=${PLATFORM_VERSION} \
   --build-arg VERSION_LABEL=${VERSION_LABEL} \
