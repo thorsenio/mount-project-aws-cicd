@@ -78,7 +78,7 @@ put-s3-site-stack.sh [--wait]
 ##### Delete the stack when it is no longer needed
 
 ```bash
-delete-ecs-site-stack.sh [--wait]
+delete-s3-site-stack.sh [--wait]
 ```
 
 ##### Utility scripts
