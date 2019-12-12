@@ -120,6 +120,7 @@ Resources:
                   - 's3:GetAccountPublicAccessBlock'
                   - 's3:HeadBucket'
                   - 's3:ListAllMyBuckets'
+                  - 'ssm:GetParameters'
                 Resource: '*'
               -
                 Effect: 'Allow'
