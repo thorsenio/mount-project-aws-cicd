@@ -66,13 +66,12 @@ ProjectVersionStage=${ProjectVersionStage//-/}
 # Combine project, version, and branch into values usable in the project
 ProjectCommitHash=${COMMIT_HASH:0:7}
 ProjectDescription="${ProjectDescription:=${ProjectName}}"
-ProjectMajorVersion=$(echo ${ProjectVersion} | head -n 1 | cut -d . -f 1)
 
 if [[ ${ProjectVersionStage} == 'master' ]]; then
-  DeploymentId="${ProjectName}-v${ProjectMajorVersion}"
+  DeploymentId="${ProjectName}"
   ProjectVersionLabel=${ProjectVersion}
 else
-  DeploymentId="${ProjectName}-v${ProjectMajorVersion}${ProjectVersionStage}"
+  DeploymentId="${ProjectName}-${ProjectVersionStage}"
   ProjectVersionLabel="${ProjectVersion}-${ProjectVersionStage}"
 fi
 
